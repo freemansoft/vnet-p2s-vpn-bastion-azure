@@ -1,0 +1,177 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetNetworkName": {
+            "type": "String"
+        },
+        "azureRegionPrimary": {
+            "type": "String"
+        },
+        "storageAccountName": {
+            "type": "String"
+        },
+        "privateEndpoints_storageAccount_blobName": {
+            "type": "String"
+        },
+        "privateEndpoints_storageAccount_fileName": {
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('privateEndpoints_storageAccount_blobName')]",
+            "location": "[parameters('azureRegionPrimary')]",
+            "dependsOn": [
+                // Created in other templates
+                // "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+                // "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), 'data')]"
+            ],
+            "properties": {
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('privateEndpoints_storageAccount_blobName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+                            "groupIds": [
+                                "blob"
+                            ],
+                            "privateLinkServiceConnectionState": {
+                                "status": "Approved",
+                                "description": "Auto-Approved",
+                                "actionsRequired": "None"
+                            }
+                        }
+                    }
+                ],
+                "manualPrivateLinkServiceConnections": [],
+                "subnet": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), 'data')]"
+                },
+                "customDnsConfigs": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('privateEndpoints_storageAccount_fileName')]",
+            "location": "[parameters('azureRegionPrimary')]",
+            "dependsOn": [
+                // Created in other templates
+                // "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+                // "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), 'data')]"
+            ],
+            "properties": {
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('privateEndpoints_storageAccount_fileName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+                            "groupIds": [
+                                "file"
+                            ],
+                            "privateLinkServiceConnectionState": {
+                                "status": "Approved",
+                                "description": "Auto-Approved",
+                                "actionsRequired": "None"
+                            }
+                        }
+                    }
+                ],
+                "manualPrivateLinkServiceConnections": [],
+                "subnet": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), 'data')]"
+                },
+                "customDnsConfigs": []
+            }
+        },
+        // DNS SOA and A records are automatically created
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2020-06-01",
+            "name": "privatelink.blob.core.windows.net",
+            "location": "global"
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2020-06-01",
+            "name": "[format('{0}/storageDnsZoneLink', 'privatelink.blob.core.windows.net')]",
+            "location": "global",
+            "properties": {
+                "registrationEnabled": false,
+                "virtualNetwork": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.blob.core.windows.net')]"
+                // Created in other templates
+                // "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+            "apiVersion": "2020-08-01",
+            "name": "[format('{0}/storagePrivateDnsZoneGroup', parameters('privateEndpoints_storageAccount_blobName'))]",
+            "properties": {
+                "privateDnsZoneConfigs": [
+                    {
+                        "name": "config1",
+                        "properties": {
+                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.blob.core.windows.net')]"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.blob.core.windows.net')]",
+                "[resourceId('Microsoft.Network/privateEndpoints', parameters('privateEndpoints_storageAccount_blobName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2020-06-01",
+            "name": "privatelink.file.core.windows.net",
+            "location": "global"
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2020-06-01",
+            "name": "[format('{0}/storageDnsZoneLink', 'privatelink.file.core.windows.net')]",
+            "location": "global",
+            "properties": {
+                "registrationEnabled": false,
+                "virtualNetwork": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.file.core.windows.net')]"
+                // Created in other templates
+                // "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+            "apiVersion": "2020-08-01",
+            "name": "[format('{0}/storagePrivateDnsZoneGroup', parameters('privateEndpoints_storageAccount_fileName'))]",
+            "properties": {
+                "privateDnsZoneConfigs": [
+                    {
+                        "name": "config1",
+                        "properties": {
+                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.file.core.windows.net')]"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.file.core.windows.net')]",
+                "[resourceId('Microsoft.Network/privateEndpoints', parameters('privateEndpoints_storageAccount_fileName'))]"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,65 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "bastionHostName": {
+            "type": "String"
+        },
+        "publicIPAddressesBastionName": {
+            "type": "String"
+        },
+        "azureRegionPrimary": {
+            "type": "String"
+        },
+        "vnetNetworkName": {
+            "type": "String"
+        },
+        "subnetBastionName": {
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('publicIPAddressesBastionName')]",
+            "location": "[parameters('azureRegionPrimary')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
+        },
+        {
+            "type": "Microsoft.Network/bastionHosts",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('bastionHostName')]",
+            "location": "[parameters('azureRegionPrimary')]",
+            "sku": {
+                "name": "Basic"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "IpConf",
+                        "properties": {
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressesBastionName'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetBastionName'))]"
+                            }
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressesBastionName'))]"
+                // is in different template
+                //"[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetBastionName'))]"
+            ]
+        }
+    ]
+}

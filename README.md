@@ -13,10 +13,11 @@
 | 2-create-resources.sh   | create a resource group if it does not exist |
 | 3-create-vnet.sh        | Creates a vnet, subnets using ARM templates |
 | 4-create-storage.sh     | Creates bastion and vnet gateway using ARM templates |
-| 5-create-vm.sh          | Create a simple virtual machine on the default subnet with no public IP | 
-| 6-create-bastion.sh     | Creates a bastion host |
-| 7-create-vpn.sh         | _future_ Creates a vpn appliance - certs managed in different script |
-| 8-create-p2s.sh         | _future_ will create point to site vpn gateway |
+| 5-crate-monitor.sh      | Creates log analytics workspace and application insights instance |
+| 6-create-vm.sh          | Create a simple virtual machine on the default subnet with no public IP | 
+| 7-create-bastion.sh     | Creates a bastion host |
+| 8-create-vpn.sh         | _future_ Creates a vpn appliance - certs managed in different script |
+| 9-create-p2s.sh         | _future_ will create point to site vpn gateway |
 | | |
 | 92-purge-vnet.sh             | Remove everything other than the VNET and it's subnets | 
 | 91-purge-resource-group.sh   | Remove everything in resource group using  an empty ARM template - leaves the resource group |

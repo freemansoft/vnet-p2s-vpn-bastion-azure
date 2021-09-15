@@ -15,8 +15,8 @@ source $DIR/env.sh
 echo "This will take several minutes "
 
 echo "-------------Gateway and Public IP--------"
-echo "-------------Bastion and Public IP--------"
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" --template-file templates/template-vpn.json \
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
+     --template-file templates/template-vpn.json \
      --parameters \
      azureRegionPrimary=$AZURE_REGION \
      vnetNetworkName=$AZURE_VNET_NAME \

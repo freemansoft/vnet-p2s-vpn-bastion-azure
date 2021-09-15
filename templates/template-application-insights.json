@@ -1,0 +1,44 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appInsightsName": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "logAnalyticsWorkspaceId": "[resourceId('microsoft.operationalinsights/workspaces',parameters('logAnalyticsWorkspaceName'))]",
+        "requestSource": "FreemanSoft",
+        "type": "Example",
+        "flowType": "Redfield"
+    },
+    "resources": [
+        {
+            "name": "[parameters('appInsightsName')]",
+            "type": "microsoft.insights/components",
+            "location": "[parameters('location')]",
+            "apiVersion": "2020-02-02-preview",
+            "dependsOn": [],
+            "properties": {
+                "ApplicationId": "[parameters('appInsightsName')]",
+                "Application_Type": "[variables('type')]",
+                "Flow_Type": "[variables('flowType')]",
+                "Request_Source": "[variables('requestSource')]",
+                "WorkspaceResourceId": "[variables('logAnalyticsWorkspaceId')]"
+            }
+        }
+    ],
+    "outputs": {
+        "applicationInsightsId": {
+            "type": "string",
+            "value": "[resourceId('microsoft.insights/components',parameters('logAnalyticsWorkspaceName'))]"
+        }
+    }
+
+}

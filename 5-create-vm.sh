@@ -14,7 +14,8 @@ source $DIR/env.sh
 
 echo "This will take several minutes "
 echo "-----------------VIRTUAL MACHINES------------------"
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" --template-file templates/template-vm-simple.json \
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
+     --template-file templates/template-vm-simple.json \
      --parameters \
      location="$AZURE_REGION" \
      vnetNetworkName="$AZURE_VNET_NAME" \

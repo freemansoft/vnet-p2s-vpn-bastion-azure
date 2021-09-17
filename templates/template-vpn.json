@@ -2,6 +2,12 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "lastPublishedAt": {
+            "type": "String",
+            "metadata": {
+                "description": "The last time the template was run"
+            }
+        },
         "virtualNetworkGatewaysVngName": {
             "type": "String"
         },
@@ -29,6 +35,9 @@
             "apiVersion": "2020-11-01",
             "name": "[parameters('publicIPAddressesVngName')]",
             "location": "[parameters('azureRegionPrimary')]",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
             "sku": {
                 "name": "Basic"
             },
@@ -41,6 +50,9 @@
             "apiVersion": "2020-11-01",
             "name": "[parameters('virtualNetworkGatewaysVngName')]",
             "location": "[parameters('azureRegionPrimary')]",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressesVngName'))]"
                 // is in different subnet

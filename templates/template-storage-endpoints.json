@@ -2,6 +2,12 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "lastPublishedAt": {
+            "type": "String",
+            "metadata": {
+                "description": "The last time the template was run"
+            }
+        },
         "vnetNetworkName": {
             "type": "String"
         },
@@ -25,6 +31,9 @@
             "apiVersion": "2020-11-01",
             "name": "[parameters('privateEndpoints_storageAccount_blobName')]",
             "location": "[parameters('azureRegionPrimary')]",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
             "dependsOn": [
                 // Created in other templates
                 // "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
@@ -59,6 +68,9 @@
             "apiVersion": "2020-11-01",
             "name": "[parameters('privateEndpoints_storageAccount_fileName')]",
             "location": "[parameters('azureRegionPrimary')]",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
             "dependsOn": [
                 // Created in other templates
                 // "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",

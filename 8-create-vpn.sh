@@ -23,4 +23,5 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      subnetVngName=$VNET_SUBNET_VNG_NAME \
      virtualNetworkGatewaysVngName=$VNGS_VNG_NAME \
      publicIPAddressesVngName=$PUBLIC_IP_VNG_NAME \
-     addressGatewayPeering=$VNG_ADDRESS_PEERING
+     addressGatewayPeering=$VNG_ADDRESS_PEERING \
+     lastPublishedAt="$NOW_PUBLISHED_AT"

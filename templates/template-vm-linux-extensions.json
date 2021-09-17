@@ -1,0 +1,78 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "lastPublishedAt": {
+            "type": "String",
+            "metadata": {
+                "description": "The last time the template was run"
+            }
+        },
+        "vmName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of you Virtual Machine. Should be derivable from vmResourceId"
+            }
+        },
+        "logAnalyticsWorkspaceId": {
+            "type": "string",
+            "metadata": {
+                "description": "The workspace id"
+            }
+        },
+        "logAnalyticsWorkspaceKey": {
+            "type": "string",
+            "metadata": {
+                "description": "The workspace primary or secondary key"
+            }
+        }
+    },
+    "functions": [],
+    "variables": {
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmName'), '/OMSExtension')]",
+            "apiVersion": "2021-03-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
+            "dependsOn": [
+            ],
+            "properties": {
+                "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                "type": "OmsAgentForLinux",
+                "typeHandlerVersion": "1.13",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "workspaceId": "[parameters('logAnalyticsWorkSpaceId')]"
+                },
+                "protectedSettings": {
+                    "workspaceKey": "[parameters('logAnalyticsWorkspaceKey')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmName'), '/DAExtension')]",
+            "apiVersion": "2021-03-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
+            "dependsOn": [
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.Monitoring.DependencyAgent",
+                "type": "DependencyAgentLinux",
+                "typeHandlerVersion": "9.5",
+                "autoUpgradeMinorVersion": true,
+                "enableAutomaticUpgrade": true
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

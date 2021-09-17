@@ -2,6 +2,12 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "lastPublishedAt": {
+            "type": "String",
+            "metadata": {
+                "description": "The last time the template was run"
+            }
+        },
         "appInsightsName": {
             "type": "string"
         },
@@ -24,6 +30,9 @@
             "type": "microsoft.insights/components",
             "location": "[parameters('location')]",
             "apiVersion": "2020-02-02-preview",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
             "dependsOn": [],
             "properties": {
                 "ApplicationId": "[parameters('appInsightsName')]",

@@ -2,6 +2,12 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "lastPublishedAt": {
+            "type": "String",
+            "metadata": {
+                "description": "The last time the template was run"
+            }
+        },
         "azureRegionPrimary": {
             "type": "String"
         },
@@ -57,6 +63,9 @@
             "apiVersion": "2020-11-01",
             "name": "[parameters('vnetNetworkName')]",
             "location": "[parameters('azureRegionPrimary')]",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [

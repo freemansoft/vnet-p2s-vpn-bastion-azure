@@ -42,7 +42,7 @@ public_ip_names=$(jq -r '.[].name' <<< $public_ips)
 #echo "public_ip_associations: $public_ip_associations"
 #echo "public_ip_names: $public_ip_names"
 
-# I deleted the associated resources above because I know I don't have any other resouces bound to public IPs
+# I deleted the associated resources above because I kNOW_PUBLISHED_AT I don't have any other resouces bound to public IPs
 # We could have iterated across the IP associations, figure out which item they are bound to and delete them
 echo "-------------- Disassociate Public IP ---------------"
 for ip_association in $public_ip_associations; do

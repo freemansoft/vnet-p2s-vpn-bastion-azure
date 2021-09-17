@@ -6,29 +6,29 @@
     * `az account set --subscription <subscription-id>`
 
 ## Scripts
-| Script | Purpose |
-| ------ | ------- |
-| 0-install-tools.sh      | install AWS CLI and jq |
-| 1-login-az.sh           | renew azure cli credentials if expired |
-| 2-create-resources.sh   | create a resource group if it does not exist |
-| 3-create-vnet.sh        | Creates a vnet, subnets using ARM templates |
-| 4-create-storage.sh     | Creates bastion and vnet gateway using ARM templates |
-| 5-crate-monitor.sh      | Creates log analytics workspace and application insights instance |
-| 6-create-vm.sh          | Create a simple virtual machine on the default subnet with no public IP | 
-| 7-create-bastion.sh     | Creates a bastion host |
-| 8-create-vpn.sh         | _future_ Creates a vpn appliance - certs managed in different script |
-| 9-create-p2s.sh         | _future_ will create point to site vpn gateway |
-| | |
-| 92-purge-vnet.sh             | Remove everything other than the VNET and it's subnets | 
-| 91-purge-resource-group.sh   | Remove everything in resource group using  an empty ARM template - leaves the resource group |
-| 90-destroy-resource-group.sh | Remove a resource group. May only works if public ips are disassociated or deleted |
+| Script | Bastion | P2S VPN | Purpose |
+| ------ | ------- | ------- | ------- |
+| 0-install-tools.sh           | yes | yes | install AWS CLI and jq |
+| 1-login-az.sh                | yes | yes | renew azure cli credentials if expired |
+| 2-create-resources.sh        | yes | yes | create a resource group if it does not exist |
+| 3-create-vnet.sh             | yes | yes | Creates a vnet, subnets using ARM templates |
+| 4-create-storage.sh          | opt | opt | Creates bastion and vnet gateway using ARM templates |
+| 5-create-monitor.sh          | opt | opt | Creates log analytics workspace and application insights instance |
+| 6-create-vm-linux.sh         | yes | opt | Create a simple virtual machine on the default subnet with no public IP | 
+| 7-create-bastion.sh          | yes | no  | Creates a bastion host |
+| 8-create-vpn.sh              | no  | yes | _future_ Creates a vpn appliance - certs managed in different script |
+| 9-create-p2s.sh              | no  | yes | _future_ will create point to site vpn gateway |
+| | | | | 
+| 92-purge-vnet.sh             | n/a | n/a | Remove everything other than the VNET and it's subnets | 
+| 91-purge-resource-group.sh   | n/a | n/a | Remove everything in resource group using  an empty ARM template - leaves the resource group |
+| 90-destroy-resource-group.sh | n/a | n/a | Remove a resource group. May only works if public ips are disassociated or deleted |
 
 
 The ARM templates are applied in `Incremental` mode so they can be used to update a configuration.
 The purge scripts apply an ARM template in `Complete` mode.
 
 ## Selecting Network Ranges
-Pick network blocks that do not conflict with other networking.
+Pick network blocks that do not conflict with other networking. The network blocks below are non-routable (private) network blocks.
 
 1. Your VNET network
 1. The Virtual Network Gateway address range
@@ -50,28 +50,36 @@ The portal will **forbid you from browsing your Storage Containers** unless you 
 
 ## References
 
-* https://en.wikipedia.org/wiki/Private_network
-* https://arminreiter.com/2017/06/connect-windows-10-clients-azure-vpn/
-* https://www.starwindsoftware.com/blog/configuring-azure-point-to-site-vpn-with-windows-10
-* https://4sysops.com/archives/defining-a-public-ip-for-an-azure-resource-group-with-a-json-template/
 
-Microsoft VNET
-* https://docs.microsoft.com/en-us/azure/virtual-network/quick-create-cli
-
-Microsoft - VPN gateway
-* https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpngateways
-
-Microsoft - ARM Templates
+ARM Templates
 * https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/quickstart-create-templates-use-visual-studio-code?tabs=CLI
-* https://docs.microsoft.com/en-us/azure/templates/microsoft.storage/storageaccounts/blobservices/containers?tabs=bicep
 * https://github.com/Azure/azure-quickstart-templates/tree/master/quickstarts
+* https://docs.microsoft.com/en-us/azure/templates/microsoft.storage/storageaccounts/blobservices/containers?tabs=bicep
+* https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/variables
+* https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/outputs
+* https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-expressions
+* https://docs.microsoft.com/en-us/azure/virtual-machines/tag-template
 
-Microsoft - Public IP
+VNET / Subnet / Network
+* https://docs.microsoft.com/en-us/azure/virtual-network/quick-create-cli
+* https://en.wikipedia.org/wiki/Private_network
+
+Public IP
 * https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-public-ip-address
 * https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-addresses
+* https://4sysops.com/archives/defining-a-public-ip-for-an-azure-resource-group-with-a-json-template/
 
-Microsoft - Bastion Hosts
+Bastion Hosts
 * https://docs.microsoft.com/en-us/azure/bastion/tutorial-create-host-portal
 
-Microsoft - P2S
+VPN gateway
+* https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpngateways
+* https://arminreiter.com/2017/06/connect-windows-10-clients-azure-vpn/
+* https://www.starwindsoftware.com/blog/configuring-azure-point-to-site-vpn-with-windows-10
+
+P2S
 * https://docs.microsoft.com/en-us/azure/storage/files/storage-files-configure-p2s-vpn-linux
+
+VM Agents
+* https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/virtual-machines/extensions/oms-linux.md
+* https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/agent-dependency-linux

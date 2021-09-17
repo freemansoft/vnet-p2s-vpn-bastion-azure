@@ -30,7 +30,8 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      subnetBastionNetwork=$VNET_SUBNET_BASTION_NETWORK \
      subnetBastionName=$VNET_SUBNET_BASTION_NAME \
      subnetVngNetwork=$VNET_SUBNET_VNG_NETWORK \
-     subnetVngName=$VNET_SUBNET_VNG_NAME 
+     subnetVngName=$VNET_SUBNET_VNG_NAME \
+     lastPublishedAt="$NOW_PUBLISHED_AT"
 
 
 

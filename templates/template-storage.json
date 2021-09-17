@@ -2,6 +2,12 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "lastPublishedAt": {
+            "type": "String",
+            "metadata": {
+                "description": "The last time the template was run"
+            }
+        },
         "azureRegionPrimary": {
             "type": "String"
         },
@@ -22,6 +28,9 @@
             "apiVersion": "2021-04-01",
             "name": "[parameters('storageAccountName')]",
             "location": "[parameters('azureRegionPrimary')]",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
             "sku": {
                 "name": "Standard_LRS",
                 "tier": "Standard"
@@ -61,6 +70,9 @@
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "2021-04-01",
             "name": "[format('{0}/default/{1}', parameters('storageAccountName'), parameters('storageContainerBlob1Name'))]",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
             ]
@@ -69,6 +81,9 @@
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "2021-04-01",
             "name": "[format('{0}/default/{1}', parameters('storageAccountName'), parameters('storageContainerBlob2Name'))]",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
             ]
@@ -77,6 +92,9 @@
             "type": "Microsoft.Storage/storageAccounts/blobServices",
             "apiVersion": "2021-04-01",
             "name": "[concat(parameters('storageAccountName'), '/default')]",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
             ],
@@ -97,6 +115,9 @@
             "type": "Microsoft.Storage/storageAccounts/fileServices",
             "apiVersion": "2021-04-01",
             "name": "[concat(parameters('storageAccountName'), '/default')]",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
             ],
@@ -115,6 +136,9 @@
             "type": "Microsoft.Storage/storageAccounts/queueServices",
             "apiVersion": "2021-04-01",
             "name": "[concat(parameters('storageAccountName'), '/default')]",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
             ],
@@ -128,6 +152,9 @@
             "type": "Microsoft.Storage/storageAccounts/tableServices",
             "apiVersion": "2021-04-01",
             "name": "[concat(parameters('storageAccountName'), '/default')]",
+            "tags": {
+                "Published At": "[parameters('lastPublishedAt')]"
+            },
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
             ],

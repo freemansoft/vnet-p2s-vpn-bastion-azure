@@ -6,6 +6,7 @@
 #   default subscription
 # Provisions
 #   VNET via ARM template
+
 set -e
 
 # Edit env.sh to your preferences
@@ -23,3 +24,4 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      subnetBastionName=$VNET_SUBNET_BASTION_NAME \
      bastionHostName=$BASTION_HOST_NAME \
      publicIPAddressesBastionName=$PUBLIC_IP_BASTION_NAME \
+     lastPublishedAt="$NOW_PUBLISHED_AT"

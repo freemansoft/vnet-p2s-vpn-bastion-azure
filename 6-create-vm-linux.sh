@@ -17,7 +17,6 @@ echo "-----------------VIRTUAL MACHINES------------------"
 create_results_metadata=$(az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-vm-linux.json \
      --parameters \
-     location="$AZURE_REGION" \
      vnetNetworkName="$AZURE_VNET_NAME" \
      vmSubnetName="$VNET_SUBNET_DEFAULT_NAME"\
      vmName="$VM_UBUNTU_NAME" \

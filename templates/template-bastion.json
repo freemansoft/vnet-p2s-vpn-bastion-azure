@@ -15,7 +15,8 @@
             "type": "String"
         },
         "azureRegionPrimary": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "[resourceGroup().location]"
         },
         "vnetNetworkName": {
             "type": "String"

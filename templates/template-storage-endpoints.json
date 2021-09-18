@@ -12,7 +12,8 @@
             "type": "String"
         },
         "azureRegionPrimary": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "[resourceGroup().location]"
         },
         "storageAccountName": {
             "type": "String"

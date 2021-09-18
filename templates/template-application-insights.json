@@ -12,7 +12,8 @@
             "type": "string"
         },
         "location": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
         },
         "logAnalyticsWorkspaceName": {
             "type": "string"

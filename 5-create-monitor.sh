@@ -17,7 +17,6 @@ echo "-----------------Log Analytics Workspace------------------"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-log-analytics-workspace.json \
      --parameters \
-     location="$AZURE_REGION" \
      logAnalyticsWorkspaceName="$LOG_ANALYTICS_WORKSPACE_NAME" \
      lastPublishedAt="$NOW_PUBLISHED_AT"
 
@@ -25,7 +24,6 @@ echo "-----------------Application Insights---------------------"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-application-insights.json \
      --parameters \
-     location="$AZURE_REGION" \
      logAnalyticsWorkspaceName="$LOG_ANALYTICS_WORKSPACE_NAME" \
      appInsightsName="$APP_INSIGHTS_NAME" \
      lastPublishedAt="$NOW_PUBLISHED_AT"

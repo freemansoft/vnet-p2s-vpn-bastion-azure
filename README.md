@@ -2,9 +2,10 @@
 ## Purpose
 Create a working Azure environment with
 * Network with VNET
-* Subnets
-* Application Insights instancess with log analytics
+* Several Subnets
+* Application Insights instancess with Log Analytics Workspace
 * Storage Accounts with storage containers
+* Linus VM with Log Analytics Workspace and Application Insights binding and agent
 * RDP bastion server
 * VPN endpoint
 
@@ -14,15 +15,15 @@ Create a working Azure environment with
     * `az account set --subscription <subscription-id>`
 
 ## Scripts
-| Script | Bastion | P2S VPN | Purpose |
-| ------ | ------- | ------- | ------- |
+| Script                       | Required for Bastion | Required for P2S VPN | Purpose |
+| ---------------------------- | -------------------- | -------------------- | ------- |
 | 0-install-tools.sh           | yes | yes | install AWS CLI and jq |
 | 1-login-az.sh                | yes | yes | renew azure cli credentials if expired |
 | 2-create-resources.sh        | yes | yes | create a resource group if it does not exist |
-| 3-create-vnet.sh             | yes | yes | Creates a vnet, subnets using ARM templates |
-| 4-create-storage.sh          | opt | opt | Creates storage accounts and storage containers using ARM templates |
-| 5-create-monitor.sh          | opt | opt | Creates log analytics workspace and application insights instance |
-| 6-create-vm-linux.sh         | yes | opt | Create a simple virtual machine on the default subnet with no public IP | 
+| 3-create-vnet.sh             | yes | yes | Creates a vnet, subnets |
+| 4-create-storage.sh          | opt | opt | Creates storage accounts, storage containers and Private Link Endpoints |
+| 5-create-monitor.sh          | opt | opt | Creates Log Analytics Workspace and Application Insights instance |
+| 6-create-vm-linux.sh         | yes | opt | Create a simple virtual machine on the default subnet with no public IP with a log analytics workspace | 
 | 7-create-bastion.sh          | yes | no  | Creates a bastion host |
 | 8-create-vpn.sh              | no  | yes | _future_ Creates a vpn appliance - certs managed in different script |
 | 9-create-p2s.sh              | no  | yes | _future_ will create point to site vpn gateway |
@@ -57,7 +58,6 @@ The portal will **forbid you from browsing your Storage Containers** unless you 
 1. Verify your ip is in the address range list
 
 ## References
-
 
 ARM Templates
 * https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/quickstart-create-templates-use-visual-studio-code?tabs=CLI

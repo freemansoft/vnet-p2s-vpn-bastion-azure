@@ -1,4 +1,12 @@
 **The VPN gateway part is not yet functional**
+## Purpose
+Create a working Azure environment with
+* Network with VNET
+* Subnets
+* Application Insights instancess with log analytics
+* Storage Accounts with storage containers
+* RDP bastion server
+* VPN endpoint
 
 ## Assumptions
 * You have a default subscription set on the CLI
@@ -12,7 +20,7 @@
 | 1-login-az.sh                | yes | yes | renew azure cli credentials if expired |
 | 2-create-resources.sh        | yes | yes | create a resource group if it does not exist |
 | 3-create-vnet.sh             | yes | yes | Creates a vnet, subnets using ARM templates |
-| 4-create-storage.sh          | opt | opt | Creates bastion and vnet gateway using ARM templates |
+| 4-create-storage.sh          | opt | opt | Creates storage accounts and storage containers using ARM templates |
 | 5-create-monitor.sh          | opt | opt | Creates log analytics workspace and application insights instance |
 | 6-create-vm-linux.sh         | yes | opt | Create a simple virtual machine on the default subnet with no public IP | 
 | 7-create-bastion.sh          | yes | no  | Creates a bastion host |

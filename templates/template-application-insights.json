@@ -1,12 +1,20 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "lastPublishedAt": {
-            "type": "String",
+            "type": "string",
             "metadata": {
                 "description": "The last time the template was run"
             }
+        },
+        "version": {
+            "type": "string",
+            "defaultValue": "unknown"
+        },
+        "project": {
+            "type": "string",
+            "defaultValue": "what is anyone's purpose?"
         },
         "appInsightsName": {
             "type": "string"
@@ -31,8 +39,11 @@
             "type": "microsoft.insights/components",
             "location": "[parameters('location')]",
             "apiVersion": "2020-02-02-preview",
+            "kind": "string",
             "tags": {
-                "Published At": "[parameters('lastPublishedAt')]"
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
             },
             "dependsOn": [],
             "properties": {

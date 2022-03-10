@@ -18,7 +18,9 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-log-analytics-workspace.json \
      --parameters \
      logAnalyticsWorkspaceName="$LOG_ANALYTICS_WORKSPACE_NAME" \
-     lastPublishedAt="$NOW_PUBLISHED_AT"
+    lastPublishedAt="$NOW_PUBLISHED_AT" \
+    version="$VERSION" \
+    project="$PROJECT" \
 
 echo "-----------------Application Insights---------------------"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
@@ -26,4 +28,6 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --parameters \
      logAnalyticsWorkspaceName="$LOG_ANALYTICS_WORKSPACE_NAME" \
      appInsightsName="$APP_INSIGHTS_NAME" \
-     lastPublishedAt="$NOW_PUBLISHED_AT"
+    lastPublishedAt="$NOW_PUBLISHED_AT" \
+    version="$VERSION" \
+    project="$PROJECT" \

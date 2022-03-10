@@ -3,16 +3,24 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "lastPublishedAt": {
-            "type": "String",
+            "type": "string",
             "metadata": {
                 "description": "The last time the template was run"
             }
         },
+        "version": {
+            "type": "string",
+            "defaultValue": "unknown"
+        },
+        "project": {
+            "type": "string",
+            "defaultValue": "what is anyone's purpose?"
+        },
         "logAnalyticsWorkspaceName": {
-            "type": "String"
+            "type": "string"
         },
         "location": {
-            "type": "String",
+            "type": "string",
             "defaultValue": "[resourceGroup().location]"
         }
     },
@@ -24,7 +32,9 @@
             "name": "[parameters('logAnalyticsWorkspaceName')]",
             "location": "[parameters('location')]",
             "tags": {
-                "Published At": "[parameters('lastPublishedAt')]"
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
             },
             "properties": {
                 "sku": {

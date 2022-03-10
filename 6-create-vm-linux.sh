@@ -24,7 +24,9 @@ create_results_metadata=$(az deployment group create --resource-group "$AZURE_RE
      vmAdminPasswordOrKey="$VM_UBUNTU_PASSWORD" \
      vmUbuntuOSVersion="$VM_UBUNTU_OS_VERSION" \
      vmSize="$VM_SIZE" \
-     lastPublishedAt="$NOW_PUBLISHED_AT"
+    lastPublishedAt="$NOW_PUBLISHED_AT" \
+    version="$VERSION" \
+    project="$PROJECT" \
      )
 
 # echo $create_results_metadata
@@ -52,6 +54,8 @@ else
           vmName="$VM_UBUNTU_NAME" \
           logAnalyticsWorkspaceId="$workspace_id" \
           logAnalyticsWorkspaceKey="$primary_key" \
-          lastPublishedAt="$NOW_PUBLISHED_AT"
+          lastPublishedAt="$NOW_PUBLISHED_AT" \
+          version="$VERSION" \
+          project="$PROJECT" \
      # TODO capture the results and just log a single line
 fi

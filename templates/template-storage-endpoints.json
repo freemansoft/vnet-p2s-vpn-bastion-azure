@@ -3,26 +3,34 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "lastPublishedAt": {
-            "type": "String",
+            "type": "string",
             "metadata": {
                 "description": "The last time the template was run"
             }
         },
+        "version": {
+            "type": "string",
+            "defaultValue": "unknown"
+        },
+        "project": {
+            "type": "string",
+            "defaultValue": "what is anyone's purpose?"
+        },
         "vnetNetworkName": {
-            "type": "String"
+            "type": "string"
         },
         "azureRegionPrimary": {
-            "type": "String",
+            "type": "string",
             "defaultValue": "[resourceGroup().location]"
         },
         "storageAccountName": {
-            "type": "String"
+            "type": "string"
         },
         "privateEndpoints_storageAccount_blobName": {
-            "type": "String"
+            "type": "string"
         },
         "privateEndpoints_storageAccount_fileName": {
-            "type": "String"
+            "type": "string"
         }
     },
     "variables": {},
@@ -33,7 +41,9 @@
             "name": "[parameters('privateEndpoints_storageAccount_blobName')]",
             "location": "[parameters('azureRegionPrimary')]",
             "tags": {
-                "Published At": "[parameters('lastPublishedAt')]"
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
             },
             "dependsOn": [
                 // Created in other templates
@@ -70,7 +80,9 @@
             "name": "[parameters('privateEndpoints_storageAccount_fileName')]",
             "location": "[parameters('azureRegionPrimary')]",
             "tags": {
-                "Published At": "[parameters('lastPublishedAt')]"
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
             },
             "dependsOn": [
                 // Created in other templates

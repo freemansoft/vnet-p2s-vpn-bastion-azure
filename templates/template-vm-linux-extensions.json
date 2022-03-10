@@ -3,10 +3,18 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "lastPublishedAt": {
-            "type": "String",
+            "type": "string",
             "metadata": {
                 "description": "The last time the template was run"
             }
+        },
+        "version": {
+            "type": "string",
+            "defaultValue": "unknown"
+        },
+        "project": {
+            "type": "string",
+            "defaultValue": "what is anyone's purpose?"
         },
         "vmName": {
             "type": "string",
@@ -28,8 +36,7 @@
         }
     },
     "functions": [],
-    "variables": {
-    },
+    "variables": {},
     "resources": [
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
@@ -37,10 +44,11 @@
             "apiVersion": "2021-03-01",
             "location": "[resourceGroup().location]",
             "tags": {
-                "Published At": "[parameters('lastPublishedAt')]"
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
             },
-            "dependsOn": [
-            ],
+            "dependsOn": [],
             "properties": {
                 "publisher": "Microsoft.EnterpriseCloud.Monitoring",
                 "type": "OmsAgentForLinux",
@@ -60,10 +68,11 @@
             "apiVersion": "2021-03-01",
             "location": "[resourceGroup().location]",
             "tags": {
-                "Published At": "[parameters('lastPublishedAt')]"
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
             },
-            "dependsOn": [
-            ],
+            "dependsOn": [],
             "properties": {
                 "publisher": "Microsoft.Azure.Monitoring.DependencyAgent",
                 "type": "DependencyAgentLinux",
@@ -73,6 +82,5 @@
             }
         }
     ],
-    "outputs": {
-    }
+    "outputs": {}
 }

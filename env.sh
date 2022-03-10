@@ -69,3 +69,15 @@ VM_SIZE="Standard_B2s"
 
 LOG_ANALYTICS_WORKSPACE_NAME="$root_name-LAW"
 APP_INSIGHTS_NAME="$root_name-AI"
+
+# Use git commands.  We know this is a git repo and that you had to use git to get it
+# This should reall be the git tag but I don't tag in my demo repos
+# long commit hash
+COMMIT_HASH="$(git log -1 --format='%H')"
+# short commit hash
+COMMIT_HASH="$(git log --pretty=format:'%h' -n 1)"
+CURRENT_BRANCH="$(git branch --show-current)"
+CURRENT_REPO="$(basename $(git remote get-url origin) .git)"
+VERSION=$CURRENT_REPO:$CURRENT_BRANCH:$COMMIT_HASH
+# echo $VERSION
+PROJECT="VNet IaC Example"

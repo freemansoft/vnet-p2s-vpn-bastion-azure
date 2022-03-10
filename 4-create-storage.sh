@@ -20,7 +20,9 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
     storageAccountName=$STORAGE_ACCOUNT_NAME \
     storageContainerBlob1Name=$STORAGE_CONTAINER_BLOB_1_NAME \
     storageContainerBlob2Name=$STORAGE_CONTAINER_BLOB_2_Name \
-    lastPublishedAt="$NOW_PUBLISHED_AT"
+    lastPublishedAt="$NOW_PUBLISHED_AT" \
+    version="$VERSION" \
+    project="$PROJECT" \
 
 
 echo "--------------Storage Account Private Endpoints-------------"
@@ -32,4 +34,6 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
     storageAccountName=$STORAGE_ACCOUNT_NAME \
     privateEndpoints_storageAccount_blobName=$PE_STORAGE_ACCOUNT_BLOB_NAME \
     privateEndpoints_storageAccount_fileName=$PE_STORAGE_ACCOUNT_FILE_NAME \
-    lastPublishedAt="$NOW_PUBLISHED_AT"
+    lastPublishedAt="$NOW_PUBLISHED_AT" \
+    version="$VERSION" \
+    project="$PROJECT" \

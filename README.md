@@ -11,8 +11,10 @@ Create a working Azure environment with
 
 ## Assumptions
 * You have a default subscription set on the CLI
-    * `az account list`
-    * `az account set --subscription <subscription-id>`
+    * You logged in `az login`
+    * Youi saw your available accounts `az account list`
+    * You selected an account `az account set --subscription <subscription-id>`
+    * You verified the current account `az account show`
 
 ## Scripts
 | Script                       | Required for Bastion | Required for P2S VPN | Purpose |

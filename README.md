@@ -16,6 +16,10 @@ Create a working Azure environment with
     * You selected an account `az account set --subscription <subscription-id>`
     * You verified the current account `az account show`
 
+## Open Issues
+1. Linux VM storage should be private link only
+1. Log Analytics should have private storage scope
+
 ## Scripts
 | Script                       | Required for Bastion | Required for P2S VPN | Purpose |
 | ---------------------------- | -------------------- | -------------------- | ------- |
@@ -44,22 +48,41 @@ Pick network blocks that do not conflict with other networking. The network bloc
 1. Your VNET network
 1. The Virtual Network Gateway address range
 
+These are the candidate network ranges for private VNETs
 ```
 24-bit block	10.0.0.0 – 10.255.255.255	    16777216	10.0.0.0/8 (255.0.0.0)	      24 bits	8 bits	single class A network
 20-bit block	172.16.0.0 – 172.31.255.255	    1048576	    172.16.0.0/12 (255.240.0.0)	  20 bits	12 bits	16 contiguous class B networks
 16-bit block	192.168.0.0 – 192.168.255.255	65536	    192.168.0.0/16 (255.255.0.0)  16 bits	16 bits	256 contiguous class C networks
 ```
 
+## VNET and Subnets
 ```mermaid
 flowchart TD
     A[VNET]
-    A --> B[default <br/>10.0.0.0/24 250]
-    A --> C[data <br/>10.0.1.0/26 57]
-    A --> D[CredentialSecrets <br/>10.0.1.64/26 59]
-    A --> E[AzureBastionSubnet <br/>10.0.1.128/26 59]
-    A --> F[GatewaySubnet <br/>10.0.2.0/24  depends]
-    A --> G[Public Bastion <br/>20.xx.xx.xx dynamic]
-    A --> H[Virtual Network Gateway <br>20.xx.xx.xx dynamic]
+    A --> SubDef[default <br/>10.0.0.0/24 250]
+    A --> SubData[data <br/>10.0.1.0/26 57]
+    A --> SubCred[CredentialSecrets <br/>10.0.1.64/26 59]
+    A --> SubBast[AzureBastionSubnet <br/>10.0.1.128/26 59]
+    A --> SubVNG[GatewaySubnet <br/>10.0.2.0/24  depends]
+
+    SubDef --> NicVM[Network Interface<br/>Linux]
+    NicVM --> VM[Linux VM]
+    
+    SubData --> NicStorFile[Network Interface<br/>File]
+    NicStorFile --> PleFile[PLE Storage File]
+    PleFile --> StorFile[Storage Account<br/>File]
+    StorFile --> StorAct[Storage Account]
+
+    SubData --> NicStorBlob[Network Interface<br/>Blob]
+    NicStorBlob --> PleBlob[PLE Storage Blob]
+    PleBlob --> StorBlob[Storage Account<br/>Blob]
+    StorBlob --> StorAct
+
+    SubBast --> Bastion[Bastion Host]
+    Bastion --> PubaAst[Public IP<br>20.xx.xx.xx dynamic]
+
+    SubVNG --> VNG[Virtual Network Gateway]
+    VNG --> PubVNG[Public IP<br>20.xx.xx.xx dynamic]
 ```
 Diagrams created with https://mermaid-js.github.io/mermaid/#/
 

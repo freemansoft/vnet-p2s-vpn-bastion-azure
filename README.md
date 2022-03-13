@@ -44,18 +44,19 @@ The purge scripts apply an ARM template in `Complete` mode.
 
 ## Selecting Network Ranges
 Pick network blocks that do not conflict with other networking. The network blocks below are non-routable (private) network blocks.
-
 1. Your VNET network
 1. The Virtual Network Gateway address range
 
 These are the candidate network ranges for private VNETs
-```
-24-bit block	10.0.0.0 – 10.255.255.255	    16777216	10.0.0.0/8 (255.0.0.0)	      24 bits	8 bits	single class A network
-20-bit block	172.16.0.0 – 172.31.255.255	    1048576	    172.16.0.0/12 (255.240.0.0)	  20 bits	12 bits	16 contiguous class B networks
-16-bit block	192.168.0.0 – 192.168.255.255	65536	    192.168.0.0/16 (255.255.0.0)  16 bits	16 bits	256 contiguous class C networks
-```
+| block size | Full IP Range | Num IPs | Default mask | IP Bits | Network Bits | Network Class |
+| ---------- | ------------- | ------- | ------------ | ------- | ------------ | ------------- |
+| 24-bit     | 10.0.0.0 – 10.255.255.255   | 16777216 | 10.0.0.0/8 (255.0.0.0)       | 24  | 8   | single class A network |
+| 20-bit     | 172.16.0.0 – 172.31.255.255 |  1048576 | 172.16.0.0/12 (255.240.0.0)  | 20  | 12  | 16 contiguous class B networks |
+| 16-bit     | 192.168.0.0 – 192.168.255.255 |  65536 | 192.168.0.0/16 (255.255.0.0) | 16  | 16  |256 contiguous class C networks |
+
 
 ## VNET and Subnets
+Internal subnets are on the 10.x.x.x network
 ```mermaid
 flowchart TD
     A[VNET]

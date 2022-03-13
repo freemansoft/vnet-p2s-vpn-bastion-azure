@@ -12,7 +12,7 @@
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
-echo "---------Certificates-------------"
-echo "-------- Point to Site VPN -------"
+echo -e "${PURPLE}---------Certificates-------------${NC}"
+echo -e "${PURPLE}-------- Point to Site VPN -------${NC}"
 
 echo "NOT YET IMPLEMENTED - have to create certs prior to creation"

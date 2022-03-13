@@ -14,11 +14,11 @@ set -e
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
-echo "----------  Storage Endpoints -----------"
+echo -e "${PURPLE}----------  Storage Endpoints -----------${NC}"
 az deployment group delete --resource-group "$AZURE_RESOURCE_GROUP" --name template-storage-endpoints
-echo "----------  Storage  -----------"
+echo -e "${PURPLE}----------  Storage  -----------${NC}"
 az deployment group delete --resource-group "$AZURE_RESOURCE_GROUP" --name template-storage
-echo "----------  VPN and Bastion -----------"
+echo -e "${PURPLE}----------  VPN and Bastion -----------${NC}"
 az deployment group delete --resource-group "$AZURE_RESOURCE_GROUP" --name template-bastion-vpn
-echo "----------  VNET -----------"
+echo -e "${PURPLE}----------  VNET -----------${NC}"
 az deployment group delete --resource-group "$AZURE_RESOURCE_GROUP" --name template-vnet

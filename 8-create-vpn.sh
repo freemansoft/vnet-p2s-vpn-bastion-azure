@@ -15,7 +15,7 @@ source $DIR/env.sh
 echo "This will take several minutes "
 
 # Occasionally seen this run a long time > 10 min
-echo "-------------Gateway and Public IP--------"
+echo -e "${PURPLE}-------------Gateway and Public IP--------${NC}"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-vpn.json \
      --parameters \

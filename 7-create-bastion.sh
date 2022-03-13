@@ -15,7 +15,7 @@ source $DIR/env.sh
 
 echo "This will take several minutes "
 
-echo "-------------Bastion and Public IP--------"
+echo -e "${PURPLE}-------------Bastion and Public IP--------${NC}"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-bastion.json \
      --parameters \

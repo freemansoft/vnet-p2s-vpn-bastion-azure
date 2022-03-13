@@ -13,7 +13,7 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
 echo "This will take several minutes "
-echo "-----------------VIRTUAL MACHINES------------------"
+echo -e "${PURPLE}-----------------VIRTUAL MACHINES------------------${NC}"
 create_results_metadata=$(az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-vm-linux.json \
      --parameters \
@@ -34,7 +34,7 @@ create_results_metadata=$(az deployment group create --resource-group "$AZURE_RE
 vm_resource_id=$(jq -r ".properties.outputs.vmResourceId.value" <<< "$create_results_metadata")
 echo "Created vm $vm_resource_id"
 
-echo "---------------- LOG ANALYTICS WORKSPACE----------------------"
+echo -e "${PURPLE}---------------- LOG ANALYTICS WORKSPACE----------------------${NC}"
 # Use "list" so we don't have to handle errors. Returns [] if it isn't there - returns [value] if it exists
 monitor_list_results=$(az monitor log-analytics workspace list --resource-group $AZURE_RESOURCE_GROUP --query "[?name=='$LOG_ANALYTICS_WORKSPACE_NAME'].customerId")
 if [ "[]" == "$vms_metadata" ]; then
@@ -47,7 +47,7 @@ else
      shared_keys=$(az monitor log-analytics workspace get-shared-keys --resource-group $AZURE_RESOURCE_GROUP --workspace-name $LOG_ANALYTICS_WORKSPACE_NAME)
      primary_key=$(jq -r  ".primarySharedKey" <<< "$shared_keys")
 
-     echo "----------------MANAGEMENT EXTENSIONS----------------------"
+     echo -e "${PURPLE}----------------MANAGEMENT EXTENSIONS----------------------${NC}"
      az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
           --template-file templates/template-vm-linux-extensions.json \
           --parameters \

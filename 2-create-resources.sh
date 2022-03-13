@@ -11,7 +11,7 @@
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
-echo "---------RESOURCE GROUP-------------------"
+echo -e "${PURPLE}---------RESOURCE GROUP-------------------${NC}"
 # TODO: add the region to this query!
 rg_exists=$(az group exists --resource-group "$AZURE_RESOURCE_GROUP")
 if [ "false" = "$rg_exists" ]; then 

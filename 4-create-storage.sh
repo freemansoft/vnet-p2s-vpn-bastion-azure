@@ -12,7 +12,7 @@ set -e
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
-echo "--------------Storage Account-------------"
+echo -e "${PURPLE}--------------Storage Account-------------${NC}"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
     --template-file templates/template-storage.json \
     --parameters \
@@ -25,7 +25,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
     project="$PROJECT" \
 
 
-echo "--------------Storage Account Private Endpoints-------------"
+echo -e "${PURPLE}--------------Storage Account Private Endpoints-------------${NC}"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
     --template-file templates/template-storage-endpoints.json \
     --parameters \

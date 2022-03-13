@@ -2,6 +2,12 @@
 #
 # These addresses should be sync'd with the templates
 
+RED='\e[1;31m'
+GREEN='\e[1;32m'
+PURPLE='\e[1;35m'
+WHITE='\e[1;37m'
+NC='\e[1;0m'
+
 # should set the subscription
 AZURE_REGION="eastus2"
 # will use your login's default

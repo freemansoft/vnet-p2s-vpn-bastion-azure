@@ -13,7 +13,7 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
 echo "This will take several minutes "
-echo "-----------------Log Analytics Workspace------------------"
+echo -e "${PURPLE}-----------------Log Analytics Workspace------------------${NC}"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-log-analytics-workspace.json \
      --parameters \
@@ -22,7 +22,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
     version="$VERSION" \
     project="$PROJECT" \
 
-echo "-----------------Application Insights---------------------"
+echo -e "${PURPLE}-----------------Application Insights---------------------${NC}"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-application-insights.json \
      --parameters \

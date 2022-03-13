@@ -13,8 +13,8 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
 echo "This will take several minutes "
-echo "--------------------VNET------------------"
-echo "-------------------SUBNETS----------------"
+echo -e "${PURPLE}--------------------VNET------------------${NC}"
+echo -e "${PURPLE}-------------------SUBNETS----------------${NC}"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-vnet.json \
      --parameters \

@@ -5,7 +5,7 @@
 #   jq is installed
 #   default subscription
 # Deprovisions
-#   The everything in the resource group
+#   Everything in the resource group
 set -e
 
 # Edit env.sh to your preferences

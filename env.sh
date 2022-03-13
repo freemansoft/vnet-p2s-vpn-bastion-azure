@@ -8,8 +8,8 @@ AZURE_REGION="eastus2"
 #AZURE_SUBSCRIPTION=[to be filled]
 
 
-# add version # to name  to avoid complications with soft-deleted keyvaults while testing
-# keyvault deletes are soft deletes witha purgable recovery == 90 days 2021/07
+# Could add version # to name  to avoid complications with soft-deleted keyvaults while testing
+# keyvault deletes are soft deletes with a purgable recovery == 90 days 2021/07
 root_name="FsiExample"
 
 # decided to not prefix the resource names with the resource type rg, ia, cl...

@@ -16,8 +16,9 @@ Create a working Azure environment with
     * You selected an account `az account set --subscription <subscription-id>`
     * You verified the current account `az account show`
 
-## Open Issues
+## Future
 1. Linux VM storage should be private link only
+1. KeyVaults should be added. Must account for are soft deletable and hang around for 90 days.
 1. Log Analytics should have private storage scope
 
 ## Scripts

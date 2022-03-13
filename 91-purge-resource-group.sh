@@ -1,7 +1,5 @@
 #!/bin/bash
 #
-# THIS SCRIPT IS USELESS.  It deletes the templates and not the resources
-#
 # Assumes 
 #   azure cli is installed
 #   jq is installed

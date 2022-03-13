@@ -50,6 +50,19 @@ Pick network blocks that do not conflict with other networking. The network bloc
 16-bit block	192.168.0.0 – 192.168.255.255	65536	    192.168.0.0/16 (255.255.0.0)  16 bits	16 bits	256 contiguous class C networks
 ```
 
+```mermaid
+flowchart TD
+    A[VNET]
+    A --> B[default <br/>10.0.0.0/24 250]
+    A --> C[data <br/>10.0.1.0/26 57]
+    A --> D[CredentialSecrets <br/>10.0.1.64/26 59]
+    A --> E[AzureBastionSubnet <br/>10.0.1.128/26 59]
+    A --> F[GatewaySubnet <br/>10.0.2.0/24  depends]
+    A --> G[Public Bastion <br/>20.xx.xx.xx dynamic]
+    A --> H[Virtual Network Gateway <br>20.xx.xx.xx dynamic]
+```
+Diagrams created with https://mermaid-js.github.io/mermaid/#/
+
 ## Accessing Storage Containers via Portal
 The portal will **forbid you from browsing your Storage Containers** unless you add your home machine IP to the firewall approve list
 1. Drill into your _storage account_ inthe portal

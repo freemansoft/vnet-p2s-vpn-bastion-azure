@@ -15,4 +15,4 @@ source $DIR/env.sh
 echo "---------Certificates-------------"
 echo "-------- Point to Site VPN -------"
 
-echo "NOT YET IMPLEMENTED"
+echo "NOT YET IMPLEMENTED - have to create certs prior to creation"

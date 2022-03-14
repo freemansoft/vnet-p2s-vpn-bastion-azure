@@ -70,14 +70,18 @@ flowchart TD
     SubDef --> NicVM[Network Interface<br/>Linux]
     NicVM --> VM[Linux VM]
     
+    StorAct[Storage Account]
+    StorFile[Storage Account<br/>File]
+    StorBlob[Storage Account<br/>Blob] 
+
     SubData --> NicStorFile[Network Interface<br/>File]
-    NicStorFile --> PleFile[PLE Storage File]
-    PleFile --> StorFile[Storage Account<br/>File]
-    StorFile --> StorAct[Storage Account]
+    NicStorFile --> PleFile[Private Endpoint<br/>Storage File]
+    PleFile --> StorFile
+    StorFile --> StorAct
 
     SubData --> NicStorBlob[Network Interface<br/>Blob]
-    NicStorBlob --> PleBlob[PLE Storage Blob]
-    PleBlob --> StorBlob[Storage Account<br/>Blob]
+    NicStorBlob --> PleBlob[Private Endpoint<br/>Storage Blob]
+    PleBlob --> StorBlob
     StorBlob --> StorAct
 
     SubBast --> Bastion[Bastion Host]
@@ -85,6 +89,7 @@ flowchart TD
 
     SubVNG --> VNG[Virtual Network Gateway]
     VNG --> PubVNG[Public IP<br>20.xx.xx.xx dynamic]
+    VNG --> PoolVNG[Address Pool<br>172.16.0.0/26]
 ```
 Diagrams created with https://mermaid-js.github.io/mermaid/#/
 

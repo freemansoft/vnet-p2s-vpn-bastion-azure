@@ -51,12 +51,18 @@ VNG_ADDRESS_PEERING="10.0.2.254"
 VNGS_VNG_NAME="$root_name-VNG"
 PUBLIC_IP_VNG_NAME="$root_name-VNG-IP"
 
-BASTION_HOST_NAME="$root_name-Bastion"
-PUBLIC_IP_BASTION_NAME="$root_name-Bastion-IP"
-
+P2S_PUBLIC_CERT_NAME="AzureVPN"
+P2S_CLIENT_CERT_NAME="AzureClientVPN"
+P2S_CERT_PASSWORD="1234"
 # pick unused address range
 # 172.31.2.0 - 172.31.2.255
 P2S_ADDRESS_POOL="172.31.2.0/24"
+# pick unused address range
+# 172.16.0.0 - 172.16.0.??
+#P2S_ADDRESS_POOL="172.16.0.0/26"
+
+BASTION_HOST_NAME="$root_name-Bastion"
+PUBLIC_IP_BASTION_NAME="$root_name-Bastion-IP"
 
 STORAGE_ACCOUNT_NAME="fsiexample0storage"
 # storage accounts need to be in lower case

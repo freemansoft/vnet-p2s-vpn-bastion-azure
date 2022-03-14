@@ -12,10 +12,13 @@ set -e
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
-echo "This will take several minutes "
+# created here because we probably can create p2s config all in one template in teh future
+# only creates if missing
+source ./create-certificates.sh
 
 # Occasionally seen this run a long time > 10 min
 echo -e "${PURPLE}-------------Gateway and Public IP--------${NC}"
+echo -e "${PURPLE}---This will take several minutes---${NC}"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-vpn.json \
      --parameters \

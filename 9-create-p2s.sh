@@ -1,5 +1,7 @@
 #!/bin/bash
 #
+# This is not functinal yet.  It does not add the address pool
+#
 # Assumes 
 #   azure cli is installed
 #   jq is installed
@@ -8,11 +10,14 @@
 #   Resource Group
 #   User Assigned Identity
 
-# Edit env.sh to your preferences
+set -e
+
 DIR="$(cd "$(dirname "$0")" && pwd)"
+# Edit env.sh to your preferences
 source $DIR/env.sh
 
-echo -e "${PURPLE}---------Certificates-------------${NC}"
-echo -e "${PURPLE}-------- Point to Site VPN -------${NC}"
+# only creates if missing
+source ./create-certs.sh
 
-echo "NOT YET IMPLEMENTED - have to create certs prior to creation"
+echo -e "${PURPLE}-------- Point to Site VPN -------${NC}"
+echo -e "P2S adding address pool NOT YET IMPLEMENTED "

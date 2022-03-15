@@ -32,7 +32,7 @@
             "defaultValue": "GatewaySubnet",
             "type": "string"
         },
-        "addressGatewayPeering": {
+        "p2sClientAddressPool": {
             "type": "string"
         }
     },
@@ -92,7 +92,22 @@
                 },
                 "gatewayType": "Vpn",
                 "vpnType": "RouteBased",
-                "enableBgp": false
+                "enableBgp": false,
+                "vpnClientConfiguration": {
+                    "vpnClientAddressPool": {
+                        "addressPrefixes": [
+                            "[parameters('p2sClientAddressPool')]"
+                        ]
+                    },
+                    "vpnClientProtocols": [
+                        "SSTP"
+                    ],
+                    "vpnAuthenticationTypes": [],
+                    "vpnClientRootCertificates": [],
+                    "vpnClientRevokedCertificates": [],
+                    "radiusServers": [],
+                    "vpnClientIpsecPolicies": []
+                }
             }
         }
     ]

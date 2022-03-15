@@ -14,11 +14,11 @@ source $DIR/env.sh
 
 # created here because we probably can create p2s config all in one template in teh future
 # only creates if missing
-source ./create-certificates.sh
+source ./create-certs.sh
 
 # Occasionally seen this run a long time > 10 min
 echo -e "${PURPLE}-------------Gateway and Public IP--------${NC}"
-echo -e "${PURPLE}---This will take several minutes---${NC}"
+echo -e "This will take several minutes"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-vpn.json \
      --parameters \
@@ -27,7 +27,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      subnetVngName=$VNET_SUBNET_VNG_NAME \
      virtualNetworkGatewaysVngName=$VNGS_VNG_NAME \
      publicIPAddressesVngName=$PUBLIC_IP_VNG_NAME \
-     addressGatewayPeering=$VNG_ADDRESS_PEERING \
+     p2sClientAddressPool="$P2S_ADDRESS_POOL" \
      lastPublishedAt="$NOW_PUBLISHED_AT" \
      version="$VERSION" \
      project="$PROJECT" \

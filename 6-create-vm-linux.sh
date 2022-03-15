@@ -12,8 +12,8 @@ set -e
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
-echo "This will take several minutes "
 echo -e "${PURPLE}-----------------VIRTUAL MACHINES------------------${NC}"
+echo "This will take several minutes "
 create_results_metadata=$(az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-vm-linux.json \
      --parameters \

@@ -20,6 +20,7 @@ Create a working Azure environment with
 1. Linux VM storage should be private link only
 1. KeyVaults should be added. Must account for are soft deletable and hang around for 90 days.
 1. Log Analytics should have private storage scope
+1. Merge P2S certificate upload into template in 8-create-vpn.sh
 
 ## Scripts
 | Script                       | Required for Bastion | Required for P2S VPN | Purpose |
@@ -32,8 +33,8 @@ Create a working Azure environment with
 | 5-create-monitor.sh          | opt | opt | Creates Log Analytics Workspace and Application Insights instance |
 | 6-create-vm-linux.sh         | yes | opt | Create a simple virtual machine on the default subnet with no public IP with a log analytics workspace | 
 | 7-create-bastion.sh          | yes | no  | Creates a bastion host |
-| 8-create-vpn.sh              | no  | yes | _future_ Creates a vpn appliance - certs managed in different script |
-| 9-create-p2s.sh              | no  | yes | _future_ will create point to site vpn gateway |
+| 8-create-vpn.sh              | no  | yes | Creates a vpn appliance  with a P2S Address pool - creates certs but doesn't use them. |
+| 9-create-p2s.sh              | no  | yes | Creates and uploads the certificates using the Azure CLI. Can VPN with the downloaded VPN Client config |
 | | | | | 
 | 92-purge-vnet.sh             | n/a | n/a | Remove everything other than the VNET and it's subnets | 
 | 91-purge-resource-group.sh   | n/a | n/a | Remove everything in resource group using  an empty ARM template - leaves the resource group |

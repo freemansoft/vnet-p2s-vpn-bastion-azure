@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # You can't purge a Resource Group via Azure portal if there are attached public IPs
+# This script retained because it has jq code I don't want to lose
 #
 # Assumes 
 #   azure cli is installed

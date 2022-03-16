@@ -1,5 +1,10 @@
 #!/bin/bash
 #
+# Deploys VM and then adds the management extensions
+#
+# TODO
+#    Verify we can't do this as a single operatino
+#
 # Assumes 
 #   azure cli is installed
 #   jq is installed
@@ -17,6 +22,7 @@ echo "This will take several minutes "
 create_results_metadata=$(az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-vm-linux.json \
      --parameters \
+     vnetResourceGroup=$AZURE_RESOURCE_GROUP_VNET \
      vnetNetworkName="$AZURE_VNET_NAME" \
      subnetVmName="$VNET_SUBNET_DEFAULT_NAME"\
      vmName="$VM_UBUNTU_NAME" \
@@ -34,7 +40,7 @@ create_results_metadata=$(az deployment group create --resource-group "$AZURE_RE
 vm_resource_id=$(jq -r ".properties.outputs.vmResourceId.value" <<< "$create_results_metadata")
 echo "Created vm $vm_resource_id"
 
-echo -e "${PURPLE}---------------- LOG ANALYTICS WORKSPACE----------------------${NC}"
+echo -e "${PURPLE}---------------- LOG ANALYTICS WORKSPACE VM HOOKUP----------------------${NC}"
 # Use "list" so we don't have to handle errors. Returns [] if it isn't there - returns [value] if it exists
 monitor_list_results=$(az monitor log-analytics workspace list --resource-group $AZURE_RESOURCE_GROUP --query "[?name=='$LOG_ANALYTICS_WORKSPACE_NAME'].customerId")
 if [ "[]" == "$vms_metadata" ]; then

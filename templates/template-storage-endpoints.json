@@ -16,6 +16,9 @@
             "type": "string",
             "defaultValue": "what is anyone's purpose?"
         },
+        "vnetResourceGroup": {
+            "type": "string"
+        },
         "vnetNetworkName": {
             "type": "string"
         },
@@ -55,7 +58,7 @@
             "dependsOn": [
                 // Created in other templates
                 // "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
-                // "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetDataName'))]"
+                // "[resourceId(parameters('vnetResourceGroup'),Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetDataName'))]"
             ],
             "properties": {
                 "privateLinkServiceConnections": [
@@ -76,7 +79,7 @@
                 ],
                 "manualPrivateLinkServiceConnections": [],
                 "subnet": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetDataName'))]"
+                    "id": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetDataName'))]"
                 },
                 "customDnsConfigs": []
             }
@@ -94,7 +97,7 @@
             "dependsOn": [
                 // Created in other templates
                 // "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
-                // "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetDataName'))]"
+                // "[resourceId(parameters('vnetResourceGroup'),,'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetDataName'))]"
             ],
             "properties": {
                 "privateLinkServiceConnections": [
@@ -115,7 +118,7 @@
                 ],
                 "manualPrivateLinkServiceConnections": [],
                 "subnet": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetDataName'))]"
+                    "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetDataName'))]"
                 },
                 "customDnsConfigs": []
             }
@@ -135,13 +138,13 @@
             "properties": {
                 "registrationEnabled": false,
                 "virtualNetwork": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+                    "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
                 }
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.blob.core.windows.net')]"
                 // Created in other templates
-                // "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+                // "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
             ]
         },
         {
@@ -177,13 +180,13 @@
             "properties": {
                 "registrationEnabled": false,
                 "virtualNetwork": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+                    "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
                 }
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.file.core.windows.net')]"
                 // Created in other templates
-                // "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+                // "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
             ]
         },
         {

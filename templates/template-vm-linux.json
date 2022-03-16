@@ -71,6 +71,9 @@
                 "description": "The size of the VM"
             }
         },
+        "vnetResourceGroup": {
+            "type": "string"
+        },
         "vnetNetworkName": {
             "type": "string",
             "metadata": {
@@ -118,7 +121,7 @@
                         "name": "ipconfig1",
                         "properties": {
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetVmName'))]"
+                                "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetVmName'))]"
                             },
                             "privateIPAllocationMethod": "Dynamic"
                         }

@@ -25,6 +25,9 @@
         "azureRegionPrimary": {
             "type": "string"
         },
+        "vnetResourceGroup": {
+            "type": "string"
+        },
         "vnetNetworkName": {
             "type": "string"
         },
@@ -68,7 +71,7 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressesVngName'))]"
                 // is in different subnet
-                //"[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetVngName'))]"
+                //"[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetVngName'))]"
             ],
             "properties": {
                 "enablePrivateIpAddress": false,
@@ -81,7 +84,7 @@
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressesVngName'))]"
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetVngName'))]"
+                                "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetVngName'))]"
                             }
                         }
                     }

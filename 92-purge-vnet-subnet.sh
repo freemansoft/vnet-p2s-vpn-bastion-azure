@@ -1,5 +1,7 @@
 #!/bin/bash
 #
+# This file is no longer useful now that the VNet is in its own resource group
+#
 # Assumes 
 #   azure cli is installed
 #   jq is installed
@@ -12,13 +14,14 @@ set -e
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
-echo "removing everything in $AZURE_VNET_NAME via vnet template"
+echo "removing everything in $AZURE_RESOURCE_GROUP_VNET leaving vnet via vnet template"
 # rely on the "Complete" mode with just the vnet/subnets. That should remove everything else
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
      --template-file templates/template-vnet.json \
      --parameters \
      azureRegionPrimary=$AZURE_REGION \
      vnetNetwork=$AZURE_VNET_NETWORK \
+     vnetResourceGroup=$AZURE_RESOURCE_GROUP_VNET \
      vnetNetworkName=$AZURE_VNET_NAME \
      subnetDefaultNetwork=$VNET_SUBNET_DEFAULT_NETWORK \
      subnetDefaultName=$VNET_SUBNET_DEFAULT_NAME \

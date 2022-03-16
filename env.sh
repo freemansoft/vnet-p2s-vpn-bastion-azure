@@ -20,6 +20,7 @@ root_name="FsiExample"
 
 # decided to not prefix the resource names with the resource type rg, ia, cl...
 AZURE_RESOURCE_GROUP="$root_name-RG"
+AZURE_RESOURCE_GROUP_VNET="$root_name-vnet-RG"
 
 NOW_PUBLISHED_AT="$(date +%F-%T)"
 

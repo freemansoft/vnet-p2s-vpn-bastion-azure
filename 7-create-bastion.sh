@@ -20,6 +20,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      --template-file templates/template-bastion.json \
      --parameters \
      azureRegionPrimary=$AZURE_REGION \
+     vnetResourceGroup=$AZURE_RESOURCE_GROUP_VNET \
      vnetNetworkName=$AZURE_VNET_NAME \
      subnetBastionName=$VNET_SUBNET_BASTION_NAME \
      bastionHostName=$BASTION_HOST_NAME \

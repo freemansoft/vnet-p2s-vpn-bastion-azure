@@ -30,6 +30,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
     --template-file templates/template-storage-endpoints.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \
+    vnetResourceGroup=$AZURE_RESOURCE_GROUP_VNET \
     vnetNetworkName=$AZURE_VNET_NAME \
     subnetDataName="$VNET_SUBNET_DATA_NAME" \
     storageAccountName=$STORAGE_ACCOUNT_NAME \

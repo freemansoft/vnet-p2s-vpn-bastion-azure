@@ -36,9 +36,11 @@ Create a working Azure environment with
 | 8-create-vng-with-p2s.sh     | no  | yes | Creates a vng appliance with a P2S Address pool and self signed CA. Can VPN with the downloaded VPN Client config |
 | 9-create-p2s.sh              | no  | yes | Creates and uploads the certificates using the Azure CLI. Can be used to add extra root certs |
 | | | | | 
-| 92-purge-vnet.sh             | n/a | n/a | Remove everything other than the VNET and it's subnets | 
-| 91-purge-resource-group.sh   | n/a | n/a | Remove everything in resource group using  an empty ARM template - leaves the resource group |
-| 90-destroy-resource-group.sh | n/a | n/a | Remove a resource group. May only works if public ips are disassociated or deleted |
+| 92-purge-vnet-subnet.sh              | n/a | n/a | Remove everything other than the VNET and it's subnets in the VNET RG - a **No Op** | 
+| 91-purge-all-resource-groups.sh      | n/a | n/a | Remove everything in the ephemeral and VNET Resource groups |
+| 91-purge-ephemeral-resource-group.sh | n/a | n/a | Remove everything in the ephemeral Resource group |
+| 91-purge-vnet-resource-group.sh      | n/a | n/a | Remove everything in the VNET Resource Group - the Vnet and subnets |
+| 90-destroy-resource-group.sh         | n/a | n/a | Remove a resource group. May only works if public ips are disassociated or deleted |
 
 
 The ARM templates are applied in `Incremental` mode so they can be used to update a configuration.

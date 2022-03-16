@@ -16,3 +16,4 @@ source env.sh
 
 echo "This will fail if you have public IPs that are still bound to a resource."
 az group delete --resource-group $AZURE_RESOURCE_GROUP
+az group delete --resource-group $AZURE_RESOURCE_GROUP_VNET

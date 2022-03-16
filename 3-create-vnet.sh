@@ -15,7 +15,7 @@ source $DIR/env.sh
 echo "This will take several minutes "
 echo -e "${PURPLE}--------------------VNET------------------${NC}"
 echo -e "${PURPLE}-------------------SUBNETS----------------${NC}"
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
      --template-file templates/template-vnet.json \
      --parameters \
      azureRegionPrimary=$AZURE_REGION \

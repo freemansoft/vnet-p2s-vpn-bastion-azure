@@ -12,15 +12,11 @@ set -e
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
-# created here because we probably can create p2s config all in one template in teh future
-# only creates if missing
-source ./create-certs.sh
-
 # Occasionally seen this run a long time > 10 min
 echo -e "${PURPLE}-------------Gateway and Public IP--------${NC}"
-echo -e "This will take several minutes"
+echo -e "This will take probably 20 minutes"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
-     --template-file templates/template-vpn.json \
+     --template-file templates/template-vng-vpn.json \
      --parameters \
      azureRegionPrimary=$AZURE_REGION \
      vnetNetworkName=$AZURE_VNET_NAME \
@@ -31,3 +27,6 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      lastPublishedAt="$NOW_PUBLISHED_AT" \
      version="$VERSION" \
      project="$PROJECT" \
+
+# invoke the script that creates certs and uploads them
+bash $DIR/9-create-p2s.sh

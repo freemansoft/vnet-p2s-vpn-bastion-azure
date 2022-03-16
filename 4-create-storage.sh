@@ -31,6 +31,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \
     vnetNetworkName=$AZURE_VNET_NAME \
+    subnetDataName="$VNET_SUBNET_DATA_NAME" \
     storageAccountName=$STORAGE_ACCOUNT_NAME \
     privateEndpoints_storageAccount_blobName=$PE_STORAGE_ACCOUNT_BLOB_NAME \
     privateEndpoints_storageAccount_fileName=$PE_STORAGE_ACCOUNT_FILE_NAME \

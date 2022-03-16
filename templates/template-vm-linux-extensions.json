@@ -22,6 +22,10 @@
                 "description": "The name of you Virtual Machine. Should be derivable from vmResourceId"
             }
         },
+        "azureRegionPrimary": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
         "logAnalyticsWorkspaceId": {
             "type": "string",
             "metadata": {
@@ -42,7 +46,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('vmName'), '/OMSExtension')]",
             "apiVersion": "2021-03-01",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('azureRegionPrimary')]",
             "tags": {
                 "PublishedAt": "[parameters('lastPublishedAt')]",
                 "Project": "[parameters('project')]",
@@ -66,7 +70,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('vmName'), '/DAExtension')]",
             "apiVersion": "2021-03-01",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('azureRegionPrimary')]",
             "tags": {
                 "PublishedAt": "[parameters('lastPublishedAt')]",
                 "Project": "[parameters('project')]",
@@ -78,7 +82,9 @@
                 "type": "DependencyAgentLinux",
                 "typeHandlerVersion": "9.5",
                 "autoUpgradeMinorVersion": true,
-                "enableAutomaticUpgrade": true
+                "enableAutomaticUpgrade": true,
+                "settings": {}
+
             }
         }
     ],

@@ -20,7 +20,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
      azureRegionPrimary=$AZURE_REGION \
      vnetNetwork=$AZURE_VNET_NETWORK \
      vnetNetworkName=$AZURE_VNET_NAME \
-     subnetDefaultNetwork=$VNET_SUBNET_DEFAULT_NETWORDK \
+     subnetDefaultNetwork=$VNET_SUBNET_DEFAULT_NETWORK \
      subnetDefaultName=$VNET_SUBNET_DEFAULT_NAME \
      subnetDataNetwork=$VNET_SUBNET_DATA_NETWORK \
      subnetDataName=$VNET_SUBNET_DATA_NAME \

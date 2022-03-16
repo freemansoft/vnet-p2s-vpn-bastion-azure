@@ -19,7 +19,7 @@
         "logAnalyticsWorkspaceName": {
             "type": "string"
         },
-        "location": {
+        "azureRegionPrimary": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]"
         }
@@ -30,7 +30,7 @@
             "type": "microsoft.operationalinsights/workspaces",
             "apiVersion": "2021-06-01",
             "name": "[parameters('logAnalyticsWorkspaceName')]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('azureRegionPrimary')]",
             "tags": {
                 "PublishedAt": "[parameters('lastPublishedAt')]",
                 "Project": "[parameters('project')]",
@@ -51,7 +51,6 @@
                 "publicNetworkAccessForQuery": "Enabled"
             }
         }
-
     ],
     "outputs": {
         "logAnalyticsWorkspaceId": {
@@ -59,5 +58,4 @@
             "value": "[resourceId('microsoft.operationalinsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
         }
     }
-
 }

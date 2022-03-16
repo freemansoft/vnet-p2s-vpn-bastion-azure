@@ -18,7 +18,7 @@ create_results_metadata=$(az deployment group create --resource-group "$AZURE_RE
      --template-file templates/template-vm-linux.json \
      --parameters \
      vnetNetworkName="$AZURE_VNET_NAME" \
-     vmSubnetName="$VNET_SUBNET_DEFAULT_NAME"\
+     subnetVmName="$VNET_SUBNET_DEFAULT_NAME"\
      vmName="$VM_UBUNTU_NAME" \
      vmAdminUsername="$VM_UBUNTU_USERNAME" \
      vmAdminPasswordOrKey="$VM_UBUNTU_PASSWORD" \

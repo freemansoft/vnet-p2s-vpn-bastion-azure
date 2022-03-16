@@ -19,4 +19,4 @@ echo -e "${GREEN}Creating Linux VM ${NC}"
 echo -e "${GREEN}Creating Bastion ${NC}"
 ./7-create-bastion.sh
 echo -e "${GREEN}Creating VPN Gateway ${NC}"
-./8-create-vpn.sh
+./8-create-vng-with-p2s.sh

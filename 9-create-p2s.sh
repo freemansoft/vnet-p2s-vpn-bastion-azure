@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # Attaches the certificates to the VPN Point-to-site configuration
+# Can be used to generate additional certs if you rename the certs directory
 #
 # Assumes 
 #   azure cli is installed
@@ -17,11 +18,10 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
 # only creates if missing
-source ./create-certs.sh
+source $DIR/create-certs.sh
 
 # This is a CLI for now because that is what I got working
-echo -e "${PURPLE}-------- Point to Site VPN -------${NC}"
-echo -e "P2S adding address pool NOT YET IMPLEMENTED "
+echo -e "${PURPLE}-------- Configure Certs for Point to Site VPN -------${NC}"
 az network vnet-gateway root-cert create \
     --public-cert-data certs/$P2S_PUBLIC_CERT_NAME.cer \
     --gateway-name "$VNGS_VNG_NAME" \

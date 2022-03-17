@@ -21,7 +21,8 @@ Create a working Azure environment with
 1. KeyVaults should be added. Must account for are soft deletable and hang around for 90 days.
 1. Log Analytics should have private storage scope
 1. Merge P2S certificate upload into template in 8-create-vpn.sh
-1. Put Linux vm drive in storage resource groupls
+1. Put Linux vm drive in storage resource groups
+1. Download the VPN package from the p2s blade in the VNG
 
 ## Scripts
 | Script                       | Required for Bastion | Required for P2S VPN | Purpose |
@@ -122,6 +123,15 @@ The portal will **forbid you from browsing your Storage Containers** unless you 
 1. Click the checkbox next to _Add your client IP address_
 1. Click on `Save`
 1. Verify your ip is in the address range list
+
+## Just Point To Site VPN
+The Point to Site only requires the resource groups, the vnet and the VNG.  
+This means only need to run those three scripts to, 2,3,8, to get a working VPN connection.
+The scripts will automatically create the certificates and upload them to Azure.
+You will have to download the VPN configuration files from the portal.
+
+### Windows VPN
+You will have to double click the pfx file in _certificates_ to load that certificate into your windows certificate store.
 
 ## References
 

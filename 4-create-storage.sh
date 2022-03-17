@@ -13,7 +13,7 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
 echo -e "${PURPLE}--------------Storage Account-------------${NC}"
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_PERSIST" \
     --template-file templates/template-storage.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \
@@ -26,7 +26,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
 
 
 echo -e "${PURPLE}--------------Storage Account Private Endpoints-------------${NC}"
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_PERSIST" \
     --template-file templates/template-storage-endpoints.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \

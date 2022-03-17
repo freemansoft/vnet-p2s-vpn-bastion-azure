@@ -21,6 +21,7 @@ Create a working Azure environment with
 1. KeyVaults should be added. Must account for are soft deletable and hang around for 90 days.
 1. Log Analytics should have private storage scope
 1. Merge P2S certificate upload into template in 8-create-vpn.sh
+1. Put Linux vm drive in storage resource groupls
 
 ## Scripts
 | Script                       | Required for Bastion | Required for P2S VPN | Purpose |
@@ -36,11 +37,9 @@ Create a working Azure environment with
 | 8-create-vng-with-p2s.sh     | no  | yes | Creates a vng appliance with a P2S Address pool and self signed CA. Can VPN with the downloaded VPN Client config |
 | 9-create-p2s.sh              | no  | yes | Creates and uploads the certificates using the Azure CLI. Can be used to add extra root certs |
 | | | | | 
-| 92-purge-vnet-subnet.sh              | n/a | n/a | Remove everything other than the VNET and it's subnets in the VNET RG - a **No Op** | 
-| 91-purge-all-resource-groups.sh      | n/a | n/a | Remove everything in the ephemeral and VNET Resource groups |
-| 91-purge-ephemeral-resource-group.sh | n/a | n/a | Remove everything in the ephemeral Resource group |
-| 91-purge-vnet-resource-group.sh      | n/a | n/a | Remove everything in the VNET Resource Group - the Vnet and subnets |
-| 90-destroy-resource-group.sh         | n/a | n/a | Remove a resource group. May only works if public ips are disassociated or deleted |
+| 90-destroy-resource-group.sh           | n/a | n/a | Remove a resource group. May only works if public ips are disassociated or deleted |
+| 91-purge-all-resource-groups.sh        | n/a | n/a | Remove everything in all resource groups leaving the resource groups |
+| 92-purge-resource-groups-_resource_.sh | n/a | n/a | Remove everything in that Resource group |
 
 
 The ARM templates are applied in `Incremental` mode so they can be used to update a configuration.
@@ -95,6 +94,19 @@ flowchart TD
     VNG --> PoolVNG[Address Pool<br>172.16.0.0/26]
 ```
 Diagrams created with https://mermaid-js.github.io/mermaid/#/
+
+## Resource Groups
+This example isolates related components components into their own Resource groups, Networking, Data Stores, etc.
+Resource Group partitioning makes it easier to cleanly build and tear down ephemeral components while leaving core and persistence services running
+
+| Resource Group | Description | Purge Script |
+| - | - | - |
+| Example-VNET-RG     | VNet and Subnets| 92-purge-resource-group-vnet.sh |
+| Example-Persist-RG  | Storage accounts and private link endpoints | 92-purge-resource-group-persist.sh |
+| Example-vng-RG      | Virtual Network Gateway and VPN | 92-purge-resource-group-vng.sh |
+| Example-bastion-RG  | Bastion host | 92-purge-resource-group-bastion.sh |
+| Example-RG          | default resource group - compute, App Insights | 92-purge-resource-group-ephememeral |
+
 
 ## Accessing Storage Containers via Portal
 The portal will **forbid you from browsing your Storage Containers** unless you add your home machine IP to the firewall approve list

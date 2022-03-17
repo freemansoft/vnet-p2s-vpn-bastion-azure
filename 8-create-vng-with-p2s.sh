@@ -15,7 +15,7 @@ source $DIR/env.sh
 # Occasionally seen this run a long time > 10 min
 echo -e "${PURPLE}-------------Gateway and Public IP--------${NC}"
 echo -e "This will take probably 20 minutes"
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP" \
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNG" \
      --template-file templates/template-vng-vpn.json \
      --parameters \
      azureRegionPrimary=$AZURE_REGION \

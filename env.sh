@@ -23,7 +23,8 @@ AZURE_RESOURCE_GROUP="$root_name-RG"
 AZURE_RESOURCE_GROUP_VNET="$root_name-vnet-RG"
 AZURE_RESOURCE_GROUP_PERSIST="$root_name-persist-RG"
 AZURE_RESOURCE_GROUP_BASTION="$root_name-bastion-RG"
-AZURE_RESOURCE_GROUP_VNG="$root_name-vng-RG"
+# VNG must be in the vnet resource group that it is the gateway for
+AZURE_RESOURCE_GROUP_VNG="$AZURE_RESOURCE_GROUP_VNET"
 
 NOW_PUBLISHED_AT="$(date +%F-%T)"
 

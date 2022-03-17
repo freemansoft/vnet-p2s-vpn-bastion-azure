@@ -92,7 +92,7 @@ flowchart TD
     SubBastRg --> Bastion[Bastion Host]
     Bastion --> PubaAst[Public IP<br>20.xx.xx.xx dynamic]
 
-    SubVng --> SubVngRg[VNG RG]
+    SubVng --> SubVngRg[VNet RG]
     SubVngRg --> VNG[Virtual Network Gateway]
     VNG --> PubVNG[Public IP<br>20.xx.xx.xx dynamic]
     VNG --> PoolVNG[Address Pool<br>172.16.0.0/26]
@@ -107,7 +107,6 @@ Resource Group partitioning makes it easier to cleanly build and tear down ephem
 | - | - | - |
 | Example-VNET-RG     | VNet and Subnets| 92-purge-resource-group-vnet.sh |
 | Example-Persist-RG  | Storage accounts and private link endpoints | 92-purge-resource-group-persist.sh |
-| Example-vng-RG      | Virtual Network Gateway and VPN | 92-purge-resource-group-vng.sh |
 | Example-bastion-RG  | Bastion host | 92-purge-resource-group-bastion.sh |
 | Example-RG          | default resource group - compute, App Insights | 92-purge-resource-group-ephememeral |
 

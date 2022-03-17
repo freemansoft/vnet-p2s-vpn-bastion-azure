@@ -105,11 +105,12 @@ Resource Group partitioning makes it easier to cleanly build and tear down ephem
 
 | Resource Group | Description | Purge Script |
 | - | - | - |
-| Example-VNET-RG     | VNet and Subnets| 92-purge-resource-group-vnet.sh |
+| Example-VNET-RG     | VNet and Subnets and VNG| 92-purge-resource-group-vnet.sh |
 | Example-Persist-RG  | Storage accounts and private link endpoints | 92-purge-resource-group-persist.sh |
 | Example-bastion-RG  | Bastion host | 92-purge-resource-group-bastion.sh |
 | Example-RG          | default resource group - compute, App Insights | 92-purge-resource-group-ephememeral |
 
+A Virtual Network Gateway must be in the same Resource Group as the VNET it is teh gatew for
 
 ## Accessing Storage Containers via Portal
 The portal will **forbid you from browsing your Storage Containers** unless you add your home machine IP to the firewall approve list

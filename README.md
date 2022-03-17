@@ -124,7 +124,14 @@ The portal will **forbid you from browsing your Storage Containers** unless you 
 1. Click on `Save`
 1. Verify your ip is in the address range list
 
-## Just Point To Site VPN
+## Point to Site
+
+```mermaid
+flowchart LR
+    LM[Local Machine] -- Internet --- VNG[VNG with P2S] -- VNET/Subnet --- AR[Azure Resources]
+```
+
+### Just Point To Site VPN
 The Point to Site only requires the resource groups, the vnet and the VNG.  
 This means only need to run those three scripts to, 2,3,8, to get a working VPN connection.
 The scripts will automatically create the certificates and upload them to Azure.

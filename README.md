@@ -62,34 +62,38 @@ These are the candidate network ranges for private VNETs
 Internal subnets are on the 10.x.x.x network
 ```mermaid
 flowchart TD
-    A[VNET]
+    A[VNET<br/> VNet RG]
     A --> SubDef[default <br/>10.0.0.0/24 250]
     A --> SubData[data <br/>10.0.1.0/26 57]
     A --> SubCred[CredentialSecrets <br/>10.0.1.64/26 59]
     A --> SubBast[AzureBastionSubnet <br/>10.0.1.128/26 59]
-    A --> SubVNG[GatewaySubnet <br/>10.0.2.0/24  depends]
+    A --> SubVng[GatewaySubnet <br/>10.0.2.0/24  depends]
 
-    SubDef --> NicVM[Network Interface<br/>Linux]
+    SubDef --> SubDefRg[RG]
+    SubDefRg --> NicVM[Network Interface<br/>Linux]
     NicVM --> VM[Linux VM]
     
     StorAct[Storage Account]
     StorFile[Storage Account<br/>File]
     StorBlob[Storage Account<br/>Blob] 
 
-    SubData --> NicStorFile[Network Interface<br/>File]
+    SubData --> SubPersistRg[Persist RG]
+    SubPersistRg --> NicStorFile[Network Interface<br/>File]
     NicStorFile --> PleFile[Private Endpoint<br/>Storage File]
     PleFile --> StorFile
     StorFile --> StorAct
 
-    SubData --> NicStorBlob[Network Interface<br/>Blob]
+    SubPersistRg --> NicStorBlob[Network Interface<br/>Blob]
     NicStorBlob --> PleBlob[Private Endpoint<br/>Storage Blob]
     PleBlob --> StorBlob
     StorBlob --> StorAct
 
-    SubBast --> Bastion[Bastion Host]
+    SubBast --> SubBastRg[Bastion RG]
+    SubBastRg --> Bastion[Bastion Host]
     Bastion --> PubaAst[Public IP<br>20.xx.xx.xx dynamic]
 
-    SubVNG --> VNG[Virtual Network Gateway]
+    SubVng --> SubVngRg[VNG RG]
+    SubVngRg --> VNG[Virtual Network Gateway]
     VNG --> PubVNG[Public IP<br>20.xx.xx.xx dynamic]
     VNG --> PoolVNG[Address Pool<br>172.16.0.0/26]
 ```

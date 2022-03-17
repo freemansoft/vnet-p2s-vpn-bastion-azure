@@ -45,6 +45,8 @@ Create a working Azure environment with
 The ARM templates are applied in `Incremental` mode so they can be used to update a configuration.
 The purge scripts apply an ARM template in `Complete` mode.
 
+The VNET gateway requires the resource groups and the vnet in order to be provisioned.
+
 ## Selecting Network Ranges
 Pick network blocks that do not conflict with other networking. The network blocks below are non-routable (private) network blocks.
 1. Your VNET network

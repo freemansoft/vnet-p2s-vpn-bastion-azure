@@ -17,5 +17,4 @@ echo "This will fail if you have public IPs that are still bound to a resource."
 az group delete --yes --resource-group $AZURE_RESOURCE_GROUP
 az group delete --yes --resource-group $AZURE_RESOURCE_GROUP_PERSIST
 az group delete --yes --resource-group $AZURE_RESOURCE_GROUP_BASTION
-az group delete --yes --resource-group $AZURE_RESOURCE_GROUP_VNG
 az group delete --yes --resource-group $AZURE_RESOURCE_GROUP_VNET

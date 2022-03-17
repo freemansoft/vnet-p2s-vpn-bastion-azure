@@ -12,9 +12,8 @@ set -e
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
-echo "removing everything in $AZURE_RESOURCE_GROUP $AZURE_RESOURCE_GROUP_PERSIST $AZURE_RESOURCE_GROUP_VNG $AZURE_RESOURCE_GROUP_BASTION $AZURE_RESOURCE_GROUP_VNET"
+echo "removing everything in $AZURE_RESOURCE_GROUP $AZURE_RESOURCE_GROUP_PERSIST $AZURE_RESOURCE_GROUP_BASTION $AZURE_RESOURCE_GROUP_VNET"
 bash $DIR/92-purge-resource-group-bastion.sh
-bash $DIR/92-purge-resource-group-vng.sh
 bash $DIR/92-purge-resource-group-ephemeral.sh
 bash $DIR/92-purge-resource-group-persist.sh
 bash $DIR/92-purge-resource-group-vnet.sh

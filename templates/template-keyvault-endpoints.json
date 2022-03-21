@@ -41,9 +41,7 @@
             "type": "string"
         }
     },
-    "variables": {
-        "networkInterfaceName": "[format('{0}-NetInt', parameters('keyVaultName'))]"
-    },
+    "variables": {},
     "resources": [
         {
             "type": "Microsoft.Network/privateEndpoints",
@@ -82,30 +80,6 @@
                     "id": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetCredentialsName'))]"
                 },
                 "customDnsConfigs": []
-            }
-        },
-        {
-            "type": "Microsoft.Network/networkInterfaces",
-            "apiVersion": "2020-06-01",
-            "name": "[variables('networkInterfaceName')]",
-            "location": "[parameters('azureRegionPrimary')]",
-            "tags": {
-                "PublishedAt": "[parameters('lastPublishedAt')]",
-                "Project": "[parameters('project')]",
-                "Version": "[parameters('version')]"
-            },
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                            "subnet": {
-                                "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetCredentialsName'))]"
-                            },
-                            "privateIPAllocationMethod": "Dynamic"
-                        }
-                    }
-                ]
             }
         },
         {

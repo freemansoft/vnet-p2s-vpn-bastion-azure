@@ -31,9 +31,10 @@ Create a working Azure environment with
 | 1-login-az.sh                | yes | yes | renew azure cli credentials if expired |
 | 2-create-resources.sh        | yes | yes | create a resource group if it does not exist |
 | 3-create-vnet.sh             | yes | yes | Creates a vnet, subnets |
-| 4-create-storage.sh          | opt | opt | Creates storage accounts, storage containers and Private Link Endpoints |
-| 5-create-monitor.sh          | opt | opt | Creates Log Analytics Workspace and Application Insights instance |
-| 6-create-vm-linux.sh         | yes | opt | Create a simple virtual machine on the default subnet with no public IP with a log analytics workspace | 
+| 3b-create-keyvault.sh        | no  | no  | Creates a Key Vault and Private Link Endpoints | 
+| 4-create-storage.sh          | no  | no  | Creates storage accounts, storage containers and Private Link Endpoints |
+| 5-create-monitor.sh          | no  | no  | Creates Log Analytics Workspace and Application Insights instance |
+| 6-create-vm-linux.sh         | no  | No  | Create a simple virtual machine on the default subnet with no public IP with a log analytics workspace | 
 | 7-create-bastion.sh          | yes | no  | Creates a bastion host |
 | 8-create-vng-with-p2s.sh     | no  | yes | Creates a vng appliance with a P2S Address pool and self signed CA. Can VPN with the downloaded VPN Client config |
 | 9-create-p2s.sh              | no  | yes | Creates and uploads the certificates using the Azure CLI. Can be used to add extra root certs |

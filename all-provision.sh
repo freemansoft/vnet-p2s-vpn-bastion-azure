@@ -6,10 +6,14 @@
 set -e
 source env.sh
 
+# I tend to create everything and the purge the bastion if I'm not going to use it
+
 echo -e "${GREEN}Creating Resource Group ${NC}"
 ./2-create-resources.sh
 echo -e "${GREEN}Creating VNet ${NC}"
 ./3-create-vnet.sh
+echo -e "${GREEN}Creating Key Vault ${NC}"
+./3b-create-keyvault.sh
 echo -e "${GREEN}Creating Storage ${NC}"
 ./4-create-storage.sh
 echo -e "${GREEN}Creating Monitoring ${NC}"

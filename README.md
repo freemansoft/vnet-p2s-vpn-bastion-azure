@@ -75,6 +75,11 @@ flowchart TD
     SubDef --> SubDefRg[RG]
     SubDefRg --> NicVM[Network Interface<br/>Linux]
     NicVM --> VM[Linux VM]
+
+    SubCred --> SubCredRg[Secrets RG]
+    SubCredRg --> NicKeyVault[Network Interface<br/>Key Vault]
+    NicKeyVault --> PleKV[Private Endpoint<br/>Key Vault]
+    PleKV --> KeyVault[Key Vault]
     
     StorAct[Storage Account]
     StorFile[Storage Account<br/>File]

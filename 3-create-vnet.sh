@@ -25,8 +25,8 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
      subnetDefaultName=$VNET_SUBNET_DEFAULT_NAME \
      subnetDataNetwork=$VNET_SUBNET_DATA_NETWORK \
      subnetDataName=$VNET_SUBNET_DATA_NAME \
-     subnetCredentialsNetwork=$VNET_SUBNET_CREDENTIALS_NETWORK \
-     subnetCredentialsName=$VNET_SUBNET_CREDENTIALS_NAME \
+     subnetCredentialsNetwork=$VNET_SUBNET_SECRETS_NETWORK \
+     subnetCredentialsName=$VNET_SUBNET_SECRETS_NAME \
      subnetBastionNetwork=$VNET_SUBNET_BASTION_NETWORK \
      subnetBastionName=$VNET_SUBNET_BASTION_NAME \
      subnetVngNetwork=$VNET_SUBNET_VNG_NETWORK \

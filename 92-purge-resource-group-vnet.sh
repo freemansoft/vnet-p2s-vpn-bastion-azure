@@ -12,7 +12,32 @@ set -e
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
-echo "removing everything in $AZURE_RESOURCE_GROUP_VNET via empty template"
-# rely on the "Complete" mode with an empty template.  It should remove all resources
-az deployment group create -g $AZURE_RESOURCE_GROUP_VNET --template-file templates/template-empty.json --mode Complete
+# echo "removing everything in $AZURE_RESOURCE_GROUP_VNET via empty template"
+# # Rely on the "complete" mode with an empty template.  It should remove all resources
+# az deployment group create -g $AZURE_RESOURCE_GROUP_VNET --template-file templates/template-empty.json --mode Complete
+
+echo "removing everything in $AZURE_RESOURCE_GROUP_VNET other than the vnet itself"
+# Rely on the "complete" task with just the vnet template to clear everything other than the vnet
+az deployment group create \
+    --mode complete \
+    --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
+    --template-file templates/template-vnet.json \
+    --parameters \
+    azureRegionPrimary=$AZURE_REGION \
+    vnetNetwork=$AZURE_VNET_NETWORK \
+    vnetNetworkName=$AZURE_VNET_NAME \
+    subnetDefaultNetwork=$VNET_SUBNET_DEFAULT_NETWORK \
+    subnetDefaultName=$VNET_SUBNET_DEFAULT_NAME \
+    subnetDataNetwork=$VNET_SUBNET_DATA_NETWORK \
+    subnetDataName=$VNET_SUBNET_DATA_NAME \
+    subnetCredentialsNetwork=$VNET_SUBNET_SECRETS_NETWORK \
+    subnetCredentialsName=$VNET_SUBNET_SECRETS_NAME \
+    subnetBastionNetwork=$VNET_SUBNET_BASTION_NETWORK \
+    subnetBastionName=$VNET_SUBNET_BASTION_NAME \
+    subnetVngNetwork=$VNET_SUBNET_VNG_NETWORK \
+    subnetVngName=$VNET_SUBNET_VNG_NAME \
+    lastPublishedAt="$NOW_PUBLISHED_AT" \
+    version="$VERSION" \
+    project="$PROJECT" \
+
 

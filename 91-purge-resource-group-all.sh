@@ -16,4 +16,5 @@ echo "removing everything in $AZURE_RESOURCE_GROUP $AZURE_RESOURCE_GROUP_PERSIST
 bash $DIR/92-purge-resource-group-bastion.sh
 bash $DIR/92-purge-resource-group-ephemeral.sh
 bash $DIR/92-purge-resource-group-persist.sh
+bash $DIR/92-purge-resource-group-keyvault.sh
 bash $DIR/92-purge-resource-group-vnet.sh

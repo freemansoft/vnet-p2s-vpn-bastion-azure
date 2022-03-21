@@ -1,0 +1,136 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "lastPublishedAt": {
+            "type": "string",
+            "metadata": {
+                "description": "The last time the template was run"
+            }
+        },
+        "version": {
+            "type": "string",
+            "defaultValue": "unknown"
+        },
+        "project": {
+            "type": "string",
+            "defaultValue": "what is anyone's purpose?"
+        },
+        "vnetResourceGroup": {
+            "type": "string"
+        },
+        "vnetNetworkName": {
+            "type": "string"
+        },
+        "subnetCredentialsName": {
+            "type": "string",
+            "defaultValue": "Subnet",
+            "metadata": {
+                "description": "Name of the subnet in the virtual network"
+            }
+        },
+        "azureRegionPrimary": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "keyVaultName": {
+            "defaultValue": "FSIExample-kv",
+            "type": "String"
+        },
+        "privateEndpointsKeyVaultName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "networkInterfaceName": "[format('{0}-NetInt', parameters('keyVaultName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('privateEndpointsKeyVaultName')]",
+            "location": "[parameters('azureRegionPrimary')]",
+            "tags": {
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
+            },
+            "dependsOn": [
+                // Created in other templates
+                // "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+                // "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetCredentialsName'))]"
+            ],
+            "properties": {
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('privateEndpointsKeyVaultName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+                            "groupIds": [
+                                "vault"
+                            ],
+                            "privateLinkServiceConnectionState": {
+                                "status": "Approved",
+                                "description": "Auto-Approved",
+                                "actionsRequired": "None"
+                            }
+                        }
+                    }
+                ],
+                "manualPrivateLinkServiceConnections": [],
+                "subnet": {
+                    "id": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetCredentialsName'))]"
+                },
+                "customDnsConfigs": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('networkInterfaceName')]",
+            "location": "[parameters('azureRegionPrimary')]",
+            "tags": {
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetCredentialsName'))]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2020-06-01",
+            "name": "privatelink.vaultcore.azure.net",
+            "location": "global"
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+            "apiVersion": "2020-08-01",
+            "name": "[concat(parameters('privateEndpointsKeyVaultName'), '/default')]",
+            "properties": {
+                "privateDnsZoneConfigs": [
+                    {
+                        "name": "config1",
+                        "properties": {
+                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.vaultcore.azure.net')]"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateEndpoints', parameters('privateEndpointsKeyVaultName'))]"
+            ]
+        }
+    ]
+}

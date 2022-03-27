@@ -1,0 +1,128 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "lastPublishedAt": {
+            "type": "string",
+            "metadata": {
+                "description": "The last time the template was run"
+            }
+        },
+        "version": {
+            "type": "string",
+            "defaultValue": "unknown"
+        },
+        "project": {
+            "type": "string",
+            "defaultValue": "what is anyone's purpose?"
+        },
+        "vnetResourceGroup": {
+            "type": "string"
+        },
+        "vnetNetworkName": {
+            "type": "string"
+        },
+        "subnetDataName": {
+            "type": "string",
+            "defaultValue": "Subnet",
+            "metadata": {
+                "description": "Name of the subnet in the virtual network"
+            }
+        },
+        "azureRegionPrimary": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "cosmosInstanceName": {
+            "type": "string"
+        },
+        "privateEndpoints_cosmos": {
+            "type": "string"
+        },
+        "privateDnsZoneName": {
+            "type": "string",
+            "defaultValue": "privatelink.documents.azure.com"
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('privateEndpoints_cosmos')]",
+            "location": "[parameters('azureRegionPrimary')]",
+            "tags": {
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
+            },
+            "dependsOn": [
+                // Created in other templates
+                // "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosInstanceName'))]",
+                // "[resourceId(parameters('vnetResourceGroup'),Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetDataName'))]"
+            ],
+            "properties": {
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('privateEndpoints_cosmos')]",
+                        "properties": {
+                            "privateLinkServiceId": "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosInstanceName'))]",
+                            "groupIds": [
+                                "Sql"
+                            ]
+                        }
+                    }
+                ],
+                "manualPrivateLinkServiceConnections": [],
+                "subnet": {
+                    "id": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetDataName'))]"
+                },
+                "customDnsConfigs": []
+            }
+        },
+        // DNS SOA and A records are automatically created
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('privateDnsZoneName')]",
+            "location": "global"
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2020-06-01",
+            "name": "[concat(parameters('privateDnsZoneName'), '/cosmosDnsZoneLink')]",
+            "location": "global",
+            "properties": {
+                "registrationEnabled": false,
+                "virtualNetwork": {
+                    "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZoneName'))]"
+                // Created in other templates
+                // "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+            "apiVersion": "2020-08-01",
+            "name": "[concat(parameters('privateEndpoints_cosmos'), '/cosmosPrivateDnsZoneGroup')]",
+            "properties": {
+                "privateDnsZoneConfigs": [
+                    {
+                        "name": "config1",
+                        "properties": {
+                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZoneName'))]"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZoneName'))]",
+                "[resourceId('Microsoft.Network/privateEndpoints', parameters('privateEndpoints_cosmos'))]"
+            ]
+        }
+    ]
+}

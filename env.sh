@@ -16,6 +16,7 @@ AZURE_REGION="eastus2"
 
 # Could add version # to name  to avoid complications with soft-deleted keyvaults while testing
 # keyvault deletes are soft deletes with a purgable recovery == 90 days 2021/07
+# root_name should not have dashes in it.  Not all names can accept dashes
 root_name="FsiExample"
 
 # decided to not prefix the resource names with the resource type rg, ia, cl...
@@ -69,17 +70,20 @@ P2S_ADDRESS_POOL="172.16.0.0/26"
 BASTION_HOST_NAME="$root_name-Bastion"
 PUBLIC_IP_BASTION_NAME="$root_name-Bastion-IP"
 
-STORAGE_ACCOUNT_NAME="fsiexample0storage"
-# storage accounts need to be in lower case
+# cosmos db must be lower case
+COSMOS_DB_INSTANCE_NAME="${root_name,,}-cosmos"
+COSMOS_DB_PE_NAME="$root_name-PeCosmos"
+
+# must be lower case with no dashes
 STORAGE_ACCOUNT_NAME="${root_name,,}0storage"
 STORAGE_CONTAINER_BLOB_1_NAME="container-1"
 STORAGE_CONTAINER_BLOB_2_Name="container-2"
 
-PE_STORAGE_ACCOUNT_BLOB_NAME="$root_name-PeStorageBlob"
-PE_STORAGE_ACCOUNT_FILE_NAME="$root_name-PeStorageFile"
+STORAGE_ACCOUNT_PE_BLOB_NAME="$root_name-PeStorageBlob"
+STORAGE_ACCOUNT_PE_FILE_NAME="$root_name-PeStorageFile"
 
 KEY_VAULT_NAME="$root_name-kv"
-PE_KEY_VAULT_NAME="$root_name-PeKeyVault"
+KEY_VAULT_PE_NAME="$root_name-PeKeyVault"
 
 VM_UBUNTU_NAME="$root_name-VmLinux"
 VM_UBUNTU_USERNAME="azureuser"

@@ -33,6 +33,7 @@ Create a working Azure environment with
 | 3-create-vnet.sh             | yes | yes | Creates a vnet, subnets |
 | 3b-create-keyvault.sh        | no  | no  | Creates a Key Vault and Private Link Endpoints | 
 | 4-create-storage.sh          | no  | no  | Creates storage accounts, storage containers and Private Link Endpoints |
+| 4b-create-cosmosdb.sh        | no  | no  | Create Cosmos DB instance and PLE connection.  No database created |
 | 5-create-monitor.sh          | no  | no  | Creates Log Analytics Workspace and Application Insights instance |
 | 6-create-vm-linux.sh         | no  | No  | Create a simple virtual machine on the default subnet with no public IP with a log analytics workspace | 
 | 7-create-bastion.sh          | yes | no  | Creates a bastion host |
@@ -74,11 +75,11 @@ flowchart TD
     A --> SubVng[GatewaySubnet <br/>10.0.2.0/24  depends]
 
     SubDef --> SubDefRg[RG]
-    SubDefRg --> NicVM[Network Interface<br/>Linux]
+    SubDefRg --> NicVM[N.I.C.<br/>Linux]
     NicVM --> VM[Linux VM]
 
     SubCred --> SubCredRg[Secrets RG]
-    SubCredRg --> NicKeyVault[Network Interface<br/>Key Vault]
+    SubCredRg --> NicKeyVault[N.I.C.<br/>Key Vault]
     NicKeyVault --> PleKV[Private Endpoint<br/>Key Vault]
     PleKV --> KeyVault[Key Vault]
     
@@ -86,16 +87,24 @@ flowchart TD
     StorFile[Storage Account<br/>File]
     StorBlob[Storage Account<br/>Blob] 
 
+    CosmosDB[Cosmos DB]
+
     SubData --> SubPersistRg[Persist RG]
-    SubPersistRg --> NicStorFile[Network Interface<br/>File]
+    
+    SubPersistRg --> NicStorFile[N.I.C.<br/>File]
     NicStorFile --> PleFile[Private Endpoint<br/>Storage File]
     PleFile --> StorFile
     StorFile --> StorAct
 
-    SubPersistRg --> NicStorBlob[Network Interface<br/>Blob]
+    SubPersistRg --> NicStorBlob[N.I.C.<br/>Blob]
     NicStorBlob --> PleBlob[Private Endpoint<br/>Storage Blob]
     PleBlob --> StorBlob
     StorBlob --> StorAct
+
+    SubPersistRg --> NicCosmos[N.I.C.<br/> Cosmos DB]
+    NicCosmos --> PleCosmos[Private Endpoint<br/>Cosmos DB]
+    PleCosmos --> CosmosDB
+    CosmosDB --> StorAct
 
     SubBast --> SubBastRg[Bastion RG]
     SubBastRg --> Bastion[Bastion Host]

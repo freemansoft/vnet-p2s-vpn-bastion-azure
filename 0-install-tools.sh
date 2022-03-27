@@ -15,6 +15,8 @@ else
 fi
 
 # assumes azure CLI installed
+# should really check the version.  
+# As of 3/2022 Ubunutu latest is 2.0.3 but Microsoft latest is 2.34.1
 if ! command -v az &> /dev/null
 then
     echo "installing Azure CLI"

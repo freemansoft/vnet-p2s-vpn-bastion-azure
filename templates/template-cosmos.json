@@ -1,0 +1,82 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "lastPublishedAt": {
+            "type": "string",
+            "metadata": {
+                "description": "The last time the template was run"
+            }
+        },
+        "version": {
+            "type": "string",
+            "defaultValue": "unknown"
+        },
+        "project": {
+            "type": "string",
+            "defaultValue": "what is anyone's purpose?"
+        },
+        "azureRegionPrimary": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "cosmosInstanceName": {
+            "type": "string"
+        },
+        "locationName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "isZoneRedundant": {
+            "type": "string",
+            "defaultValue": "false"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "apiVersion": "2021-10-15",
+            "name": "[parameters('cosmosInstanceName')]",
+            "location": "[parameters('azureRegionPrimary')]",
+            "properties": {
+                "databaseAccountOfferType": "Standard",
+                "locations": [
+                    {
+                        "id": "[concat(parameters('cosmosInstanceName'), '-', parameters('azureRegionPrimary'))]",
+                        "failoverPriority": 0,
+                        "locationName": "[parameters('locationName')]",
+                        "isZoneRedundant": "[parameters('isZoneRedundant')]"
+                    }
+                ],
+                "backupPolicy": {
+                    "type": "Periodic",
+                    "periodicModeProperties": {
+                        "backupIntervalInMinutes": 240,
+                        "backupRetentionIntervalInHours": 8,
+                        "backupStorageRedundancy": "Geo"
+                    }
+                },
+                "isVirtualNetworkFilterEnabled": false,
+                "virtualNetworkRules": [],
+                "ipRules": [],
+                "dependsOn": [],
+                "capabilities": [
+                    {
+                        "name": "EnableServerless"
+                    }
+                ],
+                "enableFreeTier": false,
+                "capacity": {
+                    "totalThroughputLimit": 4000
+                }
+            },
+            "tags": {
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
+            }
+        }
+    ],
+    "outputs": {}
+}

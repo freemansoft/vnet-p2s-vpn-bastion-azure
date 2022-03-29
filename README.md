@@ -116,6 +116,12 @@ flowchart TD
 ```
 Diagrams created with https://mermaid-js.github.io/mermaid/#/
 
+### DNS
+You can find the default domain naming conventions for Private Link Endpoint DNS at https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns
+
+**TODO**
+DNS does not currently work over the P2S connection. https://github.com/dmauser/PrivateLink/tree/master/DNS-Integration-P2S
+
 ## Resource Groups
 This example isolates related components components into their own Resource groups, Networking, Data Stores, etc.
 Resource Group partitioning makes it easier to cleanly build and tear down ephemeral components while leaving core and persistence services running

@@ -113,15 +113,15 @@ flowchart TD
 
     SubBast -.-> SubBastRg(Bastion RG)
     SubBast --> Bastion[Bastion Host]
-    Bastion --> PubaAst[Public IP<br>20.xx.xx.xx dynamic]
+    Bastion --> PubaAst[Public IP<br/>20.xx.xx.xx dynamic]
 
     SubVng -.-> SubVngRg>VNet RG]
     SubVng --> VNG[Virtual Network Gateway]
-    VNG --> PubVNG[Public IP<br>20.xx.xx.xx dynamic]
+    VNG --> PubVNG[Public IP<br/>20.xx.xx.xx dynamic]
     VNG --> PoolVNG[Address Pool<br>172.16.0.0/26]
 
     SubAci -.-> SubVngRg>VNet RG]
-    SubAci --> AciDns(VNET<br/>DNS Forwarder)
+    SubAci --> AciDns(DNS Forwarder<br/>Container)
 
 ```
 Diagrams created with https://mermaid-js.github.io/mermaid/#/

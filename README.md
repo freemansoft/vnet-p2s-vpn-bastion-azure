@@ -175,24 +175,24 @@ VPN configuration files are available for Windows and other platforms via the Ga
 1. Download the VPN configuration files from the portal.
 1. Double click the generated `pfx` file in the _certs_ folder to load that certificate into your windows certificate store.
 
-### Troubleshooting DNS 
+### Troubleshooting VPN DNS 
 Internal IP address resolution for privatelink and other resources should be avaialble as soon as you connect via VPN.
 
 Run an nslookup against your PLE endpoints. If they return external IPs then you are not using the VNET DNS server that we deployed as a container.
 In that case it could be that your VPN tunnel (PPP) is a lower priority than your network connection.
 In my case my ethernet connection was of a equivalent Metric which meant either public or private DNS could be used.
 
-
-**Problem** Resolves to external IPs when ethernet is connected
+#### Problem
+Resolves to external IPs when ethernet is connected because Ethernet Metric is same as VPN tunnel with lower index.
 ```
 PS C:\Users\joe> netsh interface ipv4 show interfaces
 
 Idx     Met         MTU          State                Name
 ---  ----------  ----------  ------------  ---------------------------
- 60          35        1400  connected     FsiExample-VNET
+ 60          25        1400  connected     FsiExample-VNET
   1          75  4294967295  connected     Loopback Pseudo-Interface 1
- 23          45        1500  connected     Wi-Fi
-  4           5        1500  disconnected  Ethernet
+ 23          70        1500  disconnected  Wi-Fi
+  4          25        1500  connected     Ethernet
   5          25        1500  disconnected  Local Area Connection* 1
  12          65        1500  disconnected  Bluetooth Network Connection
  25          25        1500  disconnected  Local Area Connection* 2
@@ -213,7 +213,8 @@ Aliases:  fsiexample0storage.blob.core.windows.net
           fsiexample0storage.privatelink.blob.core.windows.net
 ```
 
-**Correct** Resolves to internal Azure IPs when ethernet disconnected
+#### Correct
+Resolves to internal Azure IPs when ethernet disconnected because Wi-Fi is lower priority metric than the VPN tunnel.
 ```
 PS C:\Users\joe> netsh interface ipv4 show interfaces
 

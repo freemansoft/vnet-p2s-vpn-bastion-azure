@@ -77,15 +77,15 @@ flowchart TD
     A --> SubData[data <br/>10.0.1.0/26 57]
     A --> SubCred[CredentialSecrets <br/>10.0.1.64/26 59]
     A --> SubBast[AzureBastionSubnet <br/>10.0.1.128/26 59]
-    A --> SubAci[Azure Container Inst <br/>10.0.1.192/26 59]
+    A --> SubAci[AciSubnet <br/>10.0.1.192/26 59]
     A --> SubVng[GatewaySubnet <br/>10.0.2.0/24  depends]
 
-    SubDef --> SubDefRg[RG]
-    SubDefRg --> NicVM[N.I.C.<br/>Linux]
+    SubDef -.-> SubDefRg>RG]
+    SubDef --> NicVM[N.I.C.<br/>Linux]
     NicVM --> VM[Linux VM]
 
-    SubCred --> SubCredRg[Secrets RG]
-    SubCredRg --> NicKeyVault[N.I.C.<br/>Key Vault]
+    SubCred -.-> SubCredRg>Secrets RG]
+    SubCred --> NicKeyVault[N.I.C.<br/>Key Vault]
     NicKeyVault --> PleKV[Private Endpoint<br/>Key Vault]
     PleKV --> KeyVault[Key Vault]
     
@@ -95,33 +95,34 @@ flowchart TD
 
     CosmosDB[Cosmos DB]
 
-    SubData --> SubPersistRg[Persist RG]
+    SubData -.-> SubPersistRg>Persist RG]
     
-    SubPersistRg --> NicStorFile[N.I.C.<br/>File]
+    SubData --> NicStorFile[N.I.C.<br/>File]
     NicStorFile --> PleFile[Private Endpoint<br/>Storage File]
     PleFile --> StorFile
     StorFile --> StorAct
 
-    SubPersistRg --> NicStorBlob[N.I.C.<br/>Blob]
+    SubData --> NicStorBlob[N.I.C.<br/>Blob]
     NicStorBlob --> PleBlob[Private Endpoint<br/>Storage Blob]
     PleBlob --> StorBlob
     StorBlob --> StorAct
 
-    SubPersistRg --> NicCosmos[N.I.C.<br/> Cosmos DB]
+    SubData --> NicCosmos[N.I.C.<br/> Cosmos DB]
     NicCosmos --> PleCosmos[Private Endpoint<br/>Cosmos DB]
     PleCosmos --> CosmosDB
 
-    SubBast --> SubBastRg[Bastion RG]
-    SubBastRg --> Bastion[Bastion Host]
+    SubBast -.-> SubBastRg(Bastion RG)
+    SubBast --> Bastion[Bastion Host]
     Bastion --> PubaAst[Public IP<br>20.xx.xx.xx dynamic]
 
-    SubAci --> SubVngRg[VNet RG]
-    SubVngRg --> ACIDNS[DNS Forwarder<br/>Container]
-
-    SubVng --> SubVngRg[VNet RG]
-    SubVngRg --> VNG[Virtual Network Gateway]
+    SubVng -.-> SubVngRg>VNet RG]
+    SubVng --> VNG[Virtual Network Gateway]
     VNG --> PubVNG[Public IP<br>20.xx.xx.xx dynamic]
     VNG --> PoolVNG[Address Pool<br>172.16.0.0/26]
+
+    SubAci -.-> SubVngRg>VNet RG]
+    SubAci --> AciDns(VNET<br/>DNS Forwarder)
+
 ```
 Diagrams created with https://mermaid-js.github.io/mermaid/#/
 

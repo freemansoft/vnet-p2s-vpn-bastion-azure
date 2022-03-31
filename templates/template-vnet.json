@@ -32,6 +32,13 @@
         "subnetDefaultName": {
             "type": "string"
         },
+        "subnetAciNetwork": {
+            "type": "string"
+        },
+        "subnetAciName": {
+            "type": "string",
+            "defaultValue": "AciSubnet"
+        },
         "subnetDataNetwork": {
             "type": "string"
         },
@@ -83,6 +90,22 @@
                             "addressPrefix": "[parameters('subnetDefaultNetwork')]",
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('subnetAciName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetAciNetwork')]",
+                            "delegations": [
+                                {
+                                    "name": "AciDel",
+                                    "properties": {
+                                        "serviceName": "Microsoft.ContainerInstance/containerGroups"
+                                    }
+                                }
+                            ],
+                            "privateEndpointNetworkPolicies": "Disabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
                         }
                     },
@@ -153,6 +176,28 @@
             "properties": {
                 "addressPrefix": "[parameters('subnetCredentialsNetwork')]",
                 "delegations": [],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('vnetNetworkName'), '/', parameters('subnetAciName'))]",
+            "location": "[parameters('azureRegionPrimary')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[parameters('subnetAciNetwork')]",
+                "delegations": [
+                    {
+                        "name": "AciDel",
+                        "properties": {
+                            "serviceName": "Microsoft.ContainerInstance/containerGroups"
+                        }
+                    }
+                ],
                 "privateEndpointNetworkPolicies": "Disabled",
                 "privateLinkServiceNetworkPolicies": "Enabled"
             }

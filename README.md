@@ -30,7 +30,7 @@ Create a working Azure environment with
 | 0-install-tools.sh           | yes | yes | install AWS CLI and jq |
 | 1-login-az.sh                | yes | yes | renew azure cli credentials if expired |
 | 2-create-resources.sh        | yes | yes | create a resource group if it does not exist |
-| 3-create-vnet.sh             | yes | yes | Creates a vnet, subnets |
+| 3-create-vnet.sh             | yes | yes | Creates a vnet, subnets, DNS forwarder in a container and adds to VNET |
 | 3b-create-keyvault.sh        | no  | no  | Creates a Key Vault and Private Link Endpoints | 
 | 4-create-storage.sh          | no  | no  | Creates storage accounts, storage containers and Private Link Endpoints |
 | 4b-create-cosmosdb.sh        | no  | no  | Create Cosmos DB instance and PLE connection.  No containers created |
@@ -72,6 +72,7 @@ flowchart TD
     A --> SubData[data <br/>10.0.1.0/26 57]
     A --> SubCred[CredentialSecrets <br/>10.0.1.64/26 59]
     A --> SubBast[AzureBastionSubnet <br/>10.0.1.128/26 59]
+    A --> SubAci[Azure Container Inst <br/>10.0.1.192/26 59]
     A --> SubVng[GatewaySubnet <br/>10.0.2.0/24  depends]
 
     SubDef --> SubDefRg[RG]
@@ -109,6 +110,9 @@ flowchart TD
     SubBastRg --> Bastion[Bastion Host]
     Bastion --> PubaAst[Public IP<br>20.xx.xx.xx dynamic]
 
+    SubAci --> SubVngRg[VNet RG]
+    SubVngRg --> ACIDNS[DNS Forwarder<br/>Container]
+
     SubVng --> SubVngRg[VNet RG]
     SubVngRg --> VNG[Virtual Network Gateway]
     VNG --> PubVNG[Public IP<br>20.xx.xx.xx dynamic]
@@ -120,7 +124,8 @@ Diagrams created with https://mermaid-js.github.io/mermaid/#/
 You can find the default domain naming conventions for Private Link Endpoint DNS at https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns
 
 **TODO**
-DNS does not currently work over the P2S connection. https://github.com/dmauser/PrivateLink/tree/master/DNS-Integration-P2S
+* DNS does not currently work over the P2S connection. https://github.com/dmauser/PrivateLink/tree/master/DNS-Integration-P2S
+* Subnet name `subnetAciName` refuses to parse and I don't kow why
 
 ## Resource Groups
 This example isolates related components components into their own Resource groups, Networking, Data Stores, etc.
@@ -158,7 +163,71 @@ The scripts will automatically create the certificates and upload them to Azure.
 You will have to download the VPN configuration files from the portal.
 
 ### Windows VPN
-You will have to double click the pfx file in _certificates_ to load that certificate into your windows certificate store.
+You will have to double click the generated `pfx` file in the _certs_ folder to load that certificate into your windows certificate store.
+
+### Troubleshooting DNS 
+Run an nslookup against your PLE endpoints. If they return external IPs then you are not using the VNET DNS server that we deployed as a container.
+In that case it could be that your VPN tunnel (PPP) is a lower priority than your network connection.
+In my case my ethernet connection was of a equivalent 
+
+Sees internal IP when ethernet disconnected
+```
+PS C:\Users\joe> netsh interface ipv4 show interfaces
+
+Idx     Met         MTU          State                Name
+---  ----------  ----------  ------------  ---------------------------
+ 60          35        1400  connected     FsiExample-VNET
+  1          75  4294967295  connected     Loopback Pseudo-Interface 1
+ 23          45        1500  connected     Wi-Fi
+  4           5        1500  disconnected  Ethernet
+  5          25        1500  disconnected  Local Area Connection* 1
+ 12          65        1500  disconnected  Bluetooth Network Connection
+ 25          25        1500  disconnected  Local Area Connection* 2
+ 24          15        1500  connected     vEthernet (Default Switch)
+ 11          35        1500  connected     VMware Network Adapter VMnet1
+ 20          35        1500  connected     VMware Network Adapter VMnet8
+ 19          35        1500  connected     Azure Sphere
+ 56          15        1500  connected     vEthernet (WSL)
+
+PS C:\Users\joe> nslookup   fsiexample0storage.blob.core.windows.net
+Server:  UnKnown
+Address:  10.0.1.196
+
+Non-authoritative answer:
+Name:    fsiexample0storage.privatelink.blob.core.windows.net
+Address:  10.0.1.4
+Aliases:  fsiexample0storage.blob.core.windows.net
+```
+
+Sees external ip when ethernet is connected
+```
+PS C:\Users\joe> netsh interface ipv4 show interfaces
+
+Idx     Met         MTU          State                Name
+---  ----------  ----------  ------------  ---------------------------
+ 60          35        1400  connected     FsiExample-VNET
+  1          75  4294967295  connected     Loopback Pseudo-Interface 1
+ 23          45        1500  connected     Wi-Fi
+  4           5        1500  disconnected  Ethernet
+  5          25        1500  disconnected  Local Area Connection* 1
+ 12          65        1500  disconnected  Bluetooth Network Connection
+ 25          25        1500  disconnected  Local Area Connection* 2
+ 24          15        1500  connected     vEthernet (Default Switch)
+ 11          35        1500  connected     VMware Network Adapter VMnet1
+ 20          35        1500  connected     VMware Network Adapter VMnet8
+ 19          35        1500  connected     Azure Sphere
+ 56          15        1500  connected     vEthernet (WSL)
+
+PS C:\Users\joe> nslookup   fsiexample0storage.blob.core.windows.net
+Server:  Fios_Quantum_Gateway.fios-router.home
+Address:  192.168.1.1
+
+Non-authoritative answer:
+Name:    blob.bn9prdstr05a.store.core.windows.net
+Address:  52.239.174.132
+Aliases:  fsiexample0storage.blob.core.windows.net
+          fsiexample0storage.privatelink.blob.core.windows.net
+```
 
 ## References
 

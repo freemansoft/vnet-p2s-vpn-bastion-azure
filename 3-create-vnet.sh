@@ -34,6 +34,38 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
      lastPublishedAt="$NOW_PUBLISHED_AT" \
      version="$VERSION" \
      project="$PROJECT" \
+     subnetAciNetwork=$VNET_SUBNET_ACI_NETWORK \
+#    this won't parse :-(
+#     subnetAciName=$VNET_SUBNET_ACI_NAME \ 
 
 
+echo -e "${PURPLE}-------------------Deploy DNS Forwarder----------------${NC}"
+# https://github.com/dmauser/PrivateLink/tree/master/DNS-Integration-P2S
+# https://github.com/whiteducksoftware/az-dns-forwarder
+acs_result=$(az container create \
+  --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
+  --name dns-forwarder \
+  --image ghcr.io/whiteducksoftware/az-dns-forwarder/az-dns-forwarder:latest \
+  --cpu 1 \
+  --memory 0.5 \
+  --restart-policy always \
+  --vnet $AZURE_VNET_NAME \
+  --subnet $VNET_SUBNET_ACI_NAME \
+  --ip-address private \
+  --location $AZURE_REGION \
+  --os-type Linux \
+  --port 53 \
+  --protocol UDP)
 
+#echo $acs_result
+  
+# extract the IP from the result
+acs_ip=$(jq -r ".ipAddress.ip" <<< "$acs_result" )
+echo "DNS Forwarder IP is $acs_ip"
+
+echo -e "${PURPLE}-------------------Add DNS Forwarder to VNet----------------${NC}"
+# Apply this IP address as a DNS forwarder on the vnet
+az network vnet update \
+     --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
+     --name "$AZURE_VNET_NAME" \
+     --dns-servers "$acs_ip"

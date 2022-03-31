@@ -16,13 +16,13 @@ Create a working Azure environment with
     * You selected an account `az account set --subscription <subscription-id>`
     * You verified the current account `az account show`
 
-## Future
-1. Linux VM storage should be private link only
-1. KeyVaults should be added. Must account for are soft deletable and hang around for 90 days.
+## Future / TODO
+1. Linux VM drive storage should be private link only
 1. Log Analytics should have private storage scope
-1. Merge P2S certificate upload into template in 8-create-vpn.sh
 1. Put Linux vm drive in storage resource groups
-1. Download the VPN package from the p2s blade in the VNG
+1. Script the download the VPN package from the p2s blade in the VNG
+1. **Bug** The Azure CLI refuses to pars _subnet name_ `subnetAciName`. It is hard coded as a default value in the template until it is fixed
+
 
 ## Scripts
 | Script                       | Required for Bastion | Required for P2S VPN | Purpose |
@@ -30,7 +30,7 @@ Create a working Azure environment with
 | 0-install-tools.sh           | yes | yes | install AWS CLI and jq |
 | 1-login-az.sh                | yes | yes | renew azure cli credentials if expired |
 | 2-create-resources.sh        | yes | yes | create a resource group if it does not exist |
-| 3-create-vnet.sh             | yes | yes | Creates a vnet, subnets, DNS forwarder in a container and adds to VNET |
+| 3-create-vnet.sh             | yes | yes | Creates a vnet, subnets, DNS forwarder in a container. Adds DNS to VNET |
 | 3b-create-keyvault.sh        | no  | no  | Creates a Key Vault and Private Link Endpoints | 
 | 4-create-storage.sh          | no  | no  | Creates storage accounts, storage containers and Private Link Endpoints |
 | 4b-create-cosmosdb.sh        | no  | no  | Create Cosmos DB instance and PLE connection.  No containers created |
@@ -50,12 +50,15 @@ The purge scripts apply an ARM template in `Complete` mode.
 
 The VNET gateway requires the resource groups and the vnet in order to be provisioned.
 
-## Selecting Network Ranges
+## Network IP Ranges
 Pick network blocks that do not conflict with other networking. The network blocks below are non-routable (private) network blocks.
-1. Your VNET network
-1. The Virtual Network Gateway address range
+This project needs two private VNET ranges for the Azure components
+1. Your VNET IP pool will be divided across seeral subnets
+1. The Virtual Network Gateway address range managed by the network gateway
 
-These are the candidate network ranges for private VNETs
+These network blocks are available for private VNETs. Typically we divide up the 10.x.x.x across multiple VNETS.
+The each VNET divides its block among multiple subnets.
+
 | block size | Full IP Range | Num IPs | Default mask | IP Bits | Network Bits | Network Class |
 | ---------- | ------------- | ------- | ------------ | ------- | ------------ | ------------- |
 | 24-bit     | 10.0.0.0 – 10.255.255.255   | 16777216 | 10.0.0.0/8 (255.0.0.0)       | 24  | 8   | single class A network |
@@ -64,7 +67,9 @@ These are the candidate network ranges for private VNETs
 
 
 ## VNET and Subnets
-Internal subnets are on the 10.x.x.x network
+Internal subnets are on the 10.x.x.x network.  We use 10.0.0.0 - 10.0.2.255 for our internal subnets.
+
+
 ```mermaid
 flowchart TD
     A[VNET<br/> VNet RG]
@@ -121,14 +126,12 @@ flowchart TD
 Diagrams created with https://mermaid-js.github.io/mermaid/#/
 
 ### DNS
-Implemented a DNS forwarder as an Azure Container Instance https://github.com/whiteducksoftware/az-dns-forwarder 
-This provides Azure internal IP addresses to the client of the VPN tunnel.
-You can find the reason for the need for the DNS forwarder in a bunch of places like https://github.com/dmauser/PrivateLink/tree/master/DNS-Integration-P2S
-
-You can find the default domain naming conventions for Private Link Endpoint DNS at https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns
-
-**TODO**
-* Subnet name `subnetAciName` refuses to parse and I don't kow why. It is hard coded as a default value in the template until it is fixed
+The project's Azure resources often have both internal and public IP addresses under the same names.  
+Those resources are blocked from public internet access by firewalls and are only reachable across the VPN tunnel.
+This means that programs need the internal IP addresses that can be resolved via DNS inside Azure.
+The VNET has an associated DNS forwarder that is implemented as an Azure Container Instance. The project deploys this awesome project  https://github.com/whiteducksoftware/az-dns-forwarder 
+This provides Azure internal IP addresses for private link resourcesto clients of the VPN tunnel.
+You can find the reason for the need for the DNS forwarder in a bunch of places. See references below.
 
 ## Resource Groups
 This example isolates related components components into their own Resource groups, Networking, Data Stores, etc.
@@ -137,11 +140,12 @@ Resource Group partitioning makes it easier to cleanly build and tear down ephem
 | Resource Group | Description | Purge Script |
 | - | - | - |
 | Example-VNET-RG     | VNet and Subnets and VNG| 92-purge-resource-group-vnet.sh |
-| Example-Persist-RG  | Storage accounts and private link endpoints | 92-purge-resource-group-persist.sh |
+| Example-persist-RG  | Storage accounts, Cosmos and private link endpoints | 92-purge-resource-group-persist.sh |
 | Example-bastion-RG  | Bastion host | 92-purge-resource-group-bastion.sh |
+| Esample-secrets-RG  | Key Vaults | 92-purge-resource-group-keyvault.sh |
 | Example-RG          | default resource group - compute, App Insights | 92-purge-resource-group-ephememeral |
 
-A Virtual Network Gateway must be in the same Resource Group as the VNET it is teh gatew for
+A Virtual Network Gateway must be in the same Resource Group as the VNET itself.
 
 ## Accessing Storage Containers via Portal
 The portal will **forbid you from browsing your Storage Containers** unless you add your home machine IP to the firewall approve list
@@ -152,57 +156,34 @@ The portal will **forbid you from browsing your Storage Containers** unless you 
 1. Click on `Save`
 1. Verify your ip is in the address range list
 
-## Point to Site
+## Point to Site VPN
+Most of the resources in this project are blocked from internet access.
+We can access those resources using a Point-to-Site (P2s) VPN tunnel.
 
 ```mermaid
 flowchart LR
     LM[Local Machine] -- Internet --- VNG[VNG with P2S] -- VNET/Subnet --- AR[Azure Resources]
 ```
 
-### Just Point To Site VPN
+### Demonstrating just Point To Site VPN
 The Point to Site only requires the resource groups, the vnet and the VNG.  
 This means only need to run those three scripts to, 2,3,8, to get a working VPN connection.
 The scripts will automatically create the certificates and upload them to Azure.
-You will have to download the VPN configuration files from the portal.
+VPN configuration files are available for Windows and other platforms via the Gateway P2S blade.
 
 ### Windows VPN
-You will have to double click the generated `pfx` file in the _certs_ folder to load that certificate into your windows certificate store.
+1. Download the VPN configuration files from the portal.
+1. Double click the generated `pfx` file in the _certs_ folder to load that certificate into your windows certificate store.
 
 ### Troubleshooting DNS 
+Internal IP address resolution for privatelink and other resources should be avaialble as soon as you connect via VPN.
+
 Run an nslookup against your PLE endpoints. If they return external IPs then you are not using the VNET DNS server that we deployed as a container.
 In that case it could be that your VPN tunnel (PPP) is a lower priority than your network connection.
-In my case my ethernet connection was of a equivalent 
+In my case my ethernet connection was of a equivalent Metric which meant either public or private DNS could be used.
 
-Sees internal IP when ethernet disconnected
-```
-PS C:\Users\joe> netsh interface ipv4 show interfaces
 
-Idx     Met         MTU          State                Name
----  ----------  ----------  ------------  ---------------------------
- 60          35        1400  connected     FsiExample-VNET
-  1          75  4294967295  connected     Loopback Pseudo-Interface 1
- 23          45        1500  connected     Wi-Fi
-  4           5        1500  disconnected  Ethernet
-  5          25        1500  disconnected  Local Area Connection* 1
- 12          65        1500  disconnected  Bluetooth Network Connection
- 25          25        1500  disconnected  Local Area Connection* 2
- 24          15        1500  connected     vEthernet (Default Switch)
- 11          35        1500  connected     VMware Network Adapter VMnet1
- 20          35        1500  connected     VMware Network Adapter VMnet8
- 19          35        1500  connected     Azure Sphere
- 56          15        1500  connected     vEthernet (WSL)
-
-PS C:\Users\joe> nslookup   fsiexample0storage.blob.core.windows.net
-Server:  UnKnown
-Address:  10.0.1.196
-
-Non-authoritative answer:
-Name:    fsiexample0storage.privatelink.blob.core.windows.net
-Address:  10.0.1.4
-Aliases:  fsiexample0storage.blob.core.windows.net
-```
-
-Sees external ip when ethernet is connected
+**Problem** Resolves to external IPs when ethernet is connected
 ```
 PS C:\Users\joe> netsh interface ipv4 show interfaces
 
@@ -232,7 +213,38 @@ Aliases:  fsiexample0storage.blob.core.windows.net
           fsiexample0storage.privatelink.blob.core.windows.net
 ```
 
+**Correct** Resolves to internal Azure IPs when ethernet disconnected
+```
+PS C:\Users\joe> netsh interface ipv4 show interfaces
+
+Idx     Met         MTU          State                Name
+---  ----------  ----------  ------------  ---------------------------
+ 60          35        1400  connected     FsiExample-VNET
+  1          75  4294967295  connected     Loopback Pseudo-Interface 1
+ 23          45        1500  connected     Wi-Fi
+  4           5        1500  disconnected  Ethernet
+  5          25        1500  disconnected  Local Area Connection* 1
+ 12          65        1500  disconnected  Bluetooth Network Connection
+ 25          25        1500  disconnected  Local Area Connection* 2
+ 24          15        1500  connected     vEthernet (Default Switch)
+ 11          35        1500  connected     VMware Network Adapter VMnet1
+ 20          35        1500  connected     VMware Network Adapter VMnet8
+ 19          35        1500  connected     Azure Sphere
+ 56          15        1500  connected     vEthernet (WSL)
+
+PS C:\Users\joe> nslookup   fsiexample0storage.blob.core.windows.net
+Server:  UnKnown
+Address:  10.0.1.196
+
+Non-authoritative answer:
+Name:    fsiexample0storage.privatelink.blob.core.windows.net
+Address:  10.0.1.4
+Aliases:  fsiexample0storage.blob.core.windows.net
+```
+
+
 ## References
+Incomplete list of resources used in creating this project.
 
 ARM Templates
 * https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/quickstart-create-templates-use-visual-studio-code?tabs=CLI
@@ -246,6 +258,9 @@ ARM Templates
 VNET / Subnet / Network
 * https://docs.microsoft.com/en-us/azure/virtual-network/quick-create-cli
 * https://en.wikipedia.org/wiki/Private_network
+
+Azure Private Link and DNS
+* https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns
 
 Public IP
 * https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-public-ip-address
@@ -262,6 +277,10 @@ VPN gateway
 
 P2S
 * https://docs.microsoft.com/en-us/azure/storage/files/storage-files-configure-p2s-vpn-linux
+
+Azure DNS over VPN Tunnels
+* https://github.com/dmauser/PrivateLink/tree/master/DNS-Integration-P2S
+* https://docs.microsoft.com/en-us/answers/questions/64223/issue-with-resolving-hostnames-while-connected-to.html
 
 VM Agents
 * https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/virtual-machines/extensions/oms-linux.md

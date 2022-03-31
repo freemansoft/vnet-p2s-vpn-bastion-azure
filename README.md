@@ -121,11 +121,14 @@ flowchart TD
 Diagrams created with https://mermaid-js.github.io/mermaid/#/
 
 ### DNS
+Implemented a DNS forwarder as an Azure Container Instance https://github.com/whiteducksoftware/az-dns-forwarder 
+This provides Azure internal IP addresses to the client of the VPN tunnel.
+You can find the reason for the need for the DNS forwarder in a bunch of places like https://github.com/dmauser/PrivateLink/tree/master/DNS-Integration-P2S
+
 You can find the default domain naming conventions for Private Link Endpoint DNS at https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns
 
 **TODO**
-* DNS does not currently work over the P2S connection. https://github.com/dmauser/PrivateLink/tree/master/DNS-Integration-P2S
-* Subnet name `subnetAciName` refuses to parse and I don't kow why
+* Subnet name `subnetAciName` refuses to parse and I don't kow why. It is hard coded as a default value in the template until it is fixed
 
 ## Resource Groups
 This example isolates related components components into their own Resource groups, Networking, Data Stores, etc.

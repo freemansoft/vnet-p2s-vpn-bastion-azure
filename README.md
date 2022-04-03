@@ -182,6 +182,17 @@ VPN configuration files are available for Windows and other platforms via the Ga
 1. Download the VPN configuration files from the portal.
 1. Double click the generated `pfx` file in the _certs_ folder to load that certificate into your windows certificate store.
 
+### Mac VPN
+Mac computers expect IKEv2 connections. IKEv2 connections are not supported on the VPN gateway with the Basic SKU. 
+* https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-vpn-faq
+* https://docs.microsoft.com/en-us/answers/questions/762033/cant-connect-to-azure-vpn-from-macbook-pro.html
+* https://docs.microsoft.com/en-us/azure/vpn-gateway/point-to-site-vpn-client-configuration-azure-cert
+* https://docs.microsoft.com/en-us/azure/vpn-gateway/point-to-site-how-to-vpn-client-install-azure-cert
+
+Open VPN integration for macs requires Azure AD configuration.
+* https://docs.microsoft.com/en-us/azure/vpn-gateway/openvpn-azure-ad-client-mac
+
+
 ### Troubleshooting VPN DNS 
 Internal IP address resolution for privatelink and other resources should be avaialble as soon as you connect via VPN.
 

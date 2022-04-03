@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Assumes 
 #   azure cli is installed
@@ -11,6 +11,7 @@ set -e
 # Edit env.sh to your preferences
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
+
 
 # echo "removing everything in $AZURE_RESOURCE_GROUP_VNET via empty template"
 # # Rely on the "complete" mode with an empty template.  It should remove all resources
@@ -39,5 +40,8 @@ az deployment group create \
     lastPublishedAt="$NOW_PUBLISHED_AT" \
     version="$VERSION" \
     project="$PROJECT" \
+    subnetAciNetwork=$VNET_SUBNET_DNS_ACI_NETWORK \
+#   this won't parse :-(
+#    subnetAciName=$VNET_SUBNET_DNS_ACI_NAME \ 
 
 

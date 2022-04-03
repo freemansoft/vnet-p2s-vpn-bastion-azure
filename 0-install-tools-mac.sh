@@ -6,10 +6,8 @@ source $DIR/env.sh
 
 if ! command -v jq &> /dev/null
 then
-    echo "installing jq with snap"
-    if ! sudo snap install jq ; then
-        sudo apt install -y jq
-    fi
+    echo "installing jq with brew"
+    brew install jq
 else
     echo "jq already installed"
 fi
@@ -20,7 +18,7 @@ fi
 if ! command -v az &> /dev/null
 then
     echo "installing Azure CLI"
-    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash 
+    brew install azure-cli 
 else
     echo "Azure CLI already installed"
 fi

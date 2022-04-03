@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Attaches the certificates to the VPN Point-to-site configuration
 # Can be used to generate additional certs if you rename the certs directory

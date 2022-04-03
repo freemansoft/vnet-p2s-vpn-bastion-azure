@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Assumes 
 #   azure cli is installed
@@ -34,9 +34,9 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
      lastPublishedAt="$NOW_PUBLISHED_AT" \
      version="$VERSION" \
      project="$PROJECT" \
-     subnetAciNetwork=$VNET_SUBNET_ACI_NETWORK \
+     subnetAciNetwork=$VNET_SUBNET_DNS_ACI_NETWORK \
 #    this won't parse :-(
-#     subnetAciName=$VNET_SUBNET_ACI_NAME \ 
+#     subnetAciName=$VNET_SUBNET_DNS_ACI_NAME \ 
 
 
 echo -e "${PURPLE}-------------------Deploy DNS Forwarder----------------${NC}"
@@ -50,7 +50,7 @@ acs_result=$(az container create \
   --memory 0.5 \
   --restart-policy always \
   --vnet $AZURE_VNET_NAME \
-  --subnet $VNET_SUBNET_ACI_NAME \
+  --subnet $VNET_SUBNET_DNS_ACI_NAME \
   --ip-address private \
   --location $AZURE_REGION \
   --os-type Linux \

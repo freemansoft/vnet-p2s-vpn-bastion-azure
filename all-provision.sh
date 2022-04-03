@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Provision everything
 # Does NOT install tools or login to Azure
@@ -20,7 +20,7 @@ echo -e "${GREEN}Creating Monitoring ${NC}"
 ./5-create-monitor.sh
 echo -e "${GREEN}Creating Linux VM ${NC}"
 ./6-create-vm-linux.sh
-echo -e "${GREEN}Creating Bastion ${NC}"
-./7-create-bastion.sh
-echo -e "${GREEN}Creating VPN Gateway ${NC}"
-./8-create-vng-with-p2s.sh
+# echo -e "${GREEN}Creating Bastion ${NC}"
+# ./7-create-bastion.sh
+# echo -e "${GREEN}Creating VPN Gateway ${NC}"
+# ./8-create-vng-with-p2s.sh

@@ -10,11 +10,16 @@ Create a working Azure environment with
 * VPN endpoint
 
 ## Assumptions
+
+Azure
 * You have a default subscription set on the CLI
     * You logged in `az login`
     * Youi saw your available accounts `az account list`
     * You selected an account `az account set --subscription <subscription-id>`
     * You verified the current account `az account show`
+
+Mac / BASH
+* You are runnign bash 4 or later.  Apple only ships version bash 3.x.  Install the latest bash with `homebrew bash install`
 
 ## Future / TODO
 1. Linux VM drive storage should be private link only
@@ -72,23 +77,31 @@ Internal subnets are on the 10.x.x.x network.  We use 10.0.0.0 - 10.0.2.255 for 
 
 ```mermaid
 flowchart TD
-    A[VNET<br/> VNet RG]
-    A --> SubDef[default <br/>10.0.0.0/24 250]
-    A --> SubData[data <br/>10.0.1.0/26 57]
-    A --> SubCred[CredentialSecrets <br/>10.0.1.64/26 59]
-    A --> SubBast[AzureBastionSubnet <br/>10.0.1.128/26 59]
-    A --> SubAci[AciSubnet <br/>10.0.1.192/26 59]
-    A --> SubVng[GatewaySubnet <br/>10.0.2.0/24  depends]
+    A[VNET<br/>VNet RG<br/>10.0.0.0/16]
+    A --> SubVng[GatewaySubnet <br/>10.0.0.0/24  250]
+    A --> SubAci[DnsAciSubnet <br/>10.0.1.0/26 59]
+    A --> SubBast[AzureBastionSubnet <br/>10.0.1.64/26 59]
+
+    A --> SubDef[default <br/>10.0.2.0/24 250]
+    A --> SubData[data <br/>10.0.3.0/26 57]
+    A --> SubCred[CredentialSecrets <br/>10.0.3.64/26 59]
+
+    SubVng -.-> SubVngRg>VNet RG]
+    SubVng --> VNG[Virtual Network Gateway]
+    VNG --> PubVNG[Public IP<br/>20.xx.xx.xx dynamic]
+    VNG --> PoolVNG[Address Pool<br>172.16.0.0/26]
+
+    SubAci -.-> SubVngRg>VNet RG]
+    SubAci --> AciDns(DNS Forwarder<br/>Container)
+
+    SubBast -.-> SubBastRg(Bastion RG)
+    SubBast --> Bastion[Bastion Host]
+    Bastion --> PubaAst[Public IP<br/>20.xx.xx.xx dynamic]
 
     SubDef -.-> SubDefRg>RG]
     SubDef --> NicVM[N.I.C.<br/>Linux]
     NicVM --> VM[Linux VM]
 
-    SubCred -.-> SubCredRg>Secrets RG]
-    SubCred --> NicKeyVault[N.I.C.<br/>Key Vault]
-    NicKeyVault --> PleKV[Private Endpoint<br/>Key Vault]
-    PleKV --> KeyVault[Key Vault]
-    
     StorAct[Storage Account]
     StorFile[Storage Account<br/>File]
     StorBlob[Storage Account<br/>Blob] 
@@ -111,17 +124,10 @@ flowchart TD
     NicCosmos --> PleCosmos[Private Endpoint<br/>Cosmos DB]
     PleCosmos --> CosmosDB
 
-    SubBast -.-> SubBastRg(Bastion RG)
-    SubBast --> Bastion[Bastion Host]
-    Bastion --> PubaAst[Public IP<br/>20.xx.xx.xx dynamic]
-
-    SubVng -.-> SubVngRg>VNet RG]
-    SubVng --> VNG[Virtual Network Gateway]
-    VNG --> PubVNG[Public IP<br/>20.xx.xx.xx dynamic]
-    VNG --> PoolVNG[Address Pool<br>172.16.0.0/26]
-
-    SubAci -.-> SubVngRg>VNet RG]
-    SubAci --> AciDns(DNS Forwarder<br/>Container)
+    SubCred -.-> SubCredRg>Secrets RG]
+    SubCred --> NicKeyVault[N.I.C.<br/>Key Vault]
+    NicKeyVault --> PleKV[Private Endpoint<br/>Key Vault]
+    PleKV --> KeyVault[Key Vault]
 
 ```
 Diagrams created with https://mermaid-js.github.io/mermaid/#/

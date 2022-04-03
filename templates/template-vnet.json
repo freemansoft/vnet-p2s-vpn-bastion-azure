@@ -37,7 +37,7 @@
         },
         "subnetAciName": {
             "type": "string",
-            "defaultValue": "AciSubnet"
+            "defaultValue": "DnsAciSubnet"
         },
         "subnetDataNetwork": {
             "type": "string"

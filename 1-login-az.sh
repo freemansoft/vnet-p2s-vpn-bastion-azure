@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
 
 DIR="$(cd "$(dirname "$0")" && pwd)"

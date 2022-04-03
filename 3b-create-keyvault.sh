@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Assumes 
 #   azure cli is installed
@@ -20,7 +20,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SECRETS" \
     vnetResourceGroup=$AZURE_RESOURCE_GROUP_VNET \
     vnetNetworkName=$AZURE_VNET_NAME \
     subnetCredentialsName="$VNET_SUBNET_SECRETS_NAME" \
-    keyVaultName="$KEY_VAULT_NAME-2" \
+    keyVaultName="$KEY_VAULT_NAME" \
     lastPublishedAt="$NOW_PUBLISHED_AT" \
     version="$VERSION" \
     project="$PROJECT" \

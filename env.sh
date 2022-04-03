@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # These addresses should be sync'd with the templates
 
@@ -35,24 +35,30 @@ AZURE_VNET_NAME="$root_name-VNET"
 # 10.0.0.0 - 10.0.255.255
 AZURE_VNET_NETWORK="10.0.0.0/16"
 
+# MS Azure Minimum Size
 # 10.0.0.0 - 10.0.0.255
-VNET_SUBNET_DEFAULT_NETWORK="10.0.0.0/24"
-VNET_SUBNET_DEFAULT_NAME="default"
-# 10.0.1.0 - 10.0.1.63
-VNET_SUBNET_DATA_NETWORK="10.0.1.0/26"
-VNET_SUBNET_DATA_NAME="data"
-# 10.0.1.64 - 10.0.1.127
-VNET_SUBNET_SECRETS_NETWORK="10.0.1.64/26"
-VNET_SUBNET_SECRETS_NAME="CredentialsSecrets"
-# 10.0.1.128 - 10.0.1.191
-VNET_SUBNET_BASTION_NETWORK="10.0.1.128/26"
-VNET_SUBNET_BASTION_NAME="AzureBastionSubnet"
-# 10.0.1.192 - 10.0.1.255
-VNET_SUBNET_ACI_NETWORK="10.0.1.192/26"
-VNET_SUBNET_ACI_NAME="AciSubnet"
-# 10.0.2.0 - 10.0.2.255
-VNET_SUBNET_VNG_NETWORK="10.0.2.0/24"
+VNET_SUBNET_VNG_NETWORK="10.0.0.0/24"
 VNET_SUBNET_VNG_NAME="GatewaySubnet"
+# 10.0.1.64 - 10.0.1.127
+VNET_SUBNET_DNS_ACI_NETWORK="10.0.1.0/26"
+VNET_SUBNET_DNS_ACI_NAME="DnsAciSubnet"
+# MS Azure minimum size
+# 10.0.1.0 - 10.0.1.63
+VNET_SUBNET_BASTION_NETWORK="10.0.1.64/26"
+VNET_SUBNET_BASTION_NAME="AzureBastionSubnet"
+
+# 10.0.2.0 - 10.0.2.255
+VNET_SUBNET_DEFAULT_NETWORK="10.0.2.0/24"
+VNET_SUBNET_DEFAULT_NAME="default"
+
+# 10.0.3.0 - 10.0.3.63
+VNET_SUBNET_DATA_NETWORK="10.0.3.0/26"
+VNET_SUBNET_DATA_NAME="data"
+# 10.0.3.64 - 10.0.3.127
+VNET_SUBNET_SECRETS_NETWORK="10.0.3.64/26"
+VNET_SUBNET_SECRETS_NAME="CredentialsSecrets"
+
+
 
 VNGS_VNG_NAME="$root_name-VNG"
 PUBLIC_IP_VNG_NAME="$root_name-VNG-IP"
@@ -82,7 +88,8 @@ STORAGE_CONTAINER_BLOB_2_Name="container-2"
 STORAGE_ACCOUNT_PE_BLOB_NAME="$root_name-PeStorageBlob"
 STORAGE_ACCOUNT_PE_FILE_NAME="$root_name-PeStorageFile"
 
-KEY_VAULT_NAME="$root_name-kv"
+# sometimes add number to the keyvault name because of soft delete pain - being lazy
+KEY_VAULT_NAME="$root_name-kv-3"
 KEY_VAULT_PE_NAME="$root_name-PeKeyVault"
 
 VM_UBUNTU_NAME="$root_name-VmLinux"

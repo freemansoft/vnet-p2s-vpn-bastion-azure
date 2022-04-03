@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # THIS SCRIPT IS USELESS.  It deletes the templates and not the resources
 #

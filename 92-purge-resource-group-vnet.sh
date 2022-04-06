@@ -25,8 +25,10 @@ az deployment group create \
     --template-file templates/template-vnet.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \
-    vnetNetwork=$AZURE_VNET_NETWORK \
-    vnetNetworkName=$AZURE_VNET_NAME \
+    vnetNetworkHub=$AZURE_VNET_HUB_NETWORK \
+    vnetNetworkHubName=$AZURE_VNET_HUB_NAME \
+    vnetNetworkSpoke=$AZURE_VNET_SPOKE_NETWORK \
+    vnetNetworkSpokeName=$AZURE_VNET_SPOKE_NAME \
     subnetDefaultNetwork=$VNET_SUBNET_DEFAULT_NETWORK \
     subnetDefaultName=$VNET_SUBNET_DEFAULT_NAME \
     subnetDataNetwork=$VNET_SUBNET_DATA_NETWORK \
@@ -40,8 +42,8 @@ az deployment group create \
     lastPublishedAt="$NOW_PUBLISHED_AT" \
     version="$VERSION" \
     project="$PROJECT" \
-    subnetAciNetwork=$VNET_SUBNET_DNS_ACI_NETWORK \
+    subnetDnsAciNetwork=$VNET_SUBNET_DNS_ACI_NETWORK \
 #   this won't parse :-(
-#    subnetAciName=$VNET_SUBNET_DNS_ACI_NAME \ 
+#    subnetDnsAciName=$VNET_SUBNET_DNS_ACI_NAME \ 
 
 

@@ -26,7 +26,7 @@ Mac / BASH
 1. Log Analytics should have private storage scope
 1. Put Linux vm drive in storage resource groups
 1. Script the download the VPN package from the p2s blade in the VNG
-1. **Bug** The Azure CLI refuses to pars _subnet name_ `subnetAciName`. It is hard coded as a default value in the template until it is fixed
+1. **Bug** The Azure CLI refuses to pars _subnet name_ `subnetDnsAciName`. It is hard coded as a default value in the template until it is fixed
 
 
 ## Scripts
@@ -35,7 +35,7 @@ Mac / BASH
 | 0-install-tools.sh           | yes | yes | install AWS CLI and jq |
 | 1-login-az.sh                | yes | yes | renew azure cli credentials if expired |
 | 2-create-resources.sh        | yes | yes | create a resource group if it does not exist |
-| 3-create-vnet.sh             | yes | yes | Creates a vnet, subnets, DNS forwarder in a container. Adds DNS to VNET |
+| 3-create-vnet.sh             | yes | yes | Creates hub and spoke vnets, peerings, subnets, DNS forwarder in a container. Adds DNS to hub VNET |
 | 3b-create-keyvault.sh        | no  | no  | Creates a Key Vault and Private Link Endpoints | 
 | 4-create-storage.sh          | no  | no  | Creates storage accounts, storage containers and Private Link Endpoints |
 | 4b-create-cosmosdb.sh        | no  | no  | Create Cosmos DB instance and PLE connection.  No containers created |
@@ -77,24 +77,29 @@ Internal subnets are on the 10.x.x.x network.  We use 10.0.0.0 - 10.0.2.255 for 
 
 ```mermaid
 flowchart TD
-    A[VNET<br/>VNet RG<br/>10.0.0.0/16]
-    A --> SubVng[GatewaySubnet <br/>10.0.0.0/24  250]
-    A --> SubAci[DnsAciSubnet <br/>10.0.1.0/26 59]
-    A --> SubBast[AzureBastionSubnet <br/>10.0.1.64/26 59]
+    VNetHub[Hub VNet<br/>10.0.0.0/20]
+    VNetSpoke[Spoke VNet<br/>10.0.16.0/20]
+    VNetHub -.-> VngRgHub>VNet RG]
+    VNetSpoke -.-> VngRgSpoke>VNet RG]
 
-    A --> SubDef[default <br/>10.0.2.0/24 250]
-    A --> SubData[data <br/>10.0.3.0/26 57]
-    A --> SubCred[CredentialSecrets <br/>10.0.3.64/26 59]
+
+    VNetHub --> SubVng[GatewaySubnet <br/>10.0.0.0/24  250]
+    VNetHub --> SubAci[DnsAciSubnet <br/>10.0.1.0/26 59]
+    VNetHub --> SubBast[AzureBastionSubnet <br/>10.0.1.64/26 59]
+
+    VNetSpoke --> SubDef[default <br/>10.0.16.0/24 250]
+    VNetSpoke --> SubData[data <br/>10.0.17.0/26 57]
+    VNetSpoke --> SubCred[CredentialSecrets <br/>10.0.17.64/26 59]
 
     SubVng -.-> SubVngRg>VNet RG]
     SubVng --> VNG[Virtual Network Gateway]
     VNG --> PubVNG[Public IP<br/>20.xx.xx.xx dynamic]
     VNG --> PoolVNG[Address Pool<br>172.16.0.0/26]
 
-    SubAci -.-> SubVngRg>VNet RG]
+    SubAci -.-> SubAciRg>VNet RG]
     SubAci --> AciDns(DNS Forwarder<br/>Container)
 
-    SubBast -.-> SubBastRg(Bastion RG)
+    SubBast -.-> SubBastRg>Bastion RG]
     SubBast --> Bastion[Bastion Host]
     Bastion --> PubaAst[Public IP<br/>20.xx.xx.xx dynamic]
 
@@ -128,6 +133,9 @@ flowchart TD
     SubCred --> NicKeyVault[N.I.C.<br/>Key Vault]
     NicKeyVault --> PleKV[Private Endpoint<br/>Key Vault]
     PleKV --> KeyVault[Key Vault]
+
+        VNetHub --peer-.- VNetSpoke
+
 
 ```
 Diagrams created with https://mermaid-js.github.io/mermaid/#/
@@ -277,6 +285,7 @@ ARM Templates
 VNET / Subnet / Network
 * https://docs.microsoft.com/en-us/azure/virtual-network/quick-create-cli
 * https://en.wikipedia.org/wiki/Private_network
+* https://dev.to/omiossec/azure-hub-and-spoke-topology-peering-and-arm-templates-5ej7
 
 Azure Private Link and DNS
 * https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns
@@ -293,6 +302,8 @@ VPN gateway
 * https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpngateways
 * https://arminreiter.com/2017/06/connect-windows-10-clients-azure-vpn/
 * https://www.starwindsoftware.com/blog/configuring-azure-point-to-site-vpn-with-windows-10
+* https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-peering-gateway-transit
+* https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-point-to-site-routing
 
 P2S
 * https://docs.microsoft.com/en-us/azure/storage/files/storage-files-configure-p2s-vpn-linux

@@ -30,32 +30,42 @@ AZURE_RESOURCE_GROUP_VNG="$AZURE_RESOURCE_GROUP_VNET"
 
 NOW_PUBLISHED_AT="$(date +%F-%T)"
 
+# Addresses calculated with https://www.calculator.net/ip-subnet-calculator.htm
+######### ######### ######### #########  
+# Spoke / Control VNET
 # pick unused address range
-AZURE_VNET_NAME="$root_name-VNET"
-# 10.0.0.0 - 10.0.255.255
-AZURE_VNET_NETWORK="10.0.0.0/16"
+AZURE_VNET_HUB_NAME="$root_name-hub-VNET"
+# 10.0.0.1 - 10.0.63.254 4096 IPs
+AZURE_VNET_HUB_NETWORK="10.0.0.0/20"
 
 # MS Azure Minimum Size
 # 10.0.0.0 - 10.0.0.255
 VNET_SUBNET_VNG_NETWORK="10.0.0.0/24"
 VNET_SUBNET_VNG_NAME="GatewaySubnet"
-# 10.0.1.64 - 10.0.1.127
+# 10.0.1.0 - 10.0.1.63
 VNET_SUBNET_DNS_ACI_NETWORK="10.0.1.0/26"
 VNET_SUBNET_DNS_ACI_NAME="DnsAciSubnet"
 # MS Azure minimum size
-# 10.0.1.0 - 10.0.1.63
+# 10.0.1.64 - 10.0.1.127
 VNET_SUBNET_BASTION_NETWORK="10.0.1.64/26"
 VNET_SUBNET_BASTION_NAME="AzureBastionSubnet"
 
-# 10.0.2.0 - 10.0.2.255
-VNET_SUBNET_DEFAULT_NETWORK="10.0.2.0/24"
+######### ######### ######### ######### 
+# Landing Zone / application VNET
+# pick unused address range
+AZURE_VNET_SPOKE_NAME="$root_name-spoke-VNET"
+# 10.0.16.1 - 10.0.31.255 4096 IPs
+AZURE_VNET_SPOKE_NETWORK="10.0.16.0/20"
+
+# 10.0.16.0 - 10.0.16.255
+VNET_SUBNET_DEFAULT_NETWORK="10.0.16.0/24"
 VNET_SUBNET_DEFAULT_NAME="default"
 
-# 10.0.3.0 - 10.0.3.63
-VNET_SUBNET_DATA_NETWORK="10.0.3.0/26"
+# 10.0.17.0 - 10.0.17.63
+VNET_SUBNET_DATA_NETWORK="10.0.17.0/26"
 VNET_SUBNET_DATA_NAME="data"
-# 10.0.3.64 - 10.0.3.127
-VNET_SUBNET_SECRETS_NETWORK="10.0.3.64/26"
+# 10.0.17.64 - 10.0.17.127
+VNET_SUBNET_SECRETS_NETWORK="10.0.17.64/26"
 VNET_SUBNET_SECRETS_NAME="CredentialsSecrets"
 
 
@@ -89,7 +99,7 @@ STORAGE_ACCOUNT_PE_BLOB_NAME="$root_name-PeStorageBlob"
 STORAGE_ACCOUNT_PE_FILE_NAME="$root_name-PeStorageFile"
 
 # sometimes add number to the keyvault name because of soft delete pain - being lazy
-KEY_VAULT_NAME="$root_name-kv-3"
+KEY_VAULT_NAME="$root_name-kv-4"
 KEY_VAULT_PE_NAME="$root_name-PeKeyVault"
 
 VM_UBUNTU_NAME="$root_name-VmLinux"

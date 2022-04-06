@@ -20,7 +20,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNG" \
      --parameters \
      azureRegionPrimary=$AZURE_REGION \
      vnetResourceGroup=$AZURE_RESOURCE_GROUP_VNET \
-     vnetNetworkName=$AZURE_VNET_NAME \
+     vnetNetworkName=$AZURE_VNET_HUB_NAME \
      subnetVngName=$VNET_SUBNET_VNG_NAME \
      virtualNetworkGatewaysVngName=$VNGS_VNG_NAME \
      publicIPAddressesVngName=$PUBLIC_IP_VNG_NAME \

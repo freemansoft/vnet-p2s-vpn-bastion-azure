@@ -27,7 +27,7 @@ az deployment group create \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \
     vnetResourceGroup=$AZURE_RESOURCE_GROUP_VNET \
-    vnetNetworkName=$AZURE_VNET_NAME \
+    vnetNetworkName=$AZURE_VNET_SPOKE_NAME \
     subnetCredentialsName="$VNET_SUBNET_SECRETS_NAME" \
     keyVaultName="$KEY_VAULT_NAME" \
     lastPublishedAt="$NOW_PUBLISHED_AT" \

@@ -19,8 +19,10 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
      --template-file templates/template-vnet.json \
      --parameters \
      azureRegionPrimary=$AZURE_REGION \
-     vnetNetwork=$AZURE_VNET_NETWORK \
-     vnetNetworkName=$AZURE_VNET_NAME \
+     vnetNetworkHub=$AZURE_VNET_HUB_NETWORK \
+     vnetNetworkHubName=$AZURE_VNET_HUB_NAME \
+     vnetNetworkSpoke=$AZURE_VNET_SPOKE_NETWORK \
+     vnetNetworkSpokeName=$AZURE_VNET_SPOKE_NAME \
      subnetDefaultNetwork=$VNET_SUBNET_DEFAULT_NETWORK \
      subnetDefaultName=$VNET_SUBNET_DEFAULT_NAME \
      subnetDataNetwork=$VNET_SUBNET_DATA_NETWORK \
@@ -34,14 +36,15 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
      lastPublishedAt="$NOW_PUBLISHED_AT" \
      version="$VERSION" \
      project="$PROJECT" \
-     subnetAciNetwork=$VNET_SUBNET_DNS_ACI_NETWORK \
+     subnetDnsAciNetwork=$VNET_SUBNET_DNS_ACI_NETWORK \
 #    this won't parse :-(
-#     subnetAciName=$VNET_SUBNET_DNS_ACI_NAME \ 
+#     subnetDnsAciName=$VNET_SUBNET_DNS_ACI_NAME \ 
 
 
 echo -e "${PURPLE}-------------------Deploy DNS Forwarder----------------${NC}"
 # https://github.com/dmauser/PrivateLink/tree/master/DNS-Integration-P2S
 # https://github.com/whiteducksoftware/az-dns-forwarder
+# This command does not support tagging! https://github.com/Azure/azure-cli/issues/5713
 acs_result=$(az container create \
   --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
   --name dns-forwarder \
@@ -49,7 +52,7 @@ acs_result=$(az container create \
   --cpu 1 \
   --memory 0.5 \
   --restart-policy always \
-  --vnet $AZURE_VNET_NAME \
+  --vnet $AZURE_VNET_HUB_NAME \
   --subnet $VNET_SUBNET_DNS_ACI_NAME \
   --ip-address private \
   --location $AZURE_REGION \
@@ -58,6 +61,15 @@ acs_result=$(az container create \
   --protocol UDP)
 
 #echo $acs_result
+
+# extract the id from the result
+acs_id=$(jq -r ".id" <<< "$acs_result" )
+# apply the tags - sync these with the templates
+az resource tag \
+     --is-incremental \
+     --ids $acs_id \
+     --tags "PublishedAt=$NOW_PUBLISHED_AT" "Project=$PROJECT" "Version=$VERSION""
+
   
 # extract the IP from the result
 acs_ip=$(jq -r ".ipAddress.ip" <<< "$acs_result" )
@@ -67,5 +79,5 @@ echo -e "${PURPLE}-------------------Add DNS Forwarder to VNet----------------${
 # Apply this IP address as a DNS forwarder on the vnet
 az network vnet update \
      --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
-     --name "$AZURE_VNET_NAME" \
+     --name "$AZURE_VNET_HUB_NAME" \
      --dns-servers "$acs_ip"

@@ -148,6 +148,42 @@ Diagrams created with https://mermaid-js.github.io/mermaid/#/
 
 ## DNS
 
+The private DNS servers used to support the Private Link Endpoints (PLE) are managed via the same Resource Group that holds the `hub` and `spoke` VNets.  This essentially puts them in the hubs.
+
+```mermaid
+flowchart LR
+    VNetRg[VNet RG]
+
+    subgraph dns
+        blobs[privatelink.blob.core.windows.net]
+        files[ privatelink.file.core.windows.net]
+        docs[privatelink.documents.azure.com]
+        vaults[privatelink.vaultcore.azure.net]
+    end 
+    VNetRg --- dns
+
+    subgraph hub[Hub VNet]
+        SubnetsHub[Subnets]
+    end
+    VNetRg ----- hub
+
+    subgraph spoke[Spoke VNet]
+        SubnetsSpoke[Subnets]
+    end
+    VNetRg ----- spoke
+    
+    blobs -.- spoke
+    files -.- spoke
+    docs -.- spoke
+    vaults -.- spoke
+
+    blobs -.- hub
+    files -.- hub
+    docs -.- hub
+    vaults -.- hub
+   
+```
+
 ### Private DNS Zones
 Private DNS entrase are created for all Private Link Endpoint host names in the private DNS Zones.
 The private DNS Zones are created in VNET Resource Group and are bound to `Hub` and `Spoke` VNETS via Virtual Network Links.

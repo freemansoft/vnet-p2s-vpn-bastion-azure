@@ -55,6 +55,18 @@ The purge scripts apply an ARM template in `Complete` mode.
 
 The VNET gateway requires the resource groups and the vnet in order to be provisioned.
 
+### Certificate installation.
+Windows: Double click on the .pfx file and enter a passcode of `1234` to install the certificate in the windows certificate store.
+
+### Troubleshooting
+**--show-current invalid parameter**: Upgrade git.  
+```
+sudo add-apt-repository ppa:git-core/ppa
+sudo apt update
+sudo apt install git
+```
+Example: Before 2.17.1.  After 2.35.1
+
 ## Network IP Ranges
 Pick network blocks that do not conflict with other networking. The network blocks below are non-routable (private) network blocks.
 This project needs two private VNET ranges for the Azure components
@@ -208,7 +220,7 @@ Run an nslookup against your PLE endpoints. If they return external IPs then you
 In that case it could be that your VPN tunnel (PPP) is a lower priority than your network connection.
 In my case my ethernet connection was of a equivalent Metric which meant either public or private DNS could be used.
 
-#### Problem
+#### Problem Configuration
 Resolves to external IPs when ethernet is connected because Ethernet Metric is same as VPN tunnel with lower index.
 ```
 PS C:\Users\joe> netsh interface ipv4 show interfaces
@@ -239,7 +251,7 @@ Aliases:  fsiexample0storage.blob.core.windows.net
           fsiexample0storage.privatelink.blob.core.windows.net
 ```
 
-#### Correct
+#### Correct Configuration
 Resolves to internal Azure IPs when ethernet disconnected because Wi-Fi is lower priority metric than the VPN tunnel.
 ```
 PS C:\Users\joe> netsh interface ipv4 show interfaces
@@ -267,6 +279,12 @@ Non-authoritative answer:
 Name:    fsiexample0storage.privatelink.blob.core.windows.net
 Address:  10.0.1.4
 Aliases:  fsiexample0storage.blob.core.windows.net
+```
+
+### Alternative change route metric
+
+```
+netsh int ip set interface interface="FsiExample-hub-VNET" metric=15
 ```
 
 

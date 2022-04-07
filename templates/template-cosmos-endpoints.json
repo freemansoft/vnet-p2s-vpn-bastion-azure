@@ -38,14 +38,9 @@
         },
         "privateEndpoints_cosmos": {
             "type": "string"
-        },
-        "privateDnsZoneName": {
-            "type": "string",
-            "defaultValue": "privatelink.documents.azure.com"
         }
     },
-    "variables": {
-    },
+    "variables": {},
     "resources": [
         {
             "type": "Microsoft.Network/privateEndpoints",
@@ -85,13 +80,13 @@
         {
             "type": "Microsoft.Network/privateDnsZones",
             "apiVersion": "2020-06-01",
-            "name": "[parameters('privateDnsZoneName')]",
+            "name": "privatelink.documents.azure.com",
             "location": "global"
         },
         {
             "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
             "apiVersion": "2020-06-01",
-            "name": "[concat(parameters('privateDnsZoneName'), '/cosmosDnsZoneLink')]",
+            "name": "[format('{0}/cosmosDnsZoneLink-{1}', privatelink.documents.azure.com, parameters('vnetNetworkName'))]",
             "location": "global",
             "properties": {
                 "registrationEnabled": false,
@@ -100,7 +95,7 @@
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZoneName'))]"
+                "[resourceId('Microsoft.Network/privateDnsZones', privatelink.documents.azure.com)]"
                 // Created in other templates
                 // "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
             ]
@@ -114,13 +109,13 @@
                     {
                         "name": "config1",
                         "properties": {
-                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZoneName'))]"
+                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', privatelink.documents.azure.com)]"
                         }
                     }
                 ]
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZoneName'))]",
+                "[resourceId('Microsoft.Network/privateDnsZones', privatelink.documents.azure.com)]",
                 "[resourceId('Microsoft.Network/privateEndpoints', parameters('privateEndpoints_cosmos'))]"
             ]
         }

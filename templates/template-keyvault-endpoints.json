@@ -83,29 +83,6 @@
             }
         },
         {
-            "type": "Microsoft.Network/privateDnsZones",
-            "apiVersion": "2020-06-01",
-            "name": "privatelink.vaultcore.azure.net",
-            "location": "global"
-        },
-        {
-            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
-            "apiVersion": "2020-06-01",
-            "name": "[format('{0}/vaultDnsZoneLink-{1}', 'privatelink.vaultcore.azure.net',parameters('vnetNetworkName'))]",
-            "location": "global",
-            "properties": {
-                "registrationEnabled": false,
-                "virtualNetwork": {
-                    "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
-                }
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.vaultcore.azure.net')]"
-                // Created in other templates - use other resource method
-                // "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
-            ]
-        },
-        {
             "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
             "apiVersion": "2020-08-01",
             "name": "[concat(parameters('privateEndpointsKeyVaultName'), '/default')]",
@@ -114,13 +91,13 @@
                     {
                         "name": "config1",
                         "properties": {
-                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.vaultcore.azure.net')]"
+                            "privateDnsZoneId": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/privateDnsZones', 'privatelink.vaultcore.azure.net')]"
                         }
                     }
                 ]
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.vaultcore.azure.net')]",
+                //"[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.vaultcore.azure.net')]",
                 "[resourceId('Microsoft.Network/privateEndpoints', parameters('privateEndpointsKeyVaultName'))]"
             ]
         }

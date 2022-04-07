@@ -1,0 +1,146 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "lastPublishedAt": {
+            "type": "string",
+            "metadata": {
+                "description": "The last time the template was run"
+            }
+        },
+        "version": {
+            "type": "string",
+            "defaultValue": "unknown"
+        },
+        "project": {
+            "type": "string",
+            "defaultValue": "what is anyone's purpose?"
+        },
+        "vnetResourceGroup": {
+            "type": "string"
+        },
+        "vnetNetworkName": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        // DNS SOA and A records are automatically created
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2020-06-01",
+            "name": "privatelink.documents.azure.com",
+            "location": "global",
+            "tags": {
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2020-06-01",
+            "name": "[format('{0}/cosmosDnsZoneLink-{1}', 'privatelink.documents.azure.com', parameters('vnetNetworkName'))]",
+            "location": "global",
+            "properties": {
+                "registrationEnabled": false,
+                "virtualNetwork": {
+                    "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.documents.azure.com')]"
+                // Created in other templates
+                // "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+            ]
+        },
+
+                {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2020-06-01",
+            "name": "privatelink.vaultcore.azure.net",
+            "location": "global",
+            "tags": {
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2020-06-01",
+            "name": "[format('{0}/vaultDnsZoneLink-{1}', 'privatelink.vaultcore.azure.net',parameters('vnetNetworkName'))]",
+            "location": "global",
+            "properties": {
+                "registrationEnabled": false,
+                "virtualNetwork": {
+                    "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.vaultcore.azure.net')]"
+                // Created in other templates - use other resource method
+                // "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+            ]
+        },
+
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2020-06-01",
+            "name": "privatelink.blob.core.windows.net",
+            "location": "global",
+            "tags": {
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2020-06-01",
+            "name": "[format('{0}/storageDnsZoneLink-{1}', 'privatelink.blob.core.windows.net',  parameters('vnetNetworkName'))]",
+            "location": "global",
+            "properties": {
+                "registrationEnabled": false,
+                "virtualNetwork": {
+                    "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.blob.core.windows.net')]"
+                // Created in other templates - use other resource method
+                // "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+            ]
+        },
+
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2020-06-01",
+            "name": "privatelink.file.core.windows.net",
+            "location": "global",
+            "tags": {
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2020-06-01",
+            "name": "[format('{0}/storageDnsZoneLink-{1}', 'privatelink.file.core.windows.net',parameters('vnetNetworkName'))]",
+            "location": "global",
+            "properties": {
+                "registrationEnabled": false,
+                "virtualNetwork": {
+                    "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.file.core.windows.net')]"
+                // Created in other templates
+                // "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks', parameters('vnetNetworkName'))]"
+            ]
+        }
+
+    ]
+}

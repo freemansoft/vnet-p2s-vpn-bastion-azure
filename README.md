@@ -35,12 +35,12 @@ Mac / BASH
 | 0-install-tools.sh           | yes | yes | install AWS CLI and jq |
 | 1-login-az.sh                | yes | yes | renew azure cli credentials if expired |
 | 2-create-resources.sh        | yes | yes | create a resource group if it does not exist |
-| 3-create-vnet.sh             | yes | yes | Creates hub and spoke vnets, peerings, subnets, DNS forwarder in a container. Adds DNS to hub VNET |
-| 3b-create-keyvault.sh        | no  | no  | Creates a Key Vault and Private Link Endpoints | 
-| 4-create-storage.sh          | no  | no  | Creates storage accounts, storage containers and Private Link Endpoints |
-| 4b-create-cosmosdb.sh        | no  | no  | Create Cosmos DB instance and PLE connection.  No containers created |
-| 5-create-monitor.sh          | no  | no  | Creates Log Analytics Workspace and Application Insights instance |
-| 6-create-vm-linux.sh         | no  | No  | Create a simple virtual machine on the default subnet with no public IP with a log analytics workspace | 
+| 3a-create-vnet.sh             | yes | yes | Creates hub and spoke vnets, peerings, subnets, DNS forwarder in a container. Adds DNS to hub VNET |
+| 4a-create-keyvault.sh        | no  | no  | Creates a Key Vault and Private Link Endpoints | 
+| 5a-create-storage.sh          | no  | no  | Creates storage accounts, storage containers and Private Link Endpoints |
+| 5b-create-cosmosdb.sh        | no  | no  | Create Cosmos DB instance and PLE connection.  No containers created |
+| 6a-create-monitor.sh          | no  | no  | Creates Log Analytics Workspace and Application Insights instance |
+| 6b-create-vm-linux.sh         | no  | No  | Create a simple virtual machine on the default subnet with no public IP with a log analytics workspace | 
 | 7-create-bastion.sh          | yes | no  | Creates a bastion host |
 | 8-create-vng-with-p2s.sh     | no  | yes | Creates a vng appliance with a P2S Address pool and self signed CA. Can VPN with the downloaded VPN Client config |
 | 9-create-p2s.sh              | no  | yes | Creates and uploads the certificates using the Azure CLI. Can be used to add extra root certs |
@@ -60,11 +60,13 @@ Windows: Double click on the .pfx file and enter a passcode of `1234` to install
 
 ### Troubleshooting
 **--show-current invalid parameter**: Upgrade git.  
+
 ```
 sudo add-apt-repository ppa:git-core/ppa
 sudo apt update
 sudo apt install git
 ```
+
 Example: Before 2.17.1.  After 2.35.1
 
 ## Network IP Ranges
@@ -91,8 +93,6 @@ Internal subnets are on the 10.x.x.x network.  We use 10.0.0.0 - 10.0.2.255 for 
 flowchart TD
     VNetHub[Hub VNet<br/>10.0.0.0/20]
     VNetSpoke[Spoke VNet<br/>10.0.16.0/20]
-    VNetHub -.-> VngRgHub>VNet RG]
-    VNetSpoke -.-> VngRgSpoke>VNet RG]
 
 
     VNetHub --> SubVng[GatewaySubnet <br/>10.0.0.0/24  250]
@@ -103,19 +103,15 @@ flowchart TD
     VNetSpoke --> SubData[data <br/>10.0.17.0/26 57]
     VNetSpoke --> SubCred[CredentialSecrets <br/>10.0.17.64/26 59]
 
-    SubVng -.-> SubVngRg>VNet RG]
     SubVng --> VNG[Virtual Network Gateway]
     VNG --> PubVNG[Public IP<br/>20.xx.xx.xx dynamic]
     VNG --> PoolVNG[Address Pool<br>172.16.0.0/26]
 
-    SubAci -.-> SubAciRg>VNet RG]
     SubAci --> AciDns(DNS Forwarder<br/>Container)
 
-    SubBast -.-> SubBastRg>Bastion RG]
     SubBast --> Bastion[Bastion Host]
     Bastion --> PubaAst[Public IP<br/>20.xx.xx.xx dynamic]
 
-    SubDef -.-> SubDefRg>RG]
     SubDef --> NicVM[N.I.C.<br/>Linux]
     NicVM --> VM[Linux VM]
 
@@ -125,7 +121,6 @@ flowchart TD
 
     CosmosDB[Cosmos DB]
 
-    SubData -.-> SubPersistRg>Persist RG]
     
     SubData --> NicStorFile[N.I.C.<br/>File]
     NicStorFile --> PleFile[Private Endpoint<br/>Storage File]
@@ -141,18 +136,32 @@ flowchart TD
     NicCosmos --> PleCosmos[Private Endpoint<br/>Cosmos DB]
     PleCosmos --> CosmosDB
 
-    SubCred -.-> SubCredRg>Secrets RG]
     SubCred --> NicKeyVault[N.I.C.<br/>Key Vault]
     NicKeyVault --> PleKV[Private Endpoint<br/>Key Vault]
     PleKV --> KeyVault[Key Vault]
 
-        VNetHub --peer-.- VNetSpoke
+    VNetHub --peer-.- VNetSpoke
 
 
 ```
 Diagrams created with https://mermaid-js.github.io/mermaid/#/
 
-### DNS
+## DNS
+
+### Private DNS Zones
+Private DNS entrase are created for all Private Link Endpoint host names in the private DNS Zones.
+The private DNS Zones are created in VNET Resource Group and are bound to `Hub` and `Spoke` VNETS via Virtual Network Links.
+
+| Zone | Private Link Endpoints | Virtual Network Links |
+| ---- | ------- | --------- |
+| privatelink.blob.core.windows.net | Storage account blob store | Hub & Spoke |
+| privatelink.file.core.windows.net | Storage account file store | Hub & Spoke |
+| privatelink.documents.azure.com   | Cosmos DB                  | Hub & Spoke |
+| privatelink.vaultcore.azure.net   | Key Vaults                 | Hub & Spoke |
+
+Individual entries are added to DNS as the resources are created.  Eg: A Keyvault or A Blob store.
+
+### Internal and External DNS
 The project's Azure resources often have both internal and public IP addresses under the same names.  
 Those resources are blocked from public internet access by firewalls and are only reachable across the VPN tunnel.
 This means that programs need the internal IP addresses that can be resolved via DNS inside Azure.

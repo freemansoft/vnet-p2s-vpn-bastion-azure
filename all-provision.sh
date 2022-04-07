@@ -11,15 +11,17 @@ source env.sh
 echo -e "${GREEN}Creating Resource Group ${NC}"
 ./2-create-resources.sh
 echo -e "${GREEN}Creating VNet ${NC}"
-./3-create-vnet.sh
+./3a-create-vnet.sh
 echo -e "${GREEN}Creating Key Vault ${NC}"
-./3b-create-keyvault.sh
+./4a-create-keyvault.sh
 echo -e "${GREEN}Creating Storage ${NC}"
-./4-create-storage.sh
+./5a-create-storage.sh
+echo -e "${GREEN}Creating Cosmos DB ${NC}"
+./5b-create-cosmosdb.sh
 echo -e "${GREEN}Creating Monitoring ${NC}"
-./5-create-monitor.sh
+./6a-create-monitor.sh
 echo -e "${GREEN}Creating Linux VM ${NC}"
-./6-create-vm-linux.sh
+./6b-create-vm-linux.sh
 # echo -e "${GREEN}Creating Bastion ${NC}"
 # ./7-create-bastion.sh
 # echo -e "${GREEN}Creating VPN Gateway ${NC}"

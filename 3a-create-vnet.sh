@@ -13,7 +13,7 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
 echo "This will take several minutes "
-echo -e "${PURPLE}--------------------VNET------------------${NC}"
+echo -e "${PURPLE}----------------Hub / Spoke VNET----------${NC}"
 echo -e "${PURPLE}-------------------SUBNETS----------------${NC}"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
      --template-file templates/template-vnet.json \
@@ -40,6 +40,25 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
 #    this won't parse :-(
 #     subnetDnsAciName=$VNET_SUBNET_DNS_ACI_NAME \ 
 
+echo -e "${PURPLE}-------------------private DNS groups and VNET links ----------------${NC}"
+# create private DNS zones - link those zones to each VNET - for PLEs
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
+     --template-file templates/template-dns-private.json \
+     --parameters \
+     vnetResourceGroup=$AZURE_RESOURCE_GROUP_VNET \
+     vnetNetworkName=$AZURE_VNET_HUB_NAME \
+     lastPublishedAt="$NOW_PUBLISHED_AT" \
+     version="$VERSION" \
+     project="$PROJECT" \
+
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
+     --template-file templates/template-dns-private.json \
+     --parameters \
+     vnetResourceGroup=$AZURE_RESOURCE_GROUP_VNET \
+     vnetNetworkName=$AZURE_VNET_SPOKE_NAME \
+     lastPublishedAt="$NOW_PUBLISHED_AT" \
+     version="$VERSION" \
+     project="$PROJECT" \
 
 echo -e "${PURPLE}-------------------Deploy DNS Forwarder----------------${NC}"
 # https://github.com/dmauser/PrivateLink/tree/master/DNS-Integration-P2S
@@ -68,7 +87,7 @@ acs_id=$(jq -r ".id" <<< "$acs_result" )
 az resource tag \
      --is-incremental \
      --ids $acs_id \
-     --tags "PublishedAt=$NOW_PUBLISHED_AT" "Project=$PROJECT" "Version=$VERSION""
+     --tags "PublishedAt=$NOW_PUBLISHED_AT" "Project=$PROJECT" "Version=$VERSION"
 
   
 # extract the IP from the result

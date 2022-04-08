@@ -151,7 +151,7 @@ Diagrams created with https://mermaid-js.github.io/mermaid/#/
 The private DNS zones used to support the Private Link Endpoints (PLE) are managed via the same Resource Group that holds the `hub` and `spoke` VNets.  The private DNS zones are connected to the Hub and Spoke VNets via _Virtual Network links_ This essentially makes the names in those zones visible to the Hub and Spoke VNets.
 
 ```mermaid
-flowchart LR
+flowchart TD
     subgraph VNetRg[VNet Resource Group</br>]
 
     subgraph dns[Private DNS Zones]
@@ -162,26 +162,30 @@ flowchart LR
     end 
 
     subgraph hub[Hub VNet]
-        SubnetsHubGateway[Subnet<br/>Gateway]
-        SubnetHubDnsAci[Subnet<br/>DNS Azure Container Instance]
-        SubnetHubBastion[Subnet<br>Bastion]
+        SubnetsHubGateway>Subnet Gateway]
+        SubnetHubDnsAci>Subnet DNS Azure Container Instance]
+        SubnetHubBastion>Subnet Bastion]
+
+        DnsForwarder[DNS Forwarder]
+        VNetGateway[VNet Gateway]
     end
 
     subgraph spoke[Spoke VNet]
-        SubnetsSpokeDefault[Subnet<br/>default]
-        SubnetsSpokeData[Subnet<br/>data]
-        SubnetsSpokeKeyValut[Subnet<br/>CredentialSecrets]
+        SubnetsSpokeDefault>Subnet default]
+        SubnetsSpokeData>Subnet data]
+        SubnetsSpokeKeyValut>Subnet CredentialSecrets]
     end
     
-    blobs -- Virtual Network LInk-.- spoke
-    files -- Virtual Network LInk-.- spoke
-    docs  -- Virtual Network LInk-.- spoke
-    vaults -- Virtual Network LInk-.- spoke
+    blobs -.- |Virtual Network Link| spoke
+    files -.- |Virtual Network Link| spoke
+    docs  -.- |Virtual Network Link| spoke
+    vaults -.- |Virtual Network Link| spoke
 
-    blobs -- Virtual Network LInk-.- hub
-    files -- Virtual Network LInk-.- hub
-    docs -- Virtual Network LInk-.- hub
-    vaults -- Virtual Network LInk-.- hub
+    blobs -.- |Virtual Network Link| hub
+    files -.- |Virtual Network Link| hub
+    docs  -.- |Virtual Network Link| hub
+    vaults -.- |Virtual Network Link| hub
+
 
     end
    

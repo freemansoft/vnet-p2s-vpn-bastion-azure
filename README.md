@@ -155,25 +155,46 @@ flowchart TD
     subgraph VNetRg[VNet Resource Group</br>]
 
         %% subgraph dns[Private DNS Zones]
-            blobs[Private DNS Zone<br/>privatelink.blob.core.windows.net]
-            files[Private DNS Zone<br/>privatelink.file.core.windows.net]
-            docs[Private DNS Zone<br/>privatelink.documents.azure.com]
-            vaults[Private DNS Zone<br/>privatelink.vaultcore.azure.net]
+            blobs[Private DNS Zone<br/>privatelink.<br/>blob.core.windows.net]
+            files[Private DNS Zone<br/>privatelink.<br/>file.core.windows.net]
+            docs[Private DNS Zone<br/>privatelink.<br/>documents.azure.com]
+            vaults[Private DNS Zone<br/>privatelink.<br/>vaultcore.azure.net]
         %% end 
 
         subgraph hub[Hub VNet]
-            SubnetsHubGateway>Subnet Gateway]
-            SubnetHubDnsAci>Subnet DNS Azure Container Instance]
-            SubnetHubBastion>Subnet Bastion]
+            subgraph subnetHub[Hub Subnets]
+                SubnetsHubGateway>Subnet Gateway]
+                SubnetHubDnsAci>Subnet DNS Azure Container Instance]
+                SubnetHubBastion>Subnet Bastion]
+            end
 
+            subgraph VnetComponents[VNet Support]
             DnsForwarder[DNS Forwarder]
             VNetGateway[VNet Gateway]
+            end
         end
 
         subgraph spoke[Spoke VNet]
-            SubnetsSpokeDefault>Subnet default]
-            SubnetsSpokeData>Subnet data]
-            SubnetsSpokeKeyValut>Subnet CredentialSecrets]
+            subgraph subnetSpoke[Spoke Subnets]
+                SubnetsSpokeDefault>Subnet default]
+                SubnetsSpokeKeyValut>Subnet CredentialSecrets]
+                SubnetsSpokeData>Subnet data]
+            end
+            subgraph storageFileGraph[Storage Account File]
+                StorageFile[Storage Account<br/>File]
+                StorageFilePle[Storage File<br>Private Link Endpoint]
+                StorageFileNic[Storage File<br>Network Interface]
+            end
+            subgraph storageBlobGraph[Storage Account Blob]
+                StorageBlob[Storage Account<br/>Blob]
+                StorageBlobPle[Storage Blob<br>Private Link Endpoint]
+                StorageBlobNic[Storage Blob<br>Network Interface]
+            end
+            subgraph KeyVaultGraph[Key Vault]
+                KeyVault[Key Vault]
+                KeyVaultPle[SKey Vault<br>Private Link Endpoint]
+                KeyVaultNic[Key Vault<br>Network Interface]
+            end
         end
         
         blobs -.- |Virtual Network Link| spoke

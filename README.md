@@ -144,7 +144,7 @@ flowchart TD
 
 
 ```
-Diagrams created with https://mermaid-js.github.io/mermaid/#/
+Diagrams created with https://mermaid-js.github.io/mermaid/#/ - live editor at https://mermaid.live/
 
 ## DNS
 
@@ -154,41 +154,39 @@ The private DNS zones used to support the Private Link Endpoints (PLE) are manag
 flowchart TD
     subgraph VNetRg[VNet Resource Group</br>]
 
-    subgraph dns[Private DNS Zones]
-        blobs[privatelink.blob.core.windows.net]
-        files[ privatelink.file.core.windows.net]
-        docs[privatelink.documents.azure.com]
-        vaults[privatelink.vaultcore.azure.net]
-    end 
+        %% subgraph dns[Private DNS Zones]
+            blobs[Private DNS Zone<br/>privatelink.blob.core.windows.net]
+            files[Private DNS Zone<br/>privatelink.file.core.windows.net]
+            docs[Private DNS Zone<br/>privatelink.documents.azure.com]
+            vaults[Private DNS Zone<br/>privatelink.vaultcore.azure.net]
+        %% end 
 
-    subgraph hub[Hub VNet]
-        SubnetsHubGateway>Subnet Gateway]
-        SubnetHubDnsAci>Subnet DNS Azure Container Instance]
-        SubnetHubBastion>Subnet Bastion]
+        subgraph hub[Hub VNet]
+            SubnetsHubGateway>Subnet Gateway]
+            SubnetHubDnsAci>Subnet DNS Azure Container Instance]
+            SubnetHubBastion>Subnet Bastion]
 
-        DnsForwarder[DNS Forwarder]
-        VNetGateway[VNet Gateway]
-    end
+            DnsForwarder[DNS Forwarder]
+            VNetGateway[VNet Gateway]
+        end
 
-    subgraph spoke[Spoke VNet]
-        SubnetsSpokeDefault>Subnet default]
-        SubnetsSpokeData>Subnet data]
-        SubnetsSpokeKeyValut>Subnet CredentialSecrets]
-    end
-    
-    blobs -.- |Virtual Network Link| spoke
-    files -.- |Virtual Network Link| spoke
-    docs  -.- |Virtual Network Link| spoke
-    vaults -.- |Virtual Network Link| spoke
+        subgraph spoke[Spoke VNet]
+            SubnetsSpokeDefault>Subnet default]
+            SubnetsSpokeData>Subnet data]
+            SubnetsSpokeKeyValut>Subnet CredentialSecrets]
+        end
+        
+        blobs -.- |Virtual Network Link| spoke
+        files -.- |Virtual Network Link| spoke
+        docs  -.- |Virtual Network Link| spoke
+        vaults -.- |Virtual Network Link| spoke
 
-    blobs -.- |Virtual Network Link| hub
-    files -.- |Virtual Network Link| hub
-    docs  -.- |Virtual Network Link| hub
-    vaults -.- |Virtual Network Link| hub
+        blobs -.- |Virtual Network Link| hub
+        files -.- |Virtual Network Link| hub
+        docs  -.- |Virtual Network Link| hub
+        vaults -.- |Virtual Network Link| hub
 
-
-    end
-   
+    end   
 ```
 
 ### Private DNS Zones

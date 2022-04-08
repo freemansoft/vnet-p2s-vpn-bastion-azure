@@ -148,7 +148,7 @@ Diagrams created with https://mermaid-js.github.io/mermaid/#/
 
 ## DNS
 
-The private DNS servers used to support the Private Link Endpoints (PLE) are managed via the same Resource Group that holds the `hub` and `spoke` VNets.  This essentially puts them in the hubs.
+The private DNS zones used to support the Private Link Endpoints (PLE) are managed via the same Resource Group that holds the `hub` and `spoke` VNets.  The private DNS zones are connected to the Hub and Spoke VNets via _Virtual Network links_ This essentially makes the names in those zones visible to the Hub and Spoke VNets.
 
 ```mermaid
 flowchart LR

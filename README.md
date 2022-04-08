@@ -152,35 +152,38 @@ The private DNS zones used to support the Private Link Endpoints (PLE) are manag
 
 ```mermaid
 flowchart LR
-    VNetRg[VNet RG]
+    subgraph VNetRg[VNet Resource Group</br>]
 
-    subgraph dns
+    subgraph dns[Private DNS Zones]
         blobs[privatelink.blob.core.windows.net]
         files[ privatelink.file.core.windows.net]
         docs[privatelink.documents.azure.com]
         vaults[privatelink.vaultcore.azure.net]
     end 
-    VNetRg --- dns
 
     subgraph hub[Hub VNet]
-        SubnetsHub[Subnets]
+        SubnetsHubGateway[Subnet<br/>Gateway]
+        SubnetHubDnsAci[Subnet<br/>DNS Azure Container Instance]
+        SubnetHubBastion[Subnet<br>Bastion]
     end
-    VNetRg ----- hub
 
     subgraph spoke[Spoke VNet]
-        SubnetsSpoke[Subnets]
+        SubnetsSpokeDefault[Subnet<br/>default]
+        SubnetsSpokeData[Subnet<br/>data]
+        SubnetsSpokeKeyValut[Subnet<br/>CredentialSecrets]
     end
-    VNetRg ----- spoke
     
-    blobs -.- spoke
-    files -.- spoke
-    docs -.- spoke
-    vaults -.- spoke
+    blobs -- Virtual Network LInk-.- spoke
+    files -- Virtual Network LInk-.- spoke
+    docs  -- Virtual Network LInk-.- spoke
+    vaults -- Virtual Network LInk-.- spoke
 
-    blobs -.- hub
-    files -.- hub
-    docs -.- hub
-    vaults -.- hub
+    blobs -- Virtual Network LInk-.- hub
+    files -- Virtual Network LInk-.- hub
+    docs -- Virtual Network LInk-.- hub
+    vaults -- Virtual Network LInk-.- hub
+
+    end
    
 ```
 
@@ -196,6 +199,26 @@ The private DNS Zones are created in VNET Resource Group and are bound to `Hub` 
 | privatelink.vaultcore.azure.net   | Key Vaults                 | Hub & Spoke |
 
 Individual entries are added to DNS as the resources are created.  Eg: A Keyvault or A Blob store.
+
+#### Troubleshooting SSL on Private Links.
+You may get a certificate error connecting via the `privatelink` dns name. Use the base name instead.  That is what the certs are configured for.
+
+Certificate Error when using privatelink
+```
+joe@z820:~/GitHub/vnet-p2s-vpn-bastion-azure$ curl  fsiexample0storage.privatelink.blob.core.windows.net
+﻿<?xml version="1.0" encoding="utf-8"?><Error><Code>AccountRequiresHttps</Code><Message>The account being accessed does not support http.
+RequestId:013ec849-e01e-0060-75de-4aa201000000
+Time:2022-04-08T00:24:19.8808433Z</Message><AccountName>fsiexample0storage</AccountName></Error>joe@z820:~/GitHub/vnet-p2s-vpn-bastion-azure$ curl  https://fsiexample0storage.privatelink.blob.core.windows.net
+curl: (51) SSL: no alternative certificate subject name matches target host name 'fsiexample0storage.privatelink.blob.core.windows.net'
+```
+No Certificate Error when not using privatelink.xx.yy.zzz dns name
+
+```
+joe@z820:~/GitHub/vnet-p2s-vpn-bastion-azure$ curl  https://fsiexample0storage.blob.core.windows.net
+﻿<?xml version="1.0" encoding="utf-8"?><Error><Code>InvalidQueryParameterValue</Code><Message>Value for one of the query parameters specified in the request URI is invalid.
+RequestId:b582ba33-c01e-007c-7fdf-4a7a16000000
+Time:2022-04-08T00:26:03.7588962Z</Message><QueryParameterName>comp</QueryParameterName><QueryParameterValue /><Reason />
+```
 
 ### Internal and External DNS
 The project's Azure resources often have both internal and public IP addresses under the same names.  
@@ -326,10 +349,62 @@ Address:  10.0.1.4
 Aliases:  fsiexample0storage.blob.core.windows.net
 ```
 
-### Alternative change route metric
+### Manually changing the Network Interface route mentric
+You can change the metric of an interface to change the routing evaluation order. That command is
 
+* Retrieve interface metrics `netsh int ip set interface interface="<interfae-name>" metric=<some-value>`
+* Change the metric on an interface to be lower than Ethernet `netsh int ip set interface interface="FsiExample-hub-VNET" metric=15`
+
+This shows a log of finding the problem, applying the fix and then verifying problem is solved.
 ```
-netsh int ip set interface interface="FsiExample-hub-VNET" metric=15
+PS C:\Users\joe> nslookup fsiexample0storage.privatelink.file.core.windows.net
+DNS request timed out.
+    timeout was 2 seconds.
+Server:  UnKnown
+Address:  2604:2d80:9a91:6100:26a0:74ff:fe73:bb47
+
+Non-authoritative answer:
+Name:    file.bn9prdstr11a.store.core.windows.net
+Address:  20.60.88.43
+Aliases:  fsiexample0storage.privatelink.file.core.windows.net
+
+PS C:\Users\joe> netsh interface ipv4 show interfaces
+
+Idx     Met         MTU          State                Name
+---  ----------  ----------  ------------  ---------------------------
+ 53          25        1400  connected     FsiExample-hub-VNET
+  1          75  4294967295  connected     Loopback Pseudo-Interface 1
+ 16          25        1500  connected     Ethernet
+ 37          15        1500  connected     vEthernet (Default Switch)
+  6          35        1500  connected     VMware Network Adapter VMnet1
+ 25          35        1500  connected     VMware Network Adapter VMnet8
+ 48          15        1500  connected     vEthernet (WSL)
+
+PS C:\Users\joe> netsh int ip set interface interface="FsiExample-hub-VNET" metric=15
+
+PS C:\Users\joe> netsh interface ipv4 show interfaces
+
+Idx     Met         MTU          State                Name
+---  ----------  ----------  ------------  ---------------------------
+ 53          15        1400  connected     FsiExample-hub-VNET
+  1          75  4294967295  connected     Loopback Pseudo-Interface 1
+ 16          25        1500  connected     Ethernet
+ 37          15        1500  connected     vEthernet (Default Switch)
+  6          35        1500  connected     VMware Network Adapter VMnet1
+ 25          35        1500  connected     VMware Network Adapter VMnet8
+ 48          15        1500  connected     vEthernet (WSL)
+
+PS C:\Users\joe> nslookup fsiexample0storage.privatelink.file.core.windows.net
+DNS request timed out.
+    timeout was 2 seconds.
+Server:  UnKnown
+Address:  10.0.1.4
+
+DNS request timed out.
+    timeout was 2 seconds.
+Non-authoritative answer:
+Name:    fsiexample0storage.privatelink.file.core.windows.net
+Address:  10.0.17.4
 ```
 
 

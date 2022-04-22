@@ -87,7 +87,7 @@ The each VNET divides its block among multiple subnets.
 
 
 ## VNET and Subnets
-Internal subnets are on the 10.x.x.x network.  We use 10.0.0.0 - 10.0.2.255 for our internal subnets.
+The VNet subnets are on the 10.x.x.x network.  We use two network ranges, one for the Hub VNet and one for the Spoke VNet.
 
 
 ```mermaid

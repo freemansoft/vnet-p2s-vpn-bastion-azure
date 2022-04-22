@@ -32,7 +32,7 @@
         "vnetNetworkName": {
             "type": "string"
         },
-        "subnetBastionName": {
+        "subnetHubBastionName": {
             "type": "string"
         }
     },
@@ -77,7 +77,7 @@
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressesBastionName'))]"
                             },
                             "subnet": {
-                                "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetBastionName'))]"
+                                "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetHubBastionName'))]"
                             }
                         }
                     }
@@ -86,7 +86,7 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressesBastionName'))]"
                 // is in different template
-                //"[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetBastionName'))]"
+                //"[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetHubBastionName'))]"
             ]
         }
     ]

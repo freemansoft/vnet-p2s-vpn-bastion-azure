@@ -26,7 +26,7 @@
         "vnetNetworkName": {
             "type": "string"
         },
-        "subnetCredentialsName": {
+        "subnetSpokeCredentialsName": {
             "type": "string",
             "defaultValue": "Subnet",
             "metadata": {
@@ -63,7 +63,7 @@
                     "ipRules": [],
                     "virtualNetworkRules": [
                         {
-                            "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetCredentialsName'))]",
+                            "id": "[resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetSpokeCredentialsName'))]",
                             "ignoreMissingVnetServiceEndpoint": true
                         }
                     ]
@@ -77,7 +77,6 @@
                 "enableRbacAuthorization": false,
                 "publicNetworkAccess": "Disabled"
             }
-
         }
     ]
 }

@@ -22,7 +22,7 @@
         "vnetNetworkName": {
             "type": "string"
         },
-        "subnetDataName": {
+        "subnetSpokeDataName": {
             "type": "string",
             "defaultValue": "Subnet",
             "metadata": {
@@ -55,7 +55,7 @@
             "dependsOn": [
                 // Created in other templates
                 // "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosInstanceName'))]",
-                // "[resourceId(parameters('vnetResourceGroup'),Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetDataName'))]"
+                // "[resourceId(parameters('vnetResourceGroup'),Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetSpokeDataName'))]"
             ],
             "properties": {
                 "privateLinkServiceConnections": [
@@ -71,7 +71,7 @@
                 ],
                 "manualPrivateLinkServiceConnections": [],
                 "subnet": {
-                    "id": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetDataName'))]"
+                    "id": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetNetworkName'), parameters('subnetSpokeDataName'))]"
                 },
                 "customDnsConfigs": []
             }

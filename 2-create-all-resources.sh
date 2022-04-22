@@ -34,12 +34,12 @@ create_a_resource () {
 }
 
 echo -e "${PURPLE}---------RESOURCE GROUPS-------------------${NC}"
-create_a_resource $AZURE_RESOURCE_GROUP
-create_a_resource $AZURE_RESOURCE_GROUP_SECRETS
-create_a_resource $AZURE_RESOURCE_GROUP_PERSIST
-create_a_resource $AZURE_RESOURCE_GROUP_BASTION
-create_a_resource $AZURE_RESOURCE_GROUP_VNG
-create_a_resource $AZURE_RESOURCE_GROUP_VNET
+create_a_resource "$AZURE_RESOURCE_GROUP_APP"
+create_a_resource "$AZURE_RESOURCE_GROUP_SECRETS"
+create_a_resource "$AZURE_RESOURCE_GROUP_PERSIST"
+create_a_resource "$AZURE_RESOURCE_GROUP_BASTION"
+create_a_resource "$AZURE_RESOURCE_GROUP_VNG"
+create_a_resource "$AZURE_RESOURCE_GROUP_VNET"
 
 
 

@@ -28,9 +28,9 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_PERSIST" \
     --template-file templates/template-cosmos-endpoints.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \
-    vnetResourceGroup=$AZURE_RESOURCE_GROUP_VNET \
-    vnetNetworkName=$AZURE_VNET_SPOKE_NAME \
-    subnetDataName="$VNET_SUBNET_DATA_NAME" \
+    vnetResourceGroup="$AZURE_RESOURCE_GROUP_VNET" \
+    vnetNetworkName="$AZURE_VNET_SPOKE_NAME" \
+    subnetSpokeDataName="$VNET_SPOKE_SUBNET_DATA_NAME" \
     cosmosInstanceName=$COSMOS_DB_INSTANCE_NAME \
     privateEndpoints_cosmos=$COSMOS_DB_PE_NAME \
     lastPublishedAt="$NOW_PUBLISHED_AT" \

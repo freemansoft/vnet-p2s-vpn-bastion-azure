@@ -19,9 +19,9 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNG" \
      --template-file templates/template-vng-vpn.json \
      --parameters \
      azureRegionPrimary=$AZURE_REGION \
-     vnetResourceGroup=$AZURE_RESOURCE_GROUP_VNET \
-     vnetNetworkName=$AZURE_VNET_HUB_NAME \
-     subnetVngName=$VNET_SUBNET_VNG_NAME \
+     vnetResourceGroup="$AZURE_RESOURCE_GROUP_VNET" \
+     vnetNetworkName="$AZURE_VNET_HUB_NAME" \
+     subnetHubVngName="$VNET_HUB_SUBNET_VNG_NAME" \
      virtualNetworkGatewaysVngName=$VNGS_VNG_NAME \
      publicIPAddressesVngName=$PUBLIC_IP_VNG_NAME \
      p2sClientAddressPool="$P2S_ADDRESS_POOL" \
@@ -30,4 +30,4 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNG" \
      project="$PROJECT" \
 
 # invoke the script that creates certs and uploads them
-bash $DIR/9-create-p2s.sh
+bash $DIR/8b-create-hub-p2s.sh

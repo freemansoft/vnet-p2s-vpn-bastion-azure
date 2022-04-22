@@ -26,9 +26,9 @@ az deployment group create \
     --template-file templates/template-keyvault.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \
-    vnetResourceGroup=$AZURE_RESOURCE_GROUP_VNET \
-    vnetNetworkName=$AZURE_VNET_SPOKE_NAME \
-    subnetCredentialsName="$VNET_SUBNET_SECRETS_NAME" \
+    vnetResourceGroup="$AZURE_RESOURCE_GROUP_VNET" \
+    vnetNetworkName="$AZURE_VNET_SPOKE_NAME" \
+    subnetSpokeCredentialsName="$VNET_SPOKE_SUBNET_SECRETS_NAME" \
     keyVaultName="$KEY_VAULT_NAME" \
     lastPublishedAt="$NOW_PUBLISHED_AT" \
     version="$VERSION" \

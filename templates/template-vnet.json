@@ -32,41 +32,48 @@
         "vnetNetworkSpokeName": {
             "type": "string"
         },
-        "subnetDefaultNetwork": {
+        "subnetSpokeDefaultNetwork": {
             "type": "string"
         },
-        "subnetDefaultName": {
+        "subnetSpokeDefaultName": {
             "type": "string"
         },
-        "subnetDnsAciNetwork": {
+        "subnetHubDnsAciNetwork": {
             "type": "string"
         },
-        "subnetDnsAciName": {
+        "subnetHubDnsAciName": {
             "type": "string",
             "defaultValue": "DnsAciSubnet"
         },
-        "subnetDataNetwork": {
+        "subnetHubShellAciNetwork": {
             "type": "string"
         },
-        "subnetDataName": {
+        "subnetHubShellAciName": {
+            "type": "string",
+            "defaultValue": "DnsAciSubnet"
+        },
+        "subnetSpokeDataNetwork": {
             "type": "string"
         },
-        "subnetCredentialsNetwork": {
+        "subnetSpokeDataName": {
             "type": "string"
         },
-        "subnetCredentialsName": {
+        "subnetSpokeCredentialsNetwork": {
             "type": "string"
         },
-        "subnetBastionNetwork": {
+        "subnetSpokeCredentialsName": {
             "type": "string"
         },
-        "subnetBastionName": {
+        "subnetHubBastionNetwork": {
             "type": "string"
         },
-        "subnetVngNetwork": {
+        "subnetHubBastionName": {
             "type": "string"
         },
-        "subnetVngName": {
+        "subnetHubVngNetwork": {
+            "type": "string"
+        },
+        "subnetHubVngName": {
             "defaultValue": "GatewaySubnet",
             "type": "string"
         }
@@ -91,9 +98,9 @@
                 },
                 "subnets": [
                     {
-                        "name": "[parameters('subnetDnsAciName')]",
+                        "name": "[parameters('subnetHubDnsAciName')]",
                         "properties": {
-                            "addressPrefix": "[parameters('subnetDnsAciNetwork')]",
+                            "addressPrefix": "[parameters('subnetHubDnsAciNetwork')]",
                             "delegations": [
                                 {
                                     "name": "AciDel",
@@ -107,18 +114,34 @@
                         }
                     },
                     {
-                        "name": "[parameters('subnetBastionName')]",
+                        "name": "[parameters('subnetHubShellAciName')]",
                         "properties": {
-                            "addressPrefix": "[parameters('subnetBastionNetwork')]",
+                            "addressPrefix": "[parameters('subnetHubShellAciNetwork')]",
+                            "delegations": [
+                                {
+                                    "name": "AciDel",
+                                    "properties": {
+                                        "serviceName": "Microsoft.ContainerInstance/containerGroups"
+                                    }
+                                }
+                            ],
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('subnetHubBastionName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetHubBastionNetwork')]",
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
                         }
                     },
                     {
-                        "name": "[parameters('subnetVngName')]",
+                        "name": "[parameters('subnetHubVngName')]",
                         "properties": {
-                            "addressPrefix": "[parameters('subnetVngNetwork')]",
+                            "addressPrefix": "[parameters('subnetHubVngNetwork')]",
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
@@ -147,27 +170,27 @@
                 },
                 "subnets": [
                     {
-                        "name": "[parameters('subnetDefaultName')]",
+                        "name": "[parameters('subnetSpokeDefaultName')]",
                         "properties": {
-                            "addressPrefix": "[parameters('subnetDefaultNetwork')]",
+                            "addressPrefix": "[parameters('subnetSpokeDefaultNetwork')]",
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
                         }
                     },
                     {
-                        "name": "[parameters('subnetDataName')]",
+                        "name": "[parameters('subnetSpokeDataName')]",
                         "properties": {
-                            "addressPrefix": "[parameters('subnetDataNetwork')]",
+                            "addressPrefix": "[parameters('subnetSpokeDataNetwork')]",
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Disabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
                         }
                     },
                     {
-                        "name": "[parameters('subnetCredentialsName')]",
+                        "name": "[parameters('subnetSpokeCredentialsName')]",
                         "properties": {
-                            "addressPrefix": "[parameters('subnetCredentialsNetwork')]",
+                            "addressPrefix": "[parameters('subnetSpokeCredentialsNetwork')]",
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Disabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
@@ -181,13 +204,13 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2020-11-01",
-            "name": "[concat(parameters('vnetNetworkHubName'), '/', parameters('subnetBastionName'))]",
+            "name": "[concat(parameters('vnetNetworkHubName'), '/', parameters('subnetHubBastionName'))]",
             "location": "[parameters('azureRegionPrimary')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkHubName'))]"
             ],
             "properties": {
-                "addressPrefix": "[parameters('subnetBastionNetwork')]",
+                "addressPrefix": "[parameters('subnetHubBastionNetwork')]",
                 "delegations": [],
                 "privateEndpointNetworkPolicies": "Enabled",
                 "privateLinkServiceNetworkPolicies": "Enabled"
@@ -196,13 +219,13 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2020-11-01",
-            "name": "[concat(parameters('vnetNetworkSpokeName'), '/', parameters('subnetCredentialsName'))]",
+            "name": "[concat(parameters('vnetNetworkSpokeName'), '/', parameters('subnetSpokeCredentialsName'))]",
             "location": "[parameters('azureRegionPrimary')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkSpokeName'))]"
             ],
             "properties": {
-                "addressPrefix": "[parameters('subnetCredentialsNetwork')]",
+                "addressPrefix": "[parameters('subnetSpokeCredentialsNetwork')]",
                 "delegations": [],
                 "privateEndpointNetworkPolicies": "Disabled",
                 "privateLinkServiceNetworkPolicies": "Enabled"
@@ -211,13 +234,13 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2020-11-01",
-            "name": "[concat(parameters('vnetNetworkHubName'), '/', parameters('subnetDnsAciName'))]",
+            "name": "[concat(parameters('vnetNetworkHubName'), '/', parameters('subnetHubDnsAciName'))]",
             "location": "[parameters('azureRegionPrimary')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkHubName'))]"
             ],
             "properties": {
-                "addressPrefix": "[parameters('subnetDnsAciNetwork')]",
+                "addressPrefix": "[parameters('subnetHubDnsAciNetwork')]",
                 "delegations": [
                     {
                         "name": "AciDel",
@@ -233,13 +256,35 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2020-11-01",
-            "name": "[concat(parameters('vnetNetworkSpokeName'), '/', parameters('subnetDataName'))]",
+            "name": "[concat(parameters('vnetNetworkHubName'), '/', parameters('subnetHubShellAciName'))]",
+            "location": "[parameters('azureRegionPrimary')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkHubName'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[parameters('subnetHubShellAciNetwork')]",
+                "delegations": [
+                    {
+                        "name": "AciDel",
+                        "properties": {
+                            "serviceName": "Microsoft.ContainerInstance/containerGroups"
+                        }
+                    }
+                ],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('vnetNetworkSpokeName'), '/', parameters('subnetSpokeDataName'))]",
             "location": "[parameters('azureRegionPrimary')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkSpokeName'))]"
             ],
             "properties": {
-                "addressPrefix": "[parameters('subnetDataNetwork')]",
+                "addressPrefix": "[parameters('subnetSpokeDataNetwork')]",
                 "delegations": [],
                 "privateEndpointNetworkPolicies": "Disabled",
                 "privateLinkServiceNetworkPolicies": "Enabled"
@@ -248,13 +293,13 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2020-11-01",
-            "name": "[concat(parameters('vnetNetworkSpokeName'), '/', parameters('subnetDefaultName'))]",
+            "name": "[concat(parameters('vnetNetworkSpokeName'), '/', parameters('subnetSpokeDefaultName'))]",
             "location": "[parameters('azureRegionPrimary')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkSpokeName'))]"
             ],
             "properties": {
-                "addressPrefix": "[parameters('subnetDefaultNetwork')]",
+                "addressPrefix": "[parameters('subnetSpokeDefaultNetwork')]",
                 "delegations": [],
                 "privateEndpointNetworkPolicies": "Enabled",
                 "privateLinkServiceNetworkPolicies": "Enabled"
@@ -263,20 +308,18 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2020-11-01",
-            "name": "[concat(parameters('vnetNetworkHubName'), '/', parameters('subnetVngName'))]",
+            "name": "[concat(parameters('vnetNetworkHubName'), '/', parameters('subnetHubVngName'))]",
             "location": "[parameters('azureRegionPrimary')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkHubName'))]"
             ],
             "properties": {
-                "addressPrefix": "[parameters('subnetVngNetwork')]",
+                "addressPrefix": "[parameters('subnetHubVngNetwork')]",
                 "delegations": [],
                 "privateEndpointNetworkPolicies": "Enabled",
                 "privateLinkServiceNetworkPolicies": "Enabled"
             }
-
         },
-
         {
             "name": "[concat(parameters('vnetNetworkHubName'),'/',parameters('vnetNetworkSpokeName'))]",
             "dependsOn": [
@@ -323,6 +366,5 @@
                 }
             }
         }
-
     ]
 }

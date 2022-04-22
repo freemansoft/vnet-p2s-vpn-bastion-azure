@@ -18,15 +18,16 @@ Azure
     * You selected an account `az account set --subscription <subscription-id>`
     * You verified the current account `az account show`
 
-Mac / BASH
+Mac / BASH 
 * You are runnign bash 4 or later.  Apple only ships version bash 3.x.  Install the latest bash with `homebrew bash install`
 
 ## Future / TODO
 1. Linux VM drive storage should be private link only
-1. Log Analytics should have private storage scope
 1. Put Linux vm drive in storage resource groups
+1. Log Analytics should have private storage scope
+1. Add VNET attached cloud shell using cloud shell ACI subnet.  No obvious way to do that bound to a VNET with IaC
 1. Script the download the VPN package from the p2s blade in the VNG
-1. **Bug** The Azure CLI refuses to pars _subnet name_ `subnetDnsAciName`. It is hard coded as a default value in the template until it is fixed
+1. **Bug** The Azure CLI refuses to pars _subnet name_ `subnetHubDnsAciName`. It is hard coded as a default value in the template until it is fixed
 
 
 ## Scripts
@@ -34,16 +35,16 @@ Mac / BASH
 | ---------------------------- | -------------------- | -------------------- | ------- |
 | 0-install-tools.sh           | yes | yes | install AWS CLI and jq |
 | 1-login-az.sh                | yes | yes | renew azure cli credentials if expired |
-| 2-create-resources.sh        | yes | yes | create a resource group if it does not exist |
-| 3a-create-vnet.sh             | yes | yes | Creates hub and spoke vnets, peerings, subnets, DNS forwarder in a container. Adds DNS to hub VNET |
-| 4a-create-keyvault.sh        | no  | no  | Creates a Key Vault and Private Link Endpoints | 
-| 5a-create-storage.sh          | no  | no  | Creates storage accounts, storage containers and Private Link Endpoints |
-| 5b-create-cosmosdb.sh        | no  | no  | Create Cosmos DB instance and PLE connection.  No containers created |
-| 6a-create-monitor.sh          | no  | no  | Creates Log Analytics Workspace and Application Insights instance |
-| 6b-create-vm-linux.sh         | no  | No  | Create a simple virtual machine on the default subnet with no public IP with a log analytics workspace | 
-| 7-create-bastion.sh          | yes | no  | Creates a bastion host |
-| 8-create-vng-with-p2s.sh     | no  | yes | Creates a vng appliance with a P2S Address pool and self signed CA. Can VPN with the downloaded VPN Client config |
-| 9-create-p2s.sh              | no  | yes | Creates and uploads the certificates using the Azure CLI. Can be used to add extra root certs |
+| 2-create-all-resources.sh    | yes | yes | create a resource group if it does not exist |
+| 3a-create-all-vnet.sh        | yes | yes | Creates hub and spoke vnets, peerings, subnets, DNS forwarder in a container. Adds DNS to hub VNET |
+| 4a-create-spoke-keyvault.sh  | no  | no  | Creates a Key Vault and Private Link Endpoints | 
+| 5a-create-spoke-storage.sh   | no  | no  | Creates storage accounts, storage containers and Private Link Endpoints |
+| 5b-create-spoke-cosmosdb.sh  | no  | no  | Create Cosmos DB instance and PLE connection.  No containers created |
+| 6a-create-spoke-monitor.sh   | no  | no  | Creates Log Analytics Workspace and Application Insights instance |
+| 6b-create-spoke- vm-linux.sh | no  | No  | Create a simple virtual machine on the default subnet with no public IP with a log analytics workspace | 
+| 7a-create-hub-bastion.sh      | yes | no  | Creates a bastion host |
+| 8a-create-hub-vng-with-p2s.sh | no  | yes | Creates a vng appliance with a P2S Address pool and self signed CA. Can VPN with the downloaded VPN Client config |
+| 8b-create-hub-p2s.sh         | no  | yes | Creates and uploads the certificates using the Azure CLI. Can be used to add extra root certs. called by 8a-create-hub-vng-with-p2s |
 | | | | | 
 | 90-destroy-resource-group.sh           | n/a | n/a | Remove a resource group. May only works if public ips are disassociated or deleted |
 | 91-purge-all-resource-groups.sh        | n/a | n/a | Remove everything in all resource groups leaving the resource groups |
@@ -95,13 +96,14 @@ flowchart TD
     VNetSpoke[Spoke VNet<br/>10.0.16.0/20]
 
 
-    VNetHub --> SubVng[GatewaySubnet <br/>10.0.0.0/24  250]
-    VNetHub --> SubAci[DnsAciSubnet <br/>10.0.1.0/26 59]
-    VNetHub --> SubBast[AzureBastionSubnet <br/>10.0.1.64/26 59]
+    VNetHub --> SubVng[Gateway Subnet <br/>10.0.0.0/24  250]
+    VNetHub --> SubAci[DnsAci Subnet <br/>10.0.1.0/26 59]
+    VNetHub --> SubAciShell[CloudShell Subnet <br/>10.0.1.64/26 59]
+    VNetHub --> SubBast[AzureBastion Subnet <br/>10.0.1.128/26 59]
 
-    VNetSpoke --> SubDef[default <br/>10.0.16.0/24 250]
-    VNetSpoke --> SubData[data <br/>10.0.17.0/26 57]
-    VNetSpoke --> SubCred[CredentialSecrets <br/>10.0.17.64/26 59]
+    VNetSpoke --> SubDef[default Subnet<br/>10.0.16.0/24 250]
+    VNetSpoke --> SubData[data Subnet<br/>10.0.17.0/26 57]
+    VNetSpoke --> SubCred[CredentialSecrets Subnet<br/>10.0.17.64/26 59]
 
     SubVng --> VNG[Virtual Network Gateway]
     VNG --> PubVNG[Public IP<br/>20.xx.xx.xx dynamic]
@@ -163,12 +165,13 @@ flowchart TD
 
         subgraph hub[Hub VNet]
             subgraph subnetHub[Hub Subnets]
-                SubnetsHubGateway>Subnet Gateway]
-                SubnetHubDnsAci>Subnet DNS Azure Container Instance]
-                SubnetHubBastion>Subnet Bastion]
+                SubnetHubGateway>Gateway]
+                subnetHubDnsAci>DNS Forwarder - ACI]
+                SubnetHubShellAci>Cloud Shell - ACI]
+                SubnetHubBastion>Bastion]
             end
 
-            subgraph VnetComponents[VNet Support]
+            subgraph VnetComponents[VNet Support - static]
             DnsForwarder[DNS Forwarder]
             VNetGateway[VNet Gateway]
             end
@@ -176,9 +179,9 @@ flowchart TD
 
         subgraph spoke[Spoke VNet]
             subgraph subnetSpoke[Spoke Subnets]
-                SubnetsSpokeDefault>Subnet default]
-                SubnetsSpokeKeyValut>Subnet CredentialSecrets]
-                SubnetsSpokeData>Subnet data]
+                SubnetsSpokeDefault>default]
+                SubnetsSpokeKeyValut>CredentialSecrets]
+                SubnetsSpokeData>data]
             end
             subgraph storageFileGraph[Storage Account File]
                 StorageFile[Storage Account<br/>File]
@@ -192,7 +195,7 @@ flowchart TD
             end
             subgraph KeyVaultGraph[Key Vault]
                 KeyVault[Key Vault]
-                KeyVaultPle[SKey Vault<br>Private Link Endpoint]
+                KeyVaultPle[Key Vault<br>Private Link Endpoint]
                 KeyVaultNic[Key Vault<br>Network Interface]
             end
         end
@@ -472,6 +475,11 @@ P2S
 Azure DNS over VPN Tunnels
 * https://github.com/dmauser/PrivateLink/tree/master/DNS-Integration-P2S
 * https://docs.microsoft.com/en-us/answers/questions/64223/issue-with-resolving-hostnames-while-connected-to.html
+
+Azure Cloud Shell
+* https://docs.microsoft.com/en-us/azure/cloud-shell/private-vnet
+* https://docs.microsoft.com/en-us/azure/cloud-shell/persisting-shell-storage
+* https://www.redeploy.com/posts/running-cloud-shell-from-your-virtual-network#:~:text=Azure%20Cloud%20Shell%20is%20a,day%20up%20in%20the%20cloud.
 
 VM Agents
 * https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/virtual-machines/extensions/oms-linux.md

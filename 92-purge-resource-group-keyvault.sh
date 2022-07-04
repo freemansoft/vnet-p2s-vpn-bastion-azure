@@ -29,7 +29,7 @@ az deployment group create \
     vnetResourceGroup="$AZURE_RESOURCE_GROUP_VNET" \
     vnetNetworkName="$AZURE_VNET_SPOKE_NAME" \
     subnetSpokeCredentialsName="$VNET_SPOKE_SUBNET_SECRETS_NAME" \
-    keyVaultName="$KEY_VAULT_NAME" \
+    keyVaultName="$SPOKE_KEY_VAULT_NAME" \
     lastPublishedAt="$NOW_PUBLISHED_AT" \
     version="$VERSION" \
     project="$PROJECT" \

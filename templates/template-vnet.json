@@ -43,14 +43,20 @@
         },
         "subnetHubDnsAciName": {
             "type": "string",
-            "defaultValue": "DnsAciSubnet"
+            "defaultValue": "DnsAci"
         },
         "subnetHubShellAciNetwork": {
             "type": "string"
         },
         "subnetHubShellAciName": {
             "type": "string",
-            "defaultValue": "DnsAciSubnet"
+            "defaultValue": "CloudShellAci"
+        },
+        "subnetHubDataNetwork": {
+            "type": "string"
+        },
+        "subnetHubDataName": {
+            "type": "string"
         },
         "subnetSpokeDataNetwork": {
             "type": "string"
@@ -125,6 +131,14 @@
                                     }
                                 }
                             ],
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('subnetHubDataName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetHubDataNetwork')]",
                             "privateEndpointNetworkPolicies": "Disabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
                         }

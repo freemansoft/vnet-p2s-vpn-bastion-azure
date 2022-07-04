@@ -19,14 +19,19 @@ AZURE_REGION="eastus2"
 # root_name should not have dashes in it.  Not all names can accept dashes
 root_name="FsiExample"
 
-# decided to not prefix the resource names with the resource type rg, ia, cl...
-AZURE_RESOURCE_GROUP_APP="$root_name-app-RG"
+# Suffix resource groups with "-RG"
+# GLOBAL RGs
 AZURE_RESOURCE_GROUP_VNET="$root_name-vnet-RG"
-AZURE_RESOURCE_GROUP_PERSIST="$root_name-persist-RG"
+
+# HUB RGs
+# Virtnal Network Gateway (VNG) must be in the same resource group as the VNET that it is the gateway for
 AZURE_RESOURCE_GROUP_BASTION="$root_name-bastion-RG"
-AZURE_RESOURCE_GROUP_SECRETS="$root_name-secret-RG"
-# VNG must be in the vnet resource group that it is the gateway for
 AZURE_RESOURCE_GROUP_VNG="$AZURE_RESOURCE_GROUP_VNET"
+
+# Spoke RGs
+AZURE_RESOURCE_GROUP_APP="$root_name-app-RG"
+AZURE_RESOURCE_GROUP_PERSIST="$root_name-persist-RG"
+AZURE_RESOURCE_GROUP_SECRETS="$root_name-secret-RG"
 
 NOW_PUBLISHED_AT="$(date +%F-%T)"
 
@@ -41,17 +46,22 @@ AZURE_VNET_HUB_NETWORK="10.0.0.0/20"
 # MS Azure Minimum Size
 # 10.0.0.0 - 10.0.0.255
 VNET_HUB_SUBNET_VNG_NETWORK="10.0.0.0/24"
-VNET_HUB_SUBNET_VNG_NAME="GatewaySubnet"
+VNET_HUB_SUBNET_VNG_NAME="Gateway"
 # 10.0.1.0 - 10.0.1.63
 VNET_HUB_SUBNET_DNS_ACI_NETWORK="10.0.1.0/26"
-VNET_HUB_SUBNET_DNS_ACI_NAME="DnsAciSubnet"
+VNET_HUB_SUBNET_DNS_ACI_NAME="DnsAci"
 # 10.0.1.64 - 10.0.1.127
 VNET_HUB_SUBNET_SHELL_ACI_NETWORK="10.0.1.64/26"
-VNET_HUB_SUBNET_SHELL_ACI_NAME="CloudShellAciSubnet"
+VNET_HUB_SUBNET_SHELL_ACI_NAME="CloudShellAci"
 # MS Azure minimum size
 # 10.0.1.128 - 10.0.1.191
 VNET_HUB_SUBNET_BASTION_NETWORK="10.0.1.128/26"
-VNET_HUB_SUBNET_BASTION_NAME="AzureBastionSubnet"
+VNET_HUB_SUBNET_BASTION_NAME="AzureBastion"
+# primarily cloudshell storage
+# 10.0.1.192 - 1.0.1.254
+VNET_HUB_SUBNET_DATA_NETWORK="10.0.1.192/26"
+VNET_HUB_SUBNET_DATA_NAME="Storage"
+
 
 ######### ######### ######### ######### 
 # Landing Zone / application VNET
@@ -66,7 +76,7 @@ VNET_SPOKE_SUBNET_DEFAULT_NAME="default"
 
 # 10.0.17.0 - 10.0.17.63
 VNET_SPOKE_SUBNET_DATA_NETWORK="10.0.17.0/26"
-VNET_SPOKE_SUBNET_DATA_NAME="data"
+VNET_SPOKE_SUBNET_DATA_NAME="Storage"
 # 10.0.17.64 - 10.0.17.127
 VNET_SPOKE_SUBNET_SECRETS_NETWORK="10.0.17.64/26"
 VNET_SPOKE_SUBNET_SECRETS_NAME="CredentialsSecrets"
@@ -90,20 +100,21 @@ BASTION_HOST_NAME="$root_name-Bastion"
 PUBLIC_IP_BASTION_NAME="$root_name-Bastion-IP"
 
 # cosmos db must be lower case
-COSMOS_DB_INSTANCE_NAME="${root_name,,}-cosmos"
-COSMOS_DB_PE_NAME="$root_name-PeCosmos"
+SPOKE_COSMOS_DB_INSTANCE_NAME="${root_name,,}-cosmos"
+SPOKE_COSMOS_DB_PE_NAME="$root_name-PeCosmos"
 
 # must be lower case with no dashes
-STORAGE_ACCOUNT_NAME="${root_name,,}0storage"
-STORAGE_CONTAINER_BLOB_1_NAME="container-1"
-STORAGE_CONTAINER_BLOB_2_Name="container-2"
+SPOKE_STORAGE_ACCOUNT_NAME="${root_name,,}0storage"
+SPOKE_STORAGE_CONTAINER_BLOB_1_NAME="container-1"
+SPOKE_STORAGE_CONTAINER_BLOB_2_Name="container-2"
 
-STORAGE_ACCOUNT_PE_BLOB_NAME="$root_name-PeStorageBlob"
-STORAGE_ACCOUNT_PE_FILE_NAME="$root_name-PeStorageFile"
+SPOKE_STORAGE_ACCT_PE_BLOB_NAME="$root_name-PeStorageBlob"
+SPOKE_STORAGE_ACCT_PE_FILE_NAME="$root_name-PeStorageFile"
 
 # sometimes add number to the keyvault name because of soft delete pain - being lazy
-KEY_VAULT_NAME="$root_name-kv-4"
-KEY_VAULT_PE_NAME="$root_name-PeKeyVault"
+SPOKE_KEY_VAULT_NAME="$root_name-kv-4"
+# PE -> Private Link Endpoint
+SPOKE_KEY_VAULT_PE_NAME="$root_name-PeKeyVault"
 
 VM_UBUNTU_NAME="$root_name-VmLinux"
 VM_UBUNTU_USERNAME="azureuser"
@@ -111,8 +122,8 @@ VM_UBUNTU_PASSWORD="1WeakPassword"
 VM_UBUNTU_OS_VERSION="18.04-LTS"
 VM_SIZE="Standard_B2s"
 
-LOG_ANALYTICS_WORKSPACE_NAME="$root_name-LAW"
-APP_INSIGHTS_NAME="$root_name-AI"
+SPOKE_LOG_ANALYTICS_WS_NAME="$root_name-LAW"
+SPOKE_APP_INSIGHTS_NAME="$root_name-AI"
 
 # Use git commands.  We know this is a git repo and that you had to use git to get it
 # This should reall be the git tag but I don't tag in my demo repos

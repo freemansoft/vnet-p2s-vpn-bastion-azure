@@ -17,7 +17,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_PERSIST" \
     --template-file templates/template-cosmos.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \
-    cosmosInstanceName=$COSMOS_DB_INSTANCE_NAME \
+    cosmosInstanceName=$SPOKE_COSMOS_DB_INSTANCE_NAME \
     lastPublishedAt="$NOW_PUBLISHED_AT" \
     version="$VERSION" \
     project="$PROJECT" \
@@ -31,8 +31,8 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_PERSIST" \
     vnetResourceGroup="$AZURE_RESOURCE_GROUP_VNET" \
     vnetNetworkName="$AZURE_VNET_SPOKE_NAME" \
     subnetSpokeDataName="$VNET_SPOKE_SUBNET_DATA_NAME" \
-    cosmosInstanceName=$COSMOS_DB_INSTANCE_NAME \
-    privateEndpoints_cosmos=$COSMOS_DB_PE_NAME \
+    cosmosInstanceName=$SPOKE_COSMOS_DB_INSTANCE_NAME \
+    privateEndpoints_cosmos=$SPOKE_COSMOS_DB_PE_NAME \
     lastPublishedAt="$NOW_PUBLISHED_AT" \
     version="$VERSION" \
     project="$PROJECT" \

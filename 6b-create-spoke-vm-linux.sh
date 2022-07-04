@@ -42,15 +42,15 @@ echo "Created vm $vm_resource_id"
 
 echo -e "${PURPLE}---------------- LOG ANALYTICS WORKSPACE VM HOOKUP----------------------${NC}"
 # Use "list" so we don't have to handle errors. Returns [] if it isn't there - returns [value] if it exists
-monitor_list_results=$(az monitor log-analytics workspace list --resource-group "$AZURE_RESOURCE_GROUP_APP" --query "[?name=='$LOG_ANALYTICS_WORKSPACE_NAME'].customerId")
+monitor_list_results=$(az monitor log-analytics workspace list --resource-group "$AZURE_RESOURCE_GROUP_APP" --query "[?name=='$SPOKE_LOG_ANALYTICS_WS_NAME'].customerId")
 if [ "[]" == "$vms_metadata" ]; then
      echo "No Log Analytics Workspace found. Skipping VM Agent"
 else
      workspace_id=$(jq -r ".[0]" <<< "$monitor_list_results")
      # .customerId is is the WorkspaceId .id is the full path
-     # workspace_id=$(az monitor log-analytics workspace show           --resource-group "$AZURE_RESOURCE_GROUP_APP" --workspace-name $LOG_ANALYTICS_WORKSPACE_NAME --query customerId)
+     # workspace_id=$(az monitor log-analytics workspace show           --resource-group "$AZURE_RESOURCE_GROUP_APP" --workspace-name $SPOKE_LOG_ANALYTICS_WS_NAME --query customerId)
      # .primarySharedKey and .secondarySharedKey
-     shared_keys=$(az monitor log-analytics workspace get-shared-keys --resource-group "$AZURE_RESOURCE_GROUP_APP" --workspace-name $LOG_ANALYTICS_WORKSPACE_NAME)
+     shared_keys=$(az monitor log-analytics workspace get-shared-keys --resource-group "$AZURE_RESOURCE_GROUP_APP" --workspace-name $SPOKE_LOG_ANALYTICS_WS_NAME)
      primary_key=$(jq -r  ".primarySharedKey" <<< "$shared_keys")
 
      echo -e "${PURPLE}----------------MANAGEMENT EXTENSIONS----------------------${NC}"

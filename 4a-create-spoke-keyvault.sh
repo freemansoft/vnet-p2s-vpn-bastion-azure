@@ -20,7 +20,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SECRETS" \
     vnetResourceGroup="$AZURE_RESOURCE_GROUP_VNET" \
     vnetNetworkName="$AZURE_VNET_SPOKE_NAME" \
     subnetSpokeCredentialsName="$VNET_SPOKE_SUBNET_SECRETS_NAME" \
-    keyVaultName="$KEY_VAULT_NAME" \
+    keyVaultName="$SPOKE_KEY_VAULT_NAME" \
     lastPublishedAt="$NOW_PUBLISHED_AT" \
     version="$VERSION" \
     project="$PROJECT" \
@@ -33,8 +33,8 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SECRETS" \
     vnetResourceGroup="$AZURE_RESOURCE_GROUP_VNET" \
     vnetNetworkName="$AZURE_VNET_SPOKE_NAME" \
     subnetSpokeCredentialsName="$VNET_SPOKE_SUBNET_SECRETS_NAME" \
-    keyVaultName="$KEY_VAULT_NAME" \
-    privateEndpointsKeyVaultName="$KEY_VAULT_PE_NAME" \
+    keyVaultName="$SPOKE_KEY_VAULT_NAME" \
+    privateEndpointsKeyVaultName="$SPOKE_KEY_VAULT_PE_NAME" \
     lastPublishedAt="$NOW_PUBLISHED_AT" \
     version="$VERSION" \
     project="$PROJECT" \

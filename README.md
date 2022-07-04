@@ -23,11 +23,11 @@ Mac / BASH
 
 ## Future / TODO
 1. Linux VM drive storage should be private link only
-1. Put Linux vm drive in storage resource groups
+1. Linux vm drive should be in storage resource groups
 1. Log Analytics should have private storage scope
 1. Add VNET attached cloud shell using cloud shell ACI subnet.  No obvious way to do that bound to a VNET with IaC
+1. Cloudshell should use PLE for storage access.  IMO all storage should be accessed via PLE (JF)
 1. Script the download the VPN package from the p2s blade in the VNG
-1. **Bug** The Azure CLI refuses to pars _subnet name_ `subnetHubDnsAciName`. It is hard coded as a default value in the template until it is fixed
 
 
 ## Scripts
@@ -73,7 +73,7 @@ Example: Before 2.17.1.  After 2.35.1
 ## Network IP Ranges
 Pick network blocks that do not conflict with other networking. The network blocks below are non-routable (private) network blocks.
 This project needs two private VNET ranges for the Azure components
-1. Your VNET IP pool will be divided across seeral subnets
+1. Your VNET IP pool will be divided across several subnets
 1. The Virtual Network Gateway address range managed by the network gateway
 
 These network blocks are available for private VNETs. Typically we divide up the 10.x.x.x across multiple VNETS.
@@ -96,25 +96,26 @@ flowchart TD
     VNetSpoke[Spoke VNet<br/>10.0.16.0/20]
 
 
-    VNetHub --> SubVng[Gateway Subnet <br/>10.0.0.0/24  250]
-    VNetHub --> SubAci[DnsAci Subnet <br/>10.0.1.0/26 59]
-    VNetHub --> SubAciShell[CloudShell Subnet <br/>10.0.1.64/26 59]
-    VNetHub --> SubBast[AzureBastion Subnet <br/>10.0.1.128/26 59]
+    VNetHub --> SubHubVng[Gateway Subnet <br/>10.0.0.0/24  250]
+    VNetHub --> SubHubDnsAci[DnsAci Subnet <br/>10.0.1.0/26 59]
+    VNetHub --> SubHubAciShell[CloudShell Subnet <br/>10.0.1.64/26 59]
+    VNetHub --> SubnetHubData[Storage Subnet <br/>10.0.1.192/26 59]
+    VNetHub --> SubHubBast[AzureBastion Subnet <br/>10.0.1.128/26 59]
 
-    VNetSpoke --> SubDef[default Subnet<br/>10.0.16.0/24 250]
-    VNetSpoke --> SubData[data Subnet<br/>10.0.17.0/26 57]
-    VNetSpoke --> SubCred[CredentialSecrets Subnet<br/>10.0.17.64/26 59]
+    VNetSpoke --> SubSpokeDef[default Subnet<br/>10.0.16.0/24 250]
+    VNetSpoke --> SubSpokeData[Storage Subnet<br/>10.0.17.0/26 57]
+    VNetSpoke --> SubSpokeCred[CredentialSecrets Subnet<br/>10.0.17.64/26 59]
 
-    SubVng --> VNG[Virtual Network Gateway]
+    SubHubVng --> VNG[Virtual Network Gateway]
     VNG --> PubVNG[Public IP<br/>20.xx.xx.xx dynamic]
     VNG --> PoolVNG[Address Pool<br>172.16.0.0/26]
 
-    SubAci --> AciDns(DNS Forwarder<br/>Container)
+    SubHubDnsAci --> AciDns(DNS Forwarder<br/>Container)
 
-    SubBast --> Bastion[Bastion Host]
+    SubHubBast --> Bastion[Bastion Host]
     Bastion --> PubaAst[Public IP<br/>20.xx.xx.xx dynamic]
 
-    SubDef --> NicVM[N.I.C.<br/>Linux]
+    SubSpokeDef --> NicVM[N.I.C.<br/>Linux]
     NicVM --> VM[Linux VM]
 
     StorAct[Storage Account]
@@ -124,21 +125,21 @@ flowchart TD
     CosmosDB[Cosmos DB]
 
     
-    SubData --> NicStorFile[N.I.C.<br/>File]
+    SubSpokeData --> NicStorFile[N.I.C.<br/>File]
     NicStorFile --> PleFile[Private Endpoint<br/>Storage File]
     PleFile --> StorFile
     StorFile --> StorAct
 
-    SubData --> NicStorBlob[N.I.C.<br/>Blob]
+    SubSpokeData --> NicStorBlob[N.I.C.<br/>Blob]
     NicStorBlob --> PleBlob[Private Endpoint<br/>Storage Blob]
     PleBlob --> StorBlob
     StorBlob --> StorAct
 
-    SubData --> NicCosmos[N.I.C.<br/> Cosmos DB]
+    SubSpokeData --> NicCosmos[N.I.C.<br/> Cosmos DB]
     NicCosmos --> PleCosmos[Private Endpoint<br/>Cosmos DB]
     PleCosmos --> CosmosDB
 
-    SubCred --> NicKeyVault[N.I.C.<br/>Key Vault]
+    SubSpokeCred --> NicKeyVault[N.I.C.<br/>Key Vault]
     NicKeyVault --> PleKV[Private Endpoint<br/>Key Vault]
     PleKV --> KeyVault[Key Vault]
 
@@ -168,6 +169,7 @@ flowchart TD
                 SubnetHubGateway>Gateway]
                 subnetHubDnsAci>DNS Forwarder - ACI]
                 SubnetHubShellAci>Cloud Shell - ACI]
+                SubnetsHubData>Storage]
                 SubnetHubBastion>Bastion]
             end
 
@@ -181,7 +183,7 @@ flowchart TD
             subgraph subnetSpoke[Spoke Subnets]
                 SubnetsSpokeDefault>default]
                 SubnetsSpokeKeyValut>CredentialSecrets]
-                SubnetsSpokeData>data]
+                SubnetsSpokeData>Storage]
             end
             subgraph storageFileGraph[Storage Account File]
                 StorageFile[Storage Account<br/>File]
@@ -255,7 +257,7 @@ This provides Azure internal IP addresses for private link resourcesto clients o
 You can find the reason for the need for the DNS forwarder in a bunch of places. See references below.
 
 ## Resource Groups
-This example isolates related components components into their own Resource groups, Networking, Data Stores, etc.
+This example isolates related components components into their own Resource groups, Networking, Data Storage, etc.
 Resource Group partitioning makes it easier to cleanly build and tear down ephemeral components while leaving core and persistence services running
 
 | Resource Group | Description | Purge Script |
@@ -480,6 +482,8 @@ Azure Cloud Shell
 * https://docs.microsoft.com/en-us/azure/cloud-shell/private-vnet
 * https://docs.microsoft.com/en-us/azure/cloud-shell/persisting-shell-storage
 * https://www.redeploy.com/posts/running-cloud-shell-from-your-virtual-network#:~:text=Azure%20Cloud%20Shell%20is%20a,day%20up%20in%20the%20cloud.
+* https://github.com/Azure/CloudShell
+* https://gist.github.com/larsakerlund/77d11a3e1dd990052cf9f48c3c328a84
 
 VM Agents
 * https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/virtual-machines/extensions/oms-linux.md

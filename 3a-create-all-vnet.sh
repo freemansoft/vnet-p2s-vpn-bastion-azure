@@ -35,15 +35,17 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
      subnetHubVngName="$VNET_HUB_SUBNET_VNG_NAME" \
      subnetHubShellAciName="$VNET_HUB_SUBNET_SHELL_ACI_NAME" \
      subnetHubShellAciNetwork="$VNET_HUB_SUBNET_SHELL_ACI_NETWORK" \
+     subnetHubDataName="$VNET_HUB_SUBNET_DATA_NAME" \
+     subnetHubDataNetwork="$VNET_HUB_SUBNET_DATA_NETWORK" \
      lastPublishedAt="$NOW_PUBLISHED_AT" \
      version="$VERSION" \
      project="$PROJECT" \
      subnetHubDnsAciNetwork="$VNET_HUB_SUBNET_DNS_ACI_NETWORK" \
+     subnetHubDnsAciName="$VNET_HUB_SUBNET_DNS_ACI_NAME" 
 #    hardcoded into template this won't parse :-( 2022/04
-#     subnetHubDnsAciName="$VNET_HUB_SUBNET_DNS_ACI_NAME" \ 
-
+     
 echo -e "${PURPLE}-------------------private DNS groups and VNET links ----------------${NC}"
-# create private DNS zones - link private DNS zones to each VNET - for PLEs
+# create private DNS zones - link private DNS zones to hub and spoke VNETs - for PLEs
 # zones are same if have same name in same resource group
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
      --template-file templates/template-dns-private.json \

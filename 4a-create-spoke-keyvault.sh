@@ -13,7 +13,7 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
 echo -e "${PURPLE}--------------Key Vault-------------${NC}"
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SECRETS" \
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_SECRETS" \
     --template-file templates/template-keyvault.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \
@@ -26,7 +26,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SECRETS" \
     project="$PROJECT" \
 
 echo -e "${PURPLE}--------------Key Vault Private Link-------------${NC}"
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SECRETS" \
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_SECRETS" \
     --template-file templates/template-keyvault-endpoints.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \

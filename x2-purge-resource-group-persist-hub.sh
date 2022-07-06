@@ -12,7 +12,6 @@ set -e
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
-echo "removing everything in $AZURE_RESOURCE_GROUP_BASTION via empty template"
+echo "removing everything in $AZURE_RESOURCE_GROUP_HUB_PERSIST via empty template"
 # rely on the "Complete" mode with an empty template.  It should remove all resources
-az deployment group create -g "$AZURE_RESOURCE_GROUP_BASTION" --template-file templates/template-empty.json --mode Complete
-
+az deployment group create -g "$AZURE_RESOURCE_GROUP_HUB_PERSIST" --template-file templates/template-empty.json --mode Complete

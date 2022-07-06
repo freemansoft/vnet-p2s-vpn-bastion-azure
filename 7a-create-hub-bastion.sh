@@ -16,7 +16,7 @@ source $DIR/env.sh
 echo "This will take several minutes "
 
 echo -e "${PURPLE}-------------Bastion and Public IP--------${NC}"
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_BASTION" \
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_HUB_BASTION" \
      --template-file templates/template-bastion.json \
      --parameters \
      azureRegionPrimary=$AZURE_REGION \

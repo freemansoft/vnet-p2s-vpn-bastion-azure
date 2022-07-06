@@ -12,17 +12,17 @@ set -e
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
-# echo "removing everything in $AZURE_RESOURCE_GROUP_SECRETS via empty template"
+# echo "removing everything in $AZURE_RESOURCE_GROUP_SPOKE_SECRETS via empty template"
 # # Rely on the "complete" mode with an empty template.  It should remove all resources
 # az deployment group create -g $AZURE_RESOURCEAZURE_RESOURCE_GROUP_SECRETS_GROUP_VNET --template-file templates/template-empty.json --mode Complete
 
-echo "removing everything in $AZURE_RESOURCE_GROUP_SECRETS except the keyvault itself"
+echo "removing everything in $AZURE_RESOURCE_GROUP_SPOKE_SECRETS except the keyvault itself"
 # Rely on the "complete" task with just the vnet template to clear everything other than the vnet
 
 echo -e "${PURPLE}--------------Key Vault-------------${NC}"
 az deployment group create \
     --mode complete \
-    --resource-group "$AZURE_RESOURCE_GROUP_SECRETS" \
+    --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_SECRETS" \
     --template-file templates/template-keyvault.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \

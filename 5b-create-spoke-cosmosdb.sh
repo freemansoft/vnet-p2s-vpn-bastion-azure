@@ -13,7 +13,7 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
 echo -e "${PURPLE}--------------Cosmos DB-------------${NC}"
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_PERSIST" \
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_PERSIST" \
     --template-file templates/template-cosmos.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \
@@ -24,13 +24,13 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_PERSIST" \
 
 
 # echo -e "${PURPLE}--------------Cosmos DB Private Endpoints-------------${NC}"
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_PERSIST" \
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_PERSIST" \
     --template-file templates/template-cosmos-endpoints.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \
     vnetResourceGroup="$AZURE_RESOURCE_GROUP_VNET" \
     vnetNetworkName="$AZURE_VNET_SPOKE_NAME" \
-    subnetSpokeDataName="$VNET_SPOKE_SUBNET_DATA_NAME" \
+    storageSubnetName="$VNET_SPOKE_SUBNET_STORAGE_NAME" \
     cosmosInstanceName=$SPOKE_COSMOS_DB_INSTANCE_NAME \
     privateEndpoints_cosmos=$SPOKE_COSMOS_DB_PE_NAME \
     lastPublishedAt="$NOW_PUBLISHED_AT" \

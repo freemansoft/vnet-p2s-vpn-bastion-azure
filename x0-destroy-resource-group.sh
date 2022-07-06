@@ -14,9 +14,9 @@
 source env.sh
 
 echo "This will fail if you have public IPs that are still bound to a resource."
-az group delete --yes --resource-group "$AZURE_RESOURCE_GROUP_APP"
-az group delete --yes --resource-group "$AZURE_RESOURCE_GROUP_PERSIST"
-az group delete --yes --resource-group "$AZURE_RESOURCE_GROUP_BASTION"
-az group delete --yes --resource-group "$AZURE_RESOURCE_GROUP_SECRETS"
+az group delete --yes --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_APP"
+az group delete --yes --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_PERSIST"
+az group delete --yes --resource-group "$AZURE_RESOURCE_GROUP_HUB_BASTION"
+az group delete --yes --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_SECRETS"
 az group delete --yes --resource-group "$AZURE_RESOURCE_GROUP_VNET"
 

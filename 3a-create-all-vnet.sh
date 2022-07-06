@@ -25,8 +25,8 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
      vnetNetworkSpokeName="$AZURE_VNET_SPOKE_NAME" \
      subnetSpokeDefaultNetwork="$VNET_SPOKE_SUBNET_DEFAULT_NETWORK" \
      subnetSpokeDefaultName="$VNET_SPOKE_SUBNET_DEFAULT_NAME" \
-     subnetSpokeDataNetwork="$VNET_SPOKE_SUBNET_DATA_NETWORK" \
-     subnetSpokeDataName="$VNET_SPOKE_SUBNET_DATA_NAME" \
+     subnetSpokeDataNetwork="$VNET_SPOKE_SUBNET_STORAGE_NETWORK" \
+     storageSubnetName="$VNET_SPOKE_SUBNET_STORAGE_NAME" \
      subnetSpokeCredentialsNetwork="$VNET_SPOKE_SUBNET_SECRETS_NETWORK" \
      subnetSpokeCredentialsName="$VNET_SPOKE_SUBNET_SECRETS_NAME" \
      subnetHubBastionNetwork="$VNET_HUB_SUBNET_BASTION_NETWORK" \
@@ -35,8 +35,8 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_VNET" \
      subnetHubVngName="$VNET_HUB_SUBNET_VNG_NAME" \
      subnetHubShellAciName="$VNET_HUB_SUBNET_SHELL_ACI_NAME" \
      subnetHubShellAciNetwork="$VNET_HUB_SUBNET_SHELL_ACI_NETWORK" \
-     subnetHubDataName="$VNET_HUB_SUBNET_DATA_NAME" \
-     subnetHubDataNetwork="$VNET_HUB_SUBNET_DATA_NETWORK" \
+     subnetHubDataName="$VNET_HUB_SUBNET_STORAGE_NAME" \
+     subnetHubDataNetwork="$VNET_HUB_SUBNET_STORAGE_NETWORK" \
      lastPublishedAt="$NOW_PUBLISHED_AT" \
      version="$VERSION" \
      project="$PROJECT" \

@@ -28,7 +28,8 @@ Mac / BASH
 1. Add VNET attached cloud shell using cloud shell ACI subnet.  No obvious way to do that bound to a VNET with IaC
 1. Cloudshell should use PLE for storage access.  IMO all storage should be accessed via PLE (JF)
 1. Script the download the VPN package from the p2s blade in the VNG
-
+1. Split the Hub and Scope VNET RG
+1. Split the Hub and Scope compute RG
 
 ## Scripts
 | Script                       | Required for Bastion | Required for P2S VPN | Purpose |
@@ -39,6 +40,7 @@ Mac / BASH
 | 3a-create-all-vnet.sh        | yes | yes | Creates hub and spoke vnets, peerings, subnets, DNS forwarder in a container. Adds DNS to hub VNET |
 | 4a-create-spoke-keyvault.sh  | no  | no  | Creates a Key Vault and Private Link Endpoints | 
 | 5a-create-spoke-storage.sh   | no  | no  | Creates storage accounts, storage containers and Private Link Endpoints |
+| 5a-create-hub-storage.sh     | no  | no  | Creates storage accounts, storage containers and Private Link Endpoints |
 | 5b-create-spoke-cosmosdb.sh  | no  | no  | Create Cosmos DB instance and PLE connection.  No containers created |
 | 6a-create-spoke-monitor.sh   | no  | no  | Creates Log Analytics Workspace and Application Insights instance |
 | 6b-create-spoke- vm-linux.sh | no  | No  | Create a simple virtual machine on the default subnet with no public IP with a log analytics workspace | 
@@ -46,9 +48,9 @@ Mac / BASH
 | 8a-create-hub-vng-with-p2s.sh | no  | yes | Creates a vng appliance with a P2S Address pool and self signed CA. Can VPN with the downloaded VPN Client config |
 | 8b-create-hub-p2s.sh         | no  | yes | Creates and uploads the certificates using the Azure CLI. Can be used to add extra root certs. called by 8a-create-hub-vng-with-p2s |
 | | | | | 
-| 90-destroy-resource-group.sh           | n/a | n/a | Remove a resource group. May only works if public ips are disassociated or deleted |
-| 91-purge-all-resource-groups.sh        | n/a | n/a | Remove everything in all resource groups leaving the resource groups |
-| 92-purge-resource-groups-_resource_.sh | n/a | n/a | Remove everything in that Resource group |
+| x0-destroy-resource-group.sh           | n/a | n/a | Remove a resource group. May only works if public ips are disassociated or deleted |
+| x1-purge-all-resource-groups.sh        | n/a | n/a | Remove everything in all resource groups leaving the resource groups |
+| x2-purge-resource-groups-_resource_.sh | n/a | n/a | Remove everything in that Resource group |
 
 
 The ARM templates are applied in `Incremental` mode so they can be used to update a configuration.
@@ -262,11 +264,12 @@ Resource Group partitioning makes it easier to cleanly build and tear down ephem
 
 | Resource Group | Description | Purge Script |
 | - | - | - |
-| Example-VNET-RG     | VNet and Subnets and VNG| 92-purge-resource-group-vnet.sh |
-| Example-persist-RG  | Storage accounts, Cosmos and private link endpoints | 92-purge-resource-group-persist.sh |
-| Example-bastion-RG  | Bastion host | 92-purge-resource-group-bastion.sh |
-| Esample-secrets-RG  | Key Vaults | 92-purge-resource-group-keyvault.sh |
-| Example-RG          | default resource group - compute, App Insights | 92-purge-resource-group-ephememeral |
+| FsiExample-VNET-RG     | VNet and Subnets and VNG| x2-purge-resource-group-vnet.sh |
+| FsiExample-persist-hub-RG  | Storage accounts, Cosmos and private link endpoints | x2-purge-resource-group-persist.sh |
+| FsiExample-persist-spoke-RG  | Storage accounts, Cosmos and private link endpoints | x2-purge-resource-group-persist.sh |
+| FsiExample-bastion-RG  | Bastion host | x2-purge-resource-group-bastion.sh |
+| FsiExample-secrets-spoke-RG  | Key Vaults | x2-purge-resource-group-keyvault.sh |
+| FsiExample-RG          | default resource group - compute, App Insights | x2-purge-resource-group-ephememeral |
 
 A Virtual Network Gateway must be in the same Resource Group as the VNET itself.
 

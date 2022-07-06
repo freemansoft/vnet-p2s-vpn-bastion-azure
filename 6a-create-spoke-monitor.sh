@@ -14,7 +14,7 @@ source $DIR/env.sh
 
 echo "This will take several minutes "
 echo -e "${PURPLE}-----------------Log Analytics Workspace------------------${NC}"
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_APP" \
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_APP" \
      --template-file templates/template-log-analytics-workspace.json \
      --parameters \
      logAnalyticsWorkspaceName="$SPOKE_LOG_ANALYTICS_WS_NAME" \
@@ -23,7 +23,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_APP" \
     project="$PROJECT" \
 
 echo -e "${PURPLE}-----------------Application Insights---------------------${NC}"
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_APP" \
+az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_APP" \
      --template-file templates/template-application-insights.json \
      --parameters \
      logAnalyticsWorkspaceName="$SPOKE_LOG_ANALYTICS_WS_NAME" \

@@ -26,4 +26,4 @@ az network vnet-gateway root-cert create \
     --public-cert-data certs/$P2S_PUBLIC_CERT_NAME.cer \
     --gateway-name "$VNGS_VNG_NAME" \
     --name $P2S_PUBLIC_CERT_NAME \
-    --resource-group "$AZURE_RESOURCE_GROUP_VNG"
+    --resource-group "$AZURE_RESOURCE_GROUP_HUB_VNG"

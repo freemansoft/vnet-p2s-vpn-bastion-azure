@@ -20,18 +20,20 @@ AZURE_REGION="eastus2"
 root_name="FsiExample"
 
 # Suffix resource groups with "-RG"
-# GLOBAL RGs
+# GLOBAL RGs 
+# TODO split the HUB and Spoke VNET resource groups
 AZURE_RESOURCE_GROUP_VNET="$root_name-vnet-RG"
 
 # HUB RGs
 # Virtnal Network Gateway (VNG) must be in the same resource group as the VNET that it is the gateway for
-AZURE_RESOURCE_GROUP_BASTION="$root_name-bastion-RG"
-AZURE_RESOURCE_GROUP_VNG="$AZURE_RESOURCE_GROUP_VNET"
+AZURE_RESOURCE_GROUP_HUB_BASTION="$root_name-bastion-hub-RG"
+AZURE_RESOURCE_GROUP_HUB_VNG="$AZURE_RESOURCE_GROUP_VNET"
+AZURE_RESOURCE_GROUP_HUB_PERSIST="$root_name-persist-hub-RG"
 
 # Spoke RGs
-AZURE_RESOURCE_GROUP_APP="$root_name-app-RG"
-AZURE_RESOURCE_GROUP_PERSIST="$root_name-persist-RG"
-AZURE_RESOURCE_GROUP_SECRETS="$root_name-secret-RG"
+AZURE_RESOURCE_GROUP_SPOKE_APP="$root_name-app-RG"
+AZURE_RESOURCE_GROUP_SPOKE_PERSIST="$root_name-persist-spoke-RG"
+AZURE_RESOURCE_GROUP_SPOKE_SECRETS="$root_name-secret-spoke-RG"
 
 NOW_PUBLISHED_AT="$(date +%F-%T)"
 
@@ -59,8 +61,8 @@ VNET_HUB_SUBNET_BASTION_NETWORK="10.0.1.128/26"
 VNET_HUB_SUBNET_BASTION_NAME="AzureBastion"
 # primarily cloudshell storage
 # 10.0.1.192 - 1.0.1.254
-VNET_HUB_SUBNET_DATA_NETWORK="10.0.1.192/26"
-VNET_HUB_SUBNET_DATA_NAME="Storage"
+VNET_HUB_SUBNET_STORAGE_NETWORK="10.0.1.192/26"
+VNET_HUB_SUBNET_STORAGE_NAME="Storage"
 
 
 ######### ######### ######### ######### 
@@ -75,8 +77,8 @@ VNET_SPOKE_SUBNET_DEFAULT_NETWORK="10.0.16.0/24"
 VNET_SPOKE_SUBNET_DEFAULT_NAME="default"
 
 # 10.0.17.0 - 10.0.17.63
-VNET_SPOKE_SUBNET_DATA_NETWORK="10.0.17.0/26"
-VNET_SPOKE_SUBNET_DATA_NAME="Storage"
+VNET_SPOKE_SUBNET_STORAGE_NETWORK="10.0.17.0/26"
+VNET_SPOKE_SUBNET_STORAGE_NAME="Storage"
 # 10.0.17.64 - 10.0.17.127
 VNET_SPOKE_SUBNET_SECRETS_NETWORK="10.0.17.64/26"
 VNET_SPOKE_SUBNET_SECRETS_NAME="CredentialsSecrets"
@@ -104,10 +106,16 @@ SPOKE_COSMOS_DB_INSTANCE_NAME="${root_name,,}-cosmos"
 SPOKE_COSMOS_DB_PE_NAME="$root_name-PeCosmos"
 
 # must be lower case with no dashes
-SPOKE_STORAGE_ACCOUNT_NAME="${root_name,,}0storage"
+HUB_STORAGE_ACCOUNT_NAME="${root_name,,}0hub0storage"
+HUB_STORAGE_CONTAINER_BLOB_1_NAME="container-1"
+HUB_STORAGE_CONTAINER_BLOB_2_Name="container-2"
+HUB_STORAGE_ACCT_PE_BLOB_NAME="$root_name-PeStorageBlob"
+HUB_STORAGE_ACCT_PE_FILE_NAME="$root_name-PeStorageFile"
+
+# must be lower case with no dashes
+SPOKE_STORAGE_ACCOUNT_NAME="${root_name,,}0spoke0storage"
 SPOKE_STORAGE_CONTAINER_BLOB_1_NAME="container-1"
 SPOKE_STORAGE_CONTAINER_BLOB_2_Name="container-2"
-
 SPOKE_STORAGE_ACCT_PE_BLOB_NAME="$root_name-PeStorageBlob"
 SPOKE_STORAGE_ACCT_PE_FILE_NAME="$root_name-PeStorageFile"
 

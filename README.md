@@ -101,7 +101,7 @@ flowchart TD
     VNetHub --> SubHubVng[Gateway Subnet <br/>10.0.0.0/24  250]
     VNetHub --> SubHubDnsAci[DnsAci Subnet <br/>10.0.1.0/26 59]
     VNetHub --> SubHubAciShell[CloudShell Subnet <br/>10.0.1.64/26 59]
-    VNetHub --> SubnetHubData[Storage Subnet <br/>10.0.1.192/26 59]
+    VNetHub --> SubHubData[Storage Subnet <br/>10.0.1.192/26 59]
     VNetHub --> SubHubBast[AzureBastion Subnet <br/>10.0.1.128/26 59]
 
     VNetSpoke --> SubSpokeDef[default Subnet<br/>10.0.16.0/24 250]
@@ -114,28 +114,42 @@ flowchart TD
 
     SubHubDnsAci --> AciDns(DNS Forwarder<br/>Container)
 
+    StorHubAct[Storage Account]
+    StorHubFile[Storage Account<br/>File]
+    StorHubBlob[Storage Account<br/>Blob] 
+
+    SubHubData --> NicStorHubFile[N.I.C.<br/>File]
+    NicStorHubFile --> PleHubFile[Private Endpoint<br/>Storage File]
+    PleHubFile --> StorHubFile
+    StorHubFile --> StorHubAct
+
+    SubHubData --> NicStorHubBlob[N.I.C.<br/>Blob]
+    NicStorHubBlob --> PleHubBlob[Private Endpoint<br/>Storage Blob]
+    PleHubBlob --> StorHubBlob
+    StorHubBlob --> StorHubAct
+
     SubHubBast --> Bastion[Bastion Host]
     Bastion --> PubaAst[Public IP<br/>20.xx.xx.xx dynamic]
 
     SubSpokeDef --> NicVM[N.I.C.<br/>Linux]
     NicVM --> VM[Linux VM]
 
-    StorAct[Storage Account]
-    StorFile[Storage Account<br/>File]
-    StorBlob[Storage Account<br/>Blob] 
+    StorSpokeAct[Storage Account]
+    StorSpokeFile[Storage Account<br/>File]
+    StorSpokeBlob[Storage Account<br/>Blob] 
 
     CosmosDB[Cosmos DB]
 
     
-    SubSpokeData --> NicStorFile[N.I.C.<br/>File]
-    NicStorFile --> PleFile[Private Endpoint<br/>Storage File]
-    PleFile --> StorFile
-    StorFile --> StorAct
+    SubSpokeData --> NicStorSpokeFile[N.I.C.<br/>File]
+    NicStorSpokeFile --> PleSpokeFile[Private Endpoint<br/>Storage File]
+    PleSpokeFile --> StorSpokeFile
+    StorSpokeFile --> StorSpokeAct
 
-    SubSpokeData --> NicStorBlob[N.I.C.<br/>Blob]
-    NicStorBlob --> PleBlob[Private Endpoint<br/>Storage Blob]
-    PleBlob --> StorBlob
-    StorBlob --> StorAct
+    SubSpokeData --> NicStorSpokeBlob[N.I.C.<br/>Blob]
+    NicStorSpokeBlob --> PleSpokeBlob[Private Endpoint<br/>Storage Blob]
+    PleSpokeBlob --> StorSpokeBlob
+    StorSpokeBlob --> StorSpokeAct
 
     SubSpokeData --> NicCosmos[N.I.C.<br/> Cosmos DB]
     NicCosmos --> PleCosmos[Private Endpoint<br/>Cosmos DB]

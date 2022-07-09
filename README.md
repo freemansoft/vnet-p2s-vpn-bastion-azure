@@ -28,8 +28,8 @@ Mac / BASH
 1. Add VNET attached cloud shell using cloud shell ACI subnet.  No obvious way to do that bound to a VNET with IaC
 1. Cloudshell should use PLE for storage access.  IMO all storage should be accessed via PLE (JF)
 1. Script the download the VPN package from the p2s blade in the VNG
-1. Split the Hub and Scope VNET RG
-1. Split the Hub and Scope compute RG
+1. Split the Hub and Spoke VNET RG into hub, spoke/peering RGs
+1. Split the Hub and Spoke VNET into two different configuraiton / calls to be abel to stamp out spokes
 
 ## Scripts
 | Script                       | Required for Bastion | Required for P2S VPN | Purpose |

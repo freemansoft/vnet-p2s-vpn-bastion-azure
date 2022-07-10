@@ -58,10 +58,10 @@ VNET_HUB_SUBNET_DNS_ACI_NAME="DnsAci"
 # 10.0.1.64 - 10.0.1.127
 VNET_HUB_SUBNET_SHELL_ACI_NETWORK="10.0.1.64/26"
 VNET_HUB_SUBNET_SHELL_ACI_NAME="CloudShellAci"
-# MS Azure minimum size
+# MS Azure minimum size - must be named AzureBastionSubnet
 # 10.0.1.128 - 10.0.1.191
 VNET_HUB_SUBNET_BASTION_NETWORK="10.0.1.128/26"
-VNET_HUB_SUBNET_BASTION_NAME="AzureBastion"
+VNET_HUB_SUBNET_BASTION_NAME="AzureBastionSubnet"
 # primarily cloudshell storage
 # 10.0.1.192 - 1.0.1.254
 VNET_HUB_SUBNET_STORAGE_NETWORK="10.0.1.192/26"
@@ -103,6 +103,9 @@ P2S_ADDRESS_POOL="172.16.0.0/26"
 
 BASTION_HOST_NAME="$root_name-Bastion"
 PUBLIC_IP_BASTION_NAME="$root_name-Bastion-IP"
+# "Basic" is bottom tier. "Standard" is mid tier 
+# "Standard" required for native client
+BASTION_SKU="Basic"
 
 # cosmos db must be lower case
 SPOKE_COSMOS_DB_INSTANCE_NAME="${root_name,,}-cosmos"

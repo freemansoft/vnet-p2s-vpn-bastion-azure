@@ -25,6 +25,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_HUB_BASTION" 
      subnetHubBastionName="$VNET_HUB_SUBNET_BASTION_NAME" \
      bastionHostName=$BASTION_HOST_NAME \
      publicIPAddressesBastionName=$PUBLIC_IP_BASTION_NAME \
+     bastionSku=$BASTION_SKU \
      lastPublishedAt="$NOW_PUBLISHED_AT" \
      version="$VERSION" \
      project="$PROJECT" \

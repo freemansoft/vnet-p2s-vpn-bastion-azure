@@ -462,6 +462,17 @@ Name:    fsiexample0storage.privatelink.file.core.windows.net
 Address:  10.0.17.4
 ```
 
+## Bastion Hosts
+
+Bastion hosts can be used to ssh or RDP into virtual machines via the Azure Portal. This essentially opens a terminal session in a browser. 
+
+
+### Draft Comments
+Bastion hosts of type `Standard` and above also support a tunnel that lets you SSH into a VM using standard laptop tools.  The following is a sample command line for setting up the tunnel to ssh across. Note that the `Azure Bastion Tunnel` does not seem to work from the WSL Linux command line at this time.
+
+`az network bastion tunnel --name FSIExample-Bastion --resource-group FsiExample-hub-bastion-RG --target-resource-id /subscriptions/<subscription-id>/resourceGroups/FSIEXAMPLE-SPOKE-APP-RG/providers/Microsoft.Compute/virtualMachines/FsiExample-VmLinux --resource-port 111 --port 222`
+
+Once the tunnel is up you can _ssh to localhost port:222_
 
 ## References
 Incomplete list of resources used in creating this project.
@@ -490,6 +501,7 @@ Public IP
 
 Bastion Hosts
 * https://docs.microsoft.com/en-us/azure/bastion/tutorial-create-host-portal
+* https://docs.microsoft.com/en-us/cli/azure/network/bastion?view=azure-cli-latest
 
 VPN gateway
 * https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpngateways

@@ -39,9 +39,9 @@ Mac / BASH
 | 2-create-all-resources.sh    | yes | yes | create a resource group if it does not exist |
 | 3a-create-all-vnet.sh        | yes | yes | Creates hub and spoke vnets, peerings, subnets, DNS forwarder in a container. Adds DNS to hub VNET |
 | 4a-create-spoke-keyvault.sh  | no  | no  | Creates a Key Vault and Private Link Endpoints | 
-| 5a-create-spoke-storage.sh   | no  | no  | Creates storage accounts, storage containers and Private Link Endpoints |
 | 5a-create-hub-storage.sh     | no  | no  | Creates storage accounts, storage containers and Private Link Endpoints |
-| 5b-create-spoke-cosmosdb.sh  | no  | no  | Create Cosmos DB instance and PLE connection.  No containers created |
+| 5b-create-spoke-storage.sh   | no  | no  | Creates storage accounts, storage containers and Private Link Endpoints |
+| 5c-create-spoke-cosmosdb.sh  | no  | no  | Create Cosmos DB instance and PLE connection.  No containers created |
 | 6a-create-spoke-monitor.sh   | no  | no  | Creates Log Analytics Workspace and Application Insights instance |
 | 6b-create-spoke- vm-linux.sh | no  | No  | Create a simple virtual machine on the default subnet with no public IP with a log analytics workspace | 
 | 7a-create-hub-bastion.sh      | yes | no  | Creates a bastion host |
@@ -188,6 +188,16 @@ flowchart TD
                 SubnetsHubData>Storage]
                 SubnetHubBastion>Bastion]
             end
+            subgraph storageFileGraphHub[Storage Account File]
+                StorageFileHub[Storage Account<br/>File]
+                StorageFilePleHub[Storage File<br>Private Link Endpoint]
+                StorageFileNicHub[Storage File<br>Network Interface]
+            end
+            subgraph storageBlobGraphHub[Storage Account Blob]
+                StorageBlobHub[Storage Account<br/>Blob]
+                StorageBlobPleHub[Storage Blob<br>Private Link Endpoint]
+                StorageBlobNicHub[Storage Blob<br>Network Interface]
+            end
 
             subgraph VnetComponents[VNet Support - static]
             DnsForwarder[DNS Forwarder]
@@ -201,20 +211,20 @@ flowchart TD
                 SubnetsSpokeKeyValut>CredentialSecrets]
                 SubnetsSpokeData>Storage]
             end
-            subgraph storageFileGraph[Storage Account File]
-                StorageFile[Storage Account<br/>File]
-                StorageFilePle[Storage File<br>Private Link Endpoint]
-                StorageFileNic[Storage File<br>Network Interface]
+            subgraph storageFileGraphSpoke[Storage Account File]
+                StorageFileSpoke[Storage Account<br/>File]
+                StorageFilePleSpoke[Storage File<br>Private Link Endpoint]
+                StorageFileNicSpoke[Storage File<br>Network Interface]
             end
-            subgraph storageBlobGraph[Storage Account Blob]
-                StorageBlob[Storage Account<br/>Blob]
-                StorageBlobPle[Storage Blob<br>Private Link Endpoint]
-                StorageBlobNic[Storage Blob<br>Network Interface]
+            subgraph storageBlobGraphSpoke[Storage Account Blob]
+                StorageBlobSpoke[Storage Account<br/>Blob]
+                StorageBlobPleSpoke[Storage Blob<br>Private Link Endpoint]
+                StorageBlobNicSpoke[Storage Blob<br>Network Interface]
             end
-            subgraph KeyVaultGraph[Key Vault]
-                KeyVault[Key Vault]
-                KeyVaultPle[Key Vault<br>Private Link Endpoint]
-                KeyVaultNic[Key Vault<br>Network Interface]
+            subgraph KeyVaultGraphSpoke[Key Vault]
+                KeyVaultSpoke[Key Vault]
+                KeyVaultPleSpoke[Key Vault<br>Private Link Endpoint]
+                KeyVaultNicSpoke[Key Vault<br>Network Interface]
             end
         end
         

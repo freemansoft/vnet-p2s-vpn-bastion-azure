@@ -26,18 +26,6 @@
         "vnetNetworkHubName": {
             "type": "string"
         },
-        "vnetNetworkSpoke": {
-            "type": "string"
-        },
-        "vnetNetworkSpokeName": {
-            "type": "string"
-        },
-        "subnetSpokeDefaultNetwork": {
-            "type": "string"
-        },
-        "subnetSpokeDefaultName": {
-            "type": "string"
-        },
         "subnetHubDnsAciNetwork": {
             "type": "string"
         },
@@ -52,22 +40,10 @@
             "type": "string",
             "defaultValue": "CloudShellAci"
         },
-        "subnetHubDataNetwork": {
+        "subnetHubStorageNetwork": {
             "type": "string"
         },
-        "subnetHubDataName": {
-            "type": "string"
-        },
-        "subnetSpokeDataNetwork": {
-            "type": "string"
-        },
-        "storageSubnetName": {
-            "type": "string"
-        },
-        "subnetSpokeCredentialsNetwork": {
-            "type": "string"
-        },
-        "subnetSpokeCredentialsName": {
+        "subnetHubStorageName": {
             "type": "string"
         },
         "subnetHubBastionNetwork": {
@@ -136,9 +112,9 @@
                         }
                     },
                     {
-                        "name": "[parameters('subnetHubDataName')]",
+                        "name": "[parameters('subnetHubStorageName')]",
                         "properties": {
-                            "addressPrefix": "[parameters('subnetHubDataNetwork')]",
+                            "addressPrefix": "[parameters('subnetHubStorageNetwork')]",
                             "privateEndpointNetworkPolicies": "Disabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
                         }
@@ -167,55 +143,6 @@
             }
         },
         {
-            "type": "Microsoft.Network/virtualNetworks",
-            "apiVersion": "2020-11-01",
-            "name": "[parameters('vnetNetworkSpokeName')]",
-            "location": "[parameters('azureRegionPrimary')]",
-            "tags": {
-                "PublishedAt": "[parameters('lastPublishedAt')]",
-                "Project": "[parameters('project')]",
-                "Version": "[parameters('version')]"
-            },
-            "properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
-                        "[parameters('vnetNetworkSpoke')]"
-                    ]
-                },
-                "subnets": [
-                    {
-                        "name": "[parameters('subnetSpokeDefaultName')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('subnetSpokeDefaultNetwork')]",
-                            "delegations": [],
-                            "privateEndpointNetworkPolicies": "Enabled",
-                            "privateLinkServiceNetworkPolicies": "Enabled"
-                        }
-                    },
-                    {
-                        "name": "[parameters('storageSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('subnetSpokeDataNetwork')]",
-                            "delegations": [],
-                            "privateEndpointNetworkPolicies": "Disabled",
-                            "privateLinkServiceNetworkPolicies": "Enabled"
-                        }
-                    },
-                    {
-                        "name": "[parameters('subnetSpokeCredentialsName')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('subnetSpokeCredentialsNetwork')]",
-                            "delegations": [],
-                            "privateEndpointNetworkPolicies": "Disabled",
-                            "privateLinkServiceNetworkPolicies": "Enabled"
-                        }
-                    }
-                ],
-                "virtualNetworkPeerings": [],
-                "enableDdosProtection": false
-            }
-        },
-        {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2020-11-01",
             "name": "[concat(parameters('vnetNetworkHubName'), '/', parameters('subnetHubBastionName'))]",
@@ -227,21 +154,6 @@
                 "addressPrefix": "[parameters('subnetHubBastionNetwork')]",
                 "delegations": [],
                 "privateEndpointNetworkPolicies": "Enabled",
-                "privateLinkServiceNetworkPolicies": "Enabled"
-            }
-        },
-        {
-            "type": "Microsoft.Network/virtualNetworks/subnets",
-            "apiVersion": "2020-11-01",
-            "name": "[concat(parameters('vnetNetworkSpokeName'), '/', parameters('subnetSpokeCredentialsName'))]",
-            "location": "[parameters('azureRegionPrimary')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkSpokeName'))]"
-            ],
-            "properties": {
-                "addressPrefix": "[parameters('subnetSpokeCredentialsNetwork')]",
-                "delegations": [],
-                "privateEndpointNetworkPolicies": "Disabled",
                 "privateLinkServiceNetworkPolicies": "Enabled"
             }
         },
@@ -292,36 +204,6 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2020-11-01",
-            "name": "[concat(parameters('vnetNetworkSpokeName'), '/', parameters('storageSubnetName'))]",
-            "location": "[parameters('azureRegionPrimary')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkSpokeName'))]"
-            ],
-            "properties": {
-                "addressPrefix": "[parameters('subnetSpokeDataNetwork')]",
-                "delegations": [],
-                "privateEndpointNetworkPolicies": "Disabled",
-                "privateLinkServiceNetworkPolicies": "Enabled"
-            }
-        },
-        {
-            "type": "Microsoft.Network/virtualNetworks/subnets",
-            "apiVersion": "2020-11-01",
-            "name": "[concat(parameters('vnetNetworkSpokeName'), '/', parameters('subnetSpokeDefaultName'))]",
-            "location": "[parameters('azureRegionPrimary')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkSpokeName'))]"
-            ],
-            "properties": {
-                "addressPrefix": "[parameters('subnetSpokeDefaultNetwork')]",
-                "delegations": [],
-                "privateEndpointNetworkPolicies": "Enabled",
-                "privateLinkServiceNetworkPolicies": "Enabled"
-            }
-        },
-        {
-            "type": "Microsoft.Network/virtualNetworks/subnets",
-            "apiVersion": "2020-11-01",
             "name": "[concat(parameters('vnetNetworkHubName'), '/', parameters('subnetHubVngName'))]",
             "location": "[parameters('azureRegionPrimary')]",
             "dependsOn": [
@@ -332,52 +214,6 @@
                 "delegations": [],
                 "privateEndpointNetworkPolicies": "Enabled",
                 "privateLinkServiceNetworkPolicies": "Enabled"
-            }
-        },
-        {
-            "name": "[concat(parameters('vnetNetworkHubName'),'/',parameters('vnetNetworkSpokeName'))]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetNetworkHubName'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetNetworkSpokeName'))]"
-            ],
-            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-            "apiVersion": "2019-09-01",
-            "properties": {
-                "allowVirtualNetworkAccess": true,
-                "allowForwardedTraffic": true,
-                "allowGatewayTransit": false, // should be set to true after VPN added
-                "useRemoteGateways": false,
-                "remoteVirtualNetwork": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkSpokeName'))]"
-                },
-                "remoteAddressSpace": {
-                    "addressPrefixes": [
-                        "[ parameters('vnetNetworkSpoke')]"
-                    ]
-                }
-            }
-        },
-        {
-            "name": "[concat(parameters('vnetNetworkSpokeName'),'/',parameters('vnetNetworkHubName'))]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetNetworkHubName'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetNetworkSpokeName'))]"
-            ],
-            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-            "apiVersion": "2019-09-01",
-            "properties": {
-                "allowVirtualNetworkAccess": true,
-                "allowForwardedTraffic": true,
-                "allowGatewayTransit": false,
-                "useRemoteGateways": false, // should be set to true after VPN added
-                "remoteVirtualNetwork": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkHubName'))]"
-                },
-                "remoteAddressSpace": {
-                    "addressPrefixes": [
-                        "[parameters('vnetNetworkHub')]"
-                    ]
-                }
             }
         }
     ]

@@ -22,7 +22,7 @@ echo "This will take several minutes "
 create_results_metadata=$(az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_APP" \
      --template-file templates/template-vm-linux.json \
      --parameters \
-     vnetResourceGroup="$AZURE_RESOURCE_GROUP_VNET" \
+     vnetResourceGroup="$AZURE_RESOURCE_GROUP_SPOKE_VNET" \
      vnetNetworkName="$AZURE_VNET_SPOKE_NAME" \
      subnetVmName="$VNET_SPOKE_SUBNET_DEFAULT_NAME"\
      vmName="$VM_UBUNTU_NAME" \

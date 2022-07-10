@@ -13,7 +13,7 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
 # storage is a global service so there is no subnet
-echo -e "${PURPLE}--------------Storage Account-------------${NC}"
+echo -e "${PURPLE}--------------Storage Account Spoke-------------${NC}"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_PERSIST" \
     --template-file templates/template-storage.json \
     --parameters \
@@ -26,14 +26,14 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_PERSIST
     project="$PROJECT" \
 
 # Private Link Endpoints inside the VNET
-echo -e "${PURPLE}--------------Storage Account Private Endpoints-------------${NC}"
+echo -e "${PURPLE}--------------Storage Account Private Endpoints Spoke-------------${NC}"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_PERSIST" \
     --template-file templates/template-storage-endpoints.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \
-    vnetResourceGroup="$AZURE_RESOURCE_GROUP_VNET" \
+    vnetResourceGroup="$AZURE_RESOURCE_GROUP_SPOKE_VNET" \
     vnetNetworkName="$AZURE_VNET_SPOKE_NAME" \
-    storageSubnetName="$VNET_SPOKE_SUBNET_STORAGE_NAME" \
+    subnetStorageName="$VNET_SPOKE_SUBNET_STORAGE_NAME" \
     storageAccountName=$SPOKE_STORAGE_ACCOUNT_NAME \
     privateEndpoints_storageAccount_blobName=$SPOKE_STORAGE_ACCT_PE_BLOB_NAME \
     privateEndpoints_storageAccount_fileName=$SPOKE_STORAGE_ACCT_PE_FILE_NAME \

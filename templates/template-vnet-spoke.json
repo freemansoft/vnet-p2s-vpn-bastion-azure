@@ -1,0 +1,146 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "lastPublishedAt": {
+            "type": "string",
+            "metadata": {
+                "description": "The last time the template was run"
+            }
+        },
+        "version": {
+            "type": "string",
+            "defaultValue": "unknown"
+        },
+        "project": {
+            "type": "string",
+            "defaultValue": "what is anyone's purpose?"
+        },
+        "azureRegionPrimary": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "vnetNetworkSpoke": {
+            "type": "string"
+        },
+        "vnetNetworkSpokeName": {
+            "type": "string"
+        },
+        "subnetSpokeDefaultNetwork": {
+            "type": "string"
+        },
+        "subnetSpokeDefaultName": {
+            "type": "string"
+        },
+        "subnetSpokeDataNetwork": {
+            "type": "string"
+        },
+        "subnetStorageName": {
+            "type": "string"
+        },
+        "subnetSpokeCredentialsNetwork": {
+            "type": "string"
+        },
+        "subnetSpokeCredentialsName": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('vnetNetworkSpokeName')]",
+            "location": "[parameters('azureRegionPrimary')]",
+            "tags": {
+                "PublishedAt": "[parameters('lastPublishedAt')]",
+                "Project": "[parameters('project')]",
+                "Version": "[parameters('version')]"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnetNetworkSpoke')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('subnetSpokeDefaultName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetSpokeDefaultNetwork')]",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('subnetStorageName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetSpokeDataNetwork')]",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('subnetSpokeCredentialsName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetSpokeCredentialsNetwork')]",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('vnetNetworkSpokeName'), '/', parameters('subnetSpokeCredentialsName'))]",
+            "location": "[parameters('azureRegionPrimary')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkSpokeName'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[parameters('subnetSpokeCredentialsNetwork')]",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('vnetNetworkSpokeName'), '/', parameters('subnetStorageName'))]",
+            "location": "[parameters('azureRegionPrimary')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkSpokeName'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[parameters('subnetSpokeDataNetwork')]",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('vnetNetworkSpokeName'), '/', parameters('subnetSpokeDefaultName'))]",
+            "location": "[parameters('azureRegionPrimary')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNetworkSpokeName'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[parameters('subnetSpokeDefaultNetwork')]",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        }
+
+    ]
+}

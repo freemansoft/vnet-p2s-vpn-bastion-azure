@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetThisName": {
+            "type": "string"
+        },
+        "vnetThatRG": {
+            "type": "string"
+        },
+        "vnetThat": {
+            "type": "string"
+        },
+        "vnetThatName": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+            "name": "[concat(parameters('vnetThisName'),'/',parameters('vnetThatName'))]",
+            "dependsOn": [
+                // hub removed from dependsOn because hub created somewhere else
+                //"[resourceId(parameters('vnetThisRG'),'Microsoft.Network/virtualNetworks',parameters('vnetThisName'))]",
+                // "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetThatName'))]"
+            ],
+            "apiVersion": "2019-09-01",
+            "properties": {
+                "allowVirtualNetworkAccess": true,
+                "allowForwardedTraffic": true,
+                "allowGatewayTransit": false, // should be set to true after VPN added on hub
+                "useRemoteGateways": false, // should be set to true after VPN added on spoke
+                "remoteVirtualNetwork": {
+                    "id": "[resourceId(parameters('vnetThatRG'),'Microsoft.Network/virtualNetworks', parameters('vnetThatName'))]"
+                },
+                "remoteAddressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnetThat')]"
+                    ]
+                }
+            }
+        }
+    ]
+}

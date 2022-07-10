@@ -17,7 +17,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_SECRETS
     --template-file templates/template-keyvault.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \
-    vnetResourceGroup="$AZURE_RESOURCE_GROUP_VNET" \
+    vnetResourceGroup="$AZURE_RESOURCE_GROUP_HUB_VNET" \
     vnetNetworkName="$AZURE_VNET_SPOKE_NAME" \
     subnetSpokeCredentialsName="$VNET_SPOKE_SUBNET_SECRETS_NAME" \
     keyVaultName="$SPOKE_KEY_VAULT_NAME" \
@@ -30,7 +30,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_SECRETS
     --template-file templates/template-keyvault-endpoints.json \
     --parameters \
     azureRegionPrimary=$AZURE_REGION \
-    vnetResourceGroup="$AZURE_RESOURCE_GROUP_VNET" \
+    vnetResourceGroup="$AZURE_RESOURCE_GROUP_HUB_VNET" \
     vnetNetworkName="$AZURE_VNET_SPOKE_NAME" \
     subnetSpokeCredentialsName="$VNET_SPOKE_SUBNET_SECRETS_NAME" \
     keyVaultName="$SPOKE_KEY_VAULT_NAME" \

@@ -15,9 +15,10 @@ echo -e "${GREEN}Creating VNet ${NC}"
 echo -e "${GREEN}Creating Key Vault ${NC}"
 ./4a-create-spoke-keyvault.sh
 echo -e "${GREEN}Creating Storage ${NC}"
-./5a-create-spoke-storage.sh
+./5a-create-hub-storage.sh
+./5b-create-spoke-storage.sh
 echo -e "${GREEN}Creating Cosmos DB ${NC}"
-./5b-create-spoke-cosmosdb.sh
+./5c-create-spoke-cosmosdb.sh
 echo -e "${GREEN}Creating Monitoring ${NC}"
 ./6a-create-spoke-monitor.sh
 echo -e "${GREEN}Creating Linux VM ${NC}"

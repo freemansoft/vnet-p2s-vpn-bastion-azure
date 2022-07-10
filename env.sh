@@ -22,18 +22,21 @@ root_name="FsiExample"
 # Suffix resource groups with "-RG"
 # GLOBAL RGs 
 # TODO split the HUB and Spoke VNET resource groups
-AZURE_RESOURCE_GROUP_VNET="$root_name-vnet-RG"
 
 # HUB RGs
+# hub vnet and subnets
+AZURE_RESOURCE_GROUP_HUB_VNET="$root_name-vnet-hub-RG"
 # Virtnal Network Gateway (VNG) must be in the same resource group as the VNET that it is the gateway for
-AZURE_RESOURCE_GROUP_HUB_BASTION="$root_name-bastion-hub-RG"
-AZURE_RESOURCE_GROUP_HUB_VNG="$AZURE_RESOURCE_GROUP_VNET"
-AZURE_RESOURCE_GROUP_HUB_PERSIST="$root_name-persist-hub-RG"
+AZURE_RESOURCE_GROUP_HUB_BASTION="$root_name-hub-bastion-RG"
+AZURE_RESOURCE_GROUP_HUB_VNG="$AZURE_RESOURCE_GROUP_HUB_VNET"
+AZURE_RESOURCE_GROUP_HUB_PERSIST="$root_name-hub-persist-RG"
 
 # Spoke RGs
-AZURE_RESOURCE_GROUP_SPOKE_APP="$root_name-app-RG"
-AZURE_RESOURCE_GROUP_SPOKE_PERSIST="$root_name-persist-spoke-RG"
-AZURE_RESOURCE_GROUP_SPOKE_SECRETS="$root_name-secret-spoke-RG"
+# spoke vnet and subnets
+AZURE_RESOURCE_GROUP_SPOKE_VNET="$root_name-vnet-spoke-RG"
+AZURE_RESOURCE_GROUP_SPOKE_APP="$root_name-spoke-app-RG"
+AZURE_RESOURCE_GROUP_SPOKE_PERSIST="$root_name-spoke-persist-RG"
+AZURE_RESOURCE_GROUP_SPOKE_SECRETS="$root_name-spoke-secret-RG"
 
 NOW_PUBLISHED_AT="$(date +%F-%T)"
 

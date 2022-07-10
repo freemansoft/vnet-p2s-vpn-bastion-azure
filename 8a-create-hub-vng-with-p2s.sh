@@ -19,7 +19,7 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_HUB_VNG" \
      --template-file templates/template-vng-vpn.json \
      --parameters \
      azureRegionPrimary=$AZURE_REGION \
-     vnetResourceGroup="$AZURE_RESOURCE_GROUP_VNET" \
+     vnetResourceGroup="$AZURE_RESOURCE_GROUP_HUB_VNET" \
      vnetNetworkName="$AZURE_VNET_HUB_NAME" \
      subnetHubVngName="$VNET_HUB_SUBNET_VNG_NAME" \
      virtualNetworkGatewaysVngName=$VNGS_VNG_NAME \

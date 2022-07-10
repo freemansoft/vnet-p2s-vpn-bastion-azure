@@ -12,7 +12,7 @@ set -e
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/env.sh
 
-echo "removing everything in $AZURE_RESOURCE_GROUP $AZURE_RESOURCE_GROUP_SPOKE_PERSIST $AZURE_RESOURCE_GROUP_HUB_BASTION $AZURE_RESOURCE_GROUP_VNET"
+echo "removing everything in $AZURE_RESOURCE_GROUP $AZURE_RESOURCE_GROUP_SPOKE_PERSIST $AZURE_RESOURCE_GROUP_HUB_BASTION $AZURE_RESOURCE_GROUP_HUB_VNET"
 bash $DIR/x2-purge-resource-group-bastion.sh
 bash $DIR/x2-purge-resource-group-ephemeral.sh
 bash $DIR/x2-purge-resource-group-persist-spoke.sh

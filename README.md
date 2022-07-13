@@ -52,11 +52,11 @@ Mac / BASH
 | x1-purge-all-resource-groups.sh        | n/a | n/a | Remove everything in all resource groups leaving the resource groups |
 | x2-purge-resource-groups-_resource_.sh | n/a | n/a | Remove everything in that Resource group |
 
-
-The ARM templates are applied in `Incremental` mode so they can be used to update a configuration.
-The purge scripts apply an ARM template in `Complete` mode.
-
-The VNET gateway requires the resource groups and the vnet in order to be provisioned.
+Script Notes
+1. The ARM templates are applied in `Incremental` mode so they can be used to update a configuration.
+1. The purge scripts apply an ARM template in `Complete` mode.
+1. The VNET gateway requires the resource groups and the vnet in order to be provisioned.
+1. VNET peering has to be done in two separate ARM template calls because the command line resource group is where the peering gets provisioned and the hub and spoke vnets are in different resource groups.
 
 ### Certificate installation.
 Windows: Double click on the .pfx file and enter a passcode of `1234` to install the certificate in the windows certificate store.
@@ -288,12 +288,14 @@ Resource Group partitioning makes it easier to cleanly build and tear down ephem
 
 | Resource Group | Description | Purge Script |
 | - | - | - |
-| FsiExample-VNET-RG     | VNet and Subnets and VNG| x2-purge-resource-group-vnet.sh |
-| FsiExample-persist-hub-RG  | Storage accounts, Cosmos and private link endpoints | x2-purge-resource-group-persist.sh |
-| FsiExample-persist-spoke-RG  | Storage accounts, Cosmos and private link endpoints | x2-purge-resource-group-persist.sh |
-| FsiExample-bastion-RG  | Bastion host | x2-purge-resource-group-bastion.sh |
-| FsiExample-secrets-spoke-RG  | Key Vaults | x2-purge-resource-group-keyvault.sh |
-| FsiExample-RG          | default resource group - compute, App Insights | x2-purge-resource-group-ephememeral |
+| FsiExample-vnet-hub-RG     | VNet and Subnets and VNG for network hub | x2-purge-resource-group-vnet.sh |
+| FsiExample-hub-bastion-RG  | Bastion host | x2-purge-resource-group-bastion.sh |
+| FsiExample-hub-persist-RG  | Storage accounts, Cosmos and private link endpoints | x2-purge-resource-group-persist-hub.sh |
+|  |  |  |
+| FsiExample-vnet-spoke-RG   | VNet and Subnets spoke, workload VNET | x2-purge-resource-group-vnet.sh |
+| FsiExample-spoke-app-RG  | compute, App Insights | x2-purge-resource-group-ephemeral.sh |
+| FsiExample-spoke-persist-RG  | Storage accounts, Cosmos and private link endpoints | x2-purge-resource-group-persist-spoke.sh |
+| FsiExample-spoke-secrets-RG  | Key Vaults | x2-purge-resource-group-keyvault.sh |
 
 A Virtual Network Gateway must be in the same Resource Group as the VNET itself.
 
@@ -466,8 +468,9 @@ Address:  10.0.17.4
 
 Bastion hosts can be used to ssh or RDP into virtual machines via the Azure Portal. This essentially opens a terminal session in a browser. 
 
+The bastion host itself is accessed via the _connect_ button on an individual IaaS VM's Azure blade page.
 
-### Draft Comments
+### Sku notes
 Bastion hosts of type `Standard` and above also support a tunnel that lets you SSH into a VM using standard laptop tools.  The following is a sample command line for setting up the tunnel to ssh across. Note that the `Azure Bastion Tunnel` does not seem to work from the WSL Linux command line at this time.
 
 `az network bastion tunnel --name FSIExample-Bastion --resource-group FsiExample-hub-bastion-RG --target-resource-id /subscriptions/<subscription-id>/resourceGroups/FSIEXAMPLE-SPOKE-APP-RG/providers/Microsoft.Compute/virtualMachines/FsiExample-VmLinux --resource-port 111 --port 222`

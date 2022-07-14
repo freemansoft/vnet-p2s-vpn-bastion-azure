@@ -2,16 +2,22 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "vnetThisName": {
+        "vnetHubName": {
             "type": "string"
         },
-        "vnetThatRG": {
+        "vnetSpokeRG": {
             "type": "string"
         },
-        "vnetThat": {
+        "vnetSpoke": {
             "type": "string"
         },
-        "vnetThatName": {
+        "vnetSpokeName": {
+            "type": "string"
+        },
+        "vnetHubRG": {
+            "type": "string"
+        },
+        "vnetHub": {
             "type": "string"
         }
     },
@@ -19,11 +25,11 @@
     "resources": [
         {
             "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-            "name": "[concat(parameters('vnetThisName'),'/',parameters('vnetThatName'))]",
+            "name": "[concat(parameters('vnetHubName'),'/',parameters('vnetSpokeName'))]",
             "dependsOn": [
                 // hub removed from dependsOn because hub created somewhere else
-                //"[resourceId(parameters('vnetThisRG'),'Microsoft.Network/virtualNetworks',parameters('vnetThisName'))]",
-                // "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetThatName'))]"
+                //"[resourceId(parameters('vnetThisRG'),'Microsoft.Network/virtualNetworks',parameters('vnetHubName'))]",
+                // "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetSpokeName'))]"
             ],
             "apiVersion": "2019-09-01",
             "properties": {
@@ -32,11 +38,84 @@
                 "allowGatewayTransit": false, // should be set to true after VPN added on hub
                 "useRemoteGateways": false, // should be set to true after VPN added on spoke
                 "remoteVirtualNetwork": {
-                    "id": "[resourceId(parameters('vnetThatRG'),'Microsoft.Network/virtualNetworks', parameters('vnetThatName'))]"
+                    "id": "[resourceId(parameters('vnetSpokeRG'),'Microsoft.Network/virtualNetworks', parameters('vnetSpokeName'))]"
                 },
                 "remoteAddressSpace": {
                     "addressPrefixes": [
-                        "[parameters('vnetThat')]"
+                        "[parameters('vnetSpoke')]"
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "nestedPeeringDeployment",
+            "resourceGroup": "[parameters('vnetSpokeRG')]",
+            "dependsOn": [
+            ],
+            "properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                    "vnetSpokeName": {
+                        "value": "[parameters('vnetSpokeName')]"
+                    },
+                    "vnetHubRG": {
+                        "value": "[parameters('vnetHubRG')]"
+                    },
+                    "vnetHub": {
+                        "value": "[parameters('vnetHub')]"
+                    },
+                    "vnetHubName": {
+                        "value": "[parameters('vnetHubName')]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "vnetSpokeName": {
+                            "type": "string"
+                        },
+                        "vnetHubRG": {
+                            "type": "string"
+                        },
+                        "vnetHub": {
+                            "type": "string"
+                        },
+                        "vnetHubName": {
+                            "type": "string"
+                        }
+                    },
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+                            "name": "[concat(parameters('vnetSpokeName'),'/',parameters('vnetHubName'))]",
+                            "dependsOn": [
+                                // hub removed from dependsOn because hub created somewhere else
+                                //"[resourceId(parameters('vnetThisRG'),'Microsoft.Network/virtualNetworks',parameters('vnetSpokeName'))]",
+                                // "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetHubName'))]"
+                            ],
+                            "apiVersion": "2019-09-01",
+                            "properties": {
+                                "allowVirtualNetworkAccess": true,
+                                "allowForwardedTraffic": true,
+                                "allowGatewayTransit": false, // should be set to true after VPN added on hub
+                                "useRemoteGateways": false, // should be set to true after VPN added on spoke
+                                "remoteVirtualNetwork": {
+                                    "id": "[resourceId(parameters('vnetHubRG'),'Microsoft.Network/virtualNetworks', parameters('vnetHubName'))]"
+                                },
+                                "remoteAddressSpace": {
+                                    "addressPrefixes": [
+                                        "[parameters('vnetHub')]"
+                                    ]
+                                }
+                            }
+                        }
                     ]
                 }
             }

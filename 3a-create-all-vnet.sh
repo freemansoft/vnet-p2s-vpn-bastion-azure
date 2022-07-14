@@ -55,24 +55,16 @@ az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_VNET" \
 # peering must be configured in both directions to make it work
 ###
 
-echo -e "${PURPLE}-------------------Peer Spoke to Hub ----------------${NC}"
-az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_SPOKE_VNET" \
-     --template-file templates/template-vnet-peer.json \
-     --parameters \
-     vnetThisName="$AZURE_VNET_SPOKE_NAME" \
-     vnetThatRG="$AZURE_RESOURCE_GROUP_HUB_VNET" \
-     vnetThat="$AZURE_VNET_HUB_NETWORK" \
-     vnetThatName="$AZURE_VNET_HUB_NAME" \
-
-echo -e "${PURPLE}-------------------Peer Hub to Spoke ----------------${NC}"
-# has to be done with the RG of the spoke and pass in the RG of the remote hub
+echo -e "${PURPLE}------------------- Bi-Directional Peering  ----------------${NC}"
 az deployment group create --resource-group "$AZURE_RESOURCE_GROUP_HUB_VNET" \
      --template-file templates/template-vnet-peer.json \
      --parameters \
-     vnetThisName="$AZURE_VNET_HUB_NAME" \
-     vnetThatRG="$AZURE_RESOURCE_GROUP_SPOKE_VNET" \
-     vnetThat="$AZURE_VNET_SPOKE_NETWORK" \
-     vnetThatName="$AZURE_VNET_SPOKE_NAME" \
+     vnetHubRG="$AZURE_RESOURCE_GROUP_HUB_VNET" \
+     vnetHub="$AZURE_VNET_HUB_NETWORK" \
+     vnetHubName="$AZURE_VNET_HUB_NAME" \
+     vnetSpokeRG="$AZURE_RESOURCE_GROUP_SPOKE_VNET" \
+     vnetSpoke="$AZURE_VNET_SPOKE_NETWORK" \
+     vnetSpokeName="$AZURE_VNET_SPOKE_NAME" \
 
 echo -e "${PURPLE}-------------------private DNS groups and VNET links (HUB)----------------${NC}"
 # create private DNS zones - link private DNS zones to hub and spoke VNETs - for PLEs

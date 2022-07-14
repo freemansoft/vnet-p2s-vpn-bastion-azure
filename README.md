@@ -28,8 +28,6 @@ Mac / BASH
 1. Add VNET attached cloud shell using cloud shell ACI subnet.  No obvious way to do that bound to a VNET with IaC
 1. Cloudshell should use PLE for storage access.  IMO all storage should be accessed via PLE (JF)
 1. Script the download the VPN package from the p2s blade in the VNG
-1. Split the Hub and Spoke VNET RG into hub, spoke/peering RGs
-1. Split the Hub and Spoke VNET into two different configuraiton / calls to be abel to stamp out spokes
 
 ## Scripts
 | Script                       | Required for Bastion | Required for P2S VPN | Purpose |
@@ -56,7 +54,7 @@ Script Notes
 1. The ARM templates are applied in `Incremental` mode so they can be used to update a configuration.
 1. The purge scripts apply an ARM template in `Complete` mode.
 1. The VNET gateway requires the resource groups and the vnet in order to be provisioned.
-1. VNET peering has to be done in two separate ARM template calls because the command line resource group is where the peering gets provisioned and the hub and spoke vnets are in different resource groups.
+1. VNET peering has to be done a nested ARM template because that is the only one file way to target two different resource groups in the same template
 
 ### Certificate installation.
 Windows: Double click on the .pfx file and enter a passcode of `1234` to install the certificate in the windows certificate store.
@@ -488,6 +486,7 @@ ARM Templates
 * https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/outputs
 * https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-expressions
 * https://docs.microsoft.com/en-us/azure/virtual-machines/tag-template
+* https://alastairchristian.com/arm-templates-deploy-to-multiple-resource-groups-with-nested-templates-44665588e3e3
 
 VNET / Subnet / Network
 * https://docs.microsoft.com/en-us/azure/virtual-network/quick-create-cli

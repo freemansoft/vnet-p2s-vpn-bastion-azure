@@ -22,6 +22,7 @@ Mac / BASH
 * You are runnign bash 4 or later.  Apple only ships version bash 3.x.  Install the latest bash with `homebrew bash install`
 
 ## Future / TODO
+1. Create multiple resource groups in a single template rather than calling CLI for each RG like https://samcogan.com/deploying-resource-groups-with-arm-templates/
 1. Linux VM drive storage should be private link only
 1. Linux vm drive should be in storage resource groups
 1. Log Analytics should have private storage scope
@@ -486,6 +487,7 @@ ARM Templates
 * https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/outputs
 * https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-expressions
 * https://docs.microsoft.com/en-us/azure/virtual-machines/tag-template
+* https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-to-resource-group?tabs=azure-cli
 * https://alastairchristian.com/arm-templates-deploy-to-multiple-resource-groups-with-nested-templates-44665588e3e3
 
 VNET / Subnet / Network
